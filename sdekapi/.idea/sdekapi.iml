@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="EMPTY_MODULE" version="4">
+  <component name="NewModuleRootManager">
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/messenderservice/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/packageservice/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/transportservice/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/userservice/src" isTestSource="false" />
+      <excludeFolder url="file://$MODULE_DIR$/messenderservice/target" />
+      <excludeFolder url="file://$MODULE_DIR$/packageservice/target" />
+      <excludeFolder url="file://$MODULE_DIR$/transportservice/target" />
+      <excludeFolder url="file://$MODULE_DIR$/userservice/target" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+  </component>
+</module>
