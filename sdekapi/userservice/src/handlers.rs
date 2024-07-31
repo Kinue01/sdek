@@ -1,9 +1,10 @@
 use axum::extract::{Json, Query, State};
 use axum::http::StatusCode;
-use sqlx::{Connection, PgPool};
-use sqlx::types::Uuid;
+use redis::AsyncCommands;
+use sqlx::PgPool;
+use uuid::Uuid;
 
-use crate::{error::MyError, model::*};
+use crate::{AppState, error::MyError, model::*};
 
 #[utoipa::path(
     get,
@@ -13,13 +14,29 @@ use crate::{error::MyError, model::*};
         (status = 404, description = "Roles not found")
     )
 )]
-pub async fn get_roles(State(pool): State<PgPool>) -> Result<Json<Vec<RoleResponse>>, MyError> {
-    let roles: Vec<RoleResponse> = sqlx::query_as("select * from tb_role")
-        .fetch_all(&pool)
-        .await
-        .map_err(MyError::DBError)?;
+pub async fn get_roles(
+    State(mut state): State<AppState>,
+) -> Result<Json<Vec<RoleResponse>>, MyError> {
+    let roles_redis: Vec<RoleResponse> =
+        state.redis.get("roles").await.map_err(MyError::RDbError)?;
 
-    Ok(Json(roles))
+    match roles_redis.is_empty() {
+        true => {
+            let roles: Vec<RoleResponse> = sqlx::query_as("select * from tb_role")
+                .fetch_all(&state.postgres)
+                .await
+                .map_err(MyError::DBError)?;
+
+            let _: () = state
+                .redis
+                .set("roles", &roles)
+                .await
+                .map_err(MyError::RDbError)?;
+
+            Ok(Json(roles))
+        }
+        false => Ok(Json(roles_redis)),
+    }
 }
 
 #[utoipa::path(
@@ -31,14 +48,28 @@ pub async fn get_roles(State(pool): State<PgPool>) -> Result<Json<Vec<RoleRespon
     )
 )]
 pub async fn get_positions(
-    State(pool): State<PgPool>,
+    State(mut state): State<AppState>,
 ) -> Result<Json<Vec<PositionResponse>>, MyError> {
-    let poses: Vec<PositionResponse> = sqlx::query_as("select * from tb_position")
-        .fetch_all(&pool)
-        .await
-        .map_err(MyError::DBError)?;
+    let poses_redis: Vec<PositionResponse> =
+        state.redis.get("poses").await.map_err(MyError::RDbError)?;
 
-    Ok(Json(poses))
+    match poses_redis.is_empty() {
+        true => {
+            let poses: Vec<PositionResponse> = sqlx::query_as("select * from tb_position")
+                .fetch_all(&state.postgres)
+                .await
+                .map_err(MyError::DBError)?;
+
+            let _: () = state
+                .redis
+                .set("poses", &poses)
+                .await
+                .map_err(MyError::RDbError)?;
+
+            Ok(Json(poses))
+        }
+        false => Ok(Json(poses_redis)),
+    }
 }
 
 #[utoipa::path(
@@ -50,14 +81,14 @@ pub async fn get_positions(
     )
 )]
 pub async fn add_position(
-    State(pool): State<PgPool>,
+    State(state): State<AppState>,
     Json(pos): Json<PositionResponse>,
 ) -> Result<StatusCode, MyError> {
     let _ =
         sqlx::query("insert into tb_position (position_name, position_base_pay) values ($1, $2)")
             .bind(&pos.position_name)
             .bind(&pos.position_base_pay)
-            .execute(&pool)
+            .execute(&state.postgres)
             .await
             .map_err(MyError::DBError)?;
 
@@ -73,7 +104,7 @@ pub async fn add_position(
     )
 )]
 pub async fn update_position(
-    State(pool): State<PgPool>,
+    State(state): State<AppState>,
     Json(pos): Json<PositionResponse>,
 ) -> Result<StatusCode, MyError> {
     let _ = sqlx::query(
@@ -82,7 +113,7 @@ pub async fn update_position(
     .bind(&pos.position_name)
     .bind(&pos.position_base_pay)
     .bind(&pos.position_id)
-    .execute(&pool)
+    .execute(&state.postgres)
     .await
     .map_err(MyError::DBError)?;
 
@@ -97,10 +128,13 @@ pub async fn update_position(
         (status = 500, description = "Can`t delete position")
     )
 )]
-pub async fn delete_position(State(pool): State<PgPool>, id: i32) -> Result<StatusCode, MyError> {
+pub async fn delete_position(
+    State(state): State<AppState>,
+    Json(id): Json<i32>,
+) -> Result<StatusCode, MyError> {
     let _ = sqlx::query("delete from tb_position where position_id = $1")
         .bind(&id)
-        .execute(&pool)
+        .execute(&state.postgres)
         .await
         .map_err(MyError::DBError)?;
 
@@ -115,27 +149,42 @@ pub async fn delete_position(State(pool): State<PgPool>, id: i32) -> Result<Stat
         (status = 404, description = "Users not found")
     )
 )]
-pub async fn get_users(State(pool): State<PgPool>) -> Result<Json<Vec<User>>, MyError> {
-    let users: Vec<UserResponse> = sqlx::query_as("select * from tb_user")
-        .fetch_all(&pool)
-        .await
-        .map_err(MyError::DBError)?;
+pub async fn get_users(State(mut state): State<AppState>) -> Result<Json<Vec<User>>, MyError> {
+    let users_redis: Vec<User> = state.redis.get("users").await.map_err(MyError::RDbError)?;
 
-    let mut res: Vec<User> = Vec::new();
+    match users_redis.is_empty() {
+        true => {
+            let users: Vec<UserResponse> = sqlx::query_as("select * from tb_user")
+                .fetch_all(&state.postgres)
+                .await
+                .map_err(MyError::DBError)?;
 
-    let _ = users.iter().map(async move |x| {
-        res.push(User {
-            user_id: x.user_id,
-            user_login: x.clone().user_login,
-            user_password: x.clone().user_password,
-            user_role: sqlx::query_as("select * from tb_role where role_id = $1")
-                .bind(x.user_role_id)
-                .fetch_one(&pool)
-                .await?,
-        })
-    });
+            let roles = get_roles(State(state.clone())).await.unwrap_or_default().0;
+            let mut res: Vec<User> = Vec::new();
 
-    Ok(Json(res))
+            let _ = users.iter().map(|x| {
+                res.push(User {
+                    user_id: x.user_id,
+                    user_login: x.clone().user_login,
+                    user_password: x.clone().user_password,
+                    user_role: roles
+                        .clone()
+                        .into_iter()
+                        .find(|y| x.user_role_id == y.role_id)
+                        .unwrap_or_default(),
+                })
+            });
+
+            let _: () = state
+                .redis
+                .set("users", &res)
+                .await
+                .map_err(MyError::RDbError)?;
+
+            Ok(Json(res))
+        }
+        false => Ok(Json(users_redis)),
+    }
 }
 
 #[utoipa::path(
@@ -147,44 +196,44 @@ pub async fn get_users(State(pool): State<PgPool>) -> Result<Json<Vec<User>>, My
     )
 )]
 pub async fn get_user_by_id(
-    State(pool): State<PgPool>,
-    uuid: Query<Uuid>,
+    State(mut state): State<AppState>,
+    Query(uuid): Query<Uuid>,
 ) -> Result<Json<User>, MyError> {
-    let user: UserResponse = sqlx::query_as("select * from tb_user where user_id = $1")
-        .bind(&uuid.0)
-        .fetch_one(&pool)
+    let user_redis: User = state
+        .redis
+        .get("user".to_owned() + &*uuid.to_string())
         .await
-        .map_err(MyError::DBError)?;
+        .map_err(MyError::RDbError)?;
 
-    Ok(Json(User {
-        user_id: user.user_id,
-        user_login: user.user_login,
-        user_password: user.user_password,
-        user_role: sqlx::query_as("select * from tb_role where role_id = $1")
-            .bind(user.user_role_id)
-            .fetch_one(&pool)
-            .await
-            .unwrap(),
-    }))
-}
+    match user_redis.user_id {
+        u if u == Uuid::default() => {
+            let user: UserResponse = sqlx::query_as("select * from tb_user where user_id = $1")
+                .bind(&uuid)
+                .fetch_one(&state.postgres)
+                .await
+                .map_err(MyError::DBError)?;
 
-async fn get_user_by_cl_or_emp_id(State(pool): State<PgPool>, uuid: Uuid) -> Result<User, MyError> {
-    let user: UserResponse = sqlx::query_as("select * from tb_user where user_id = $1")
-        .bind(&uuid)
-        .fetch_one(&pool)
-        .await
-        .map_err(MyError::DBError)?;
+            let res = User {
+                user_id: user.user_id,
+                user_login: user.user_login,
+                user_password: user.user_password,
+                user_role: sqlx::query_as("select * from tb_role where role_id = $1")
+                    .bind(user.user_role_id)
+                    .fetch_one(&state.postgres)
+                    .await
+                    .map_err(MyError::DBError)?,
+            };
 
-    Ok(User {
-        user_id: user.user_id,
-        user_login: user.user_login,
-        user_password: user.user_password,
-        user_role: sqlx::query_as("select * from tb_role where role_id = $1")
-            .bind(user.user_role_id)
-            .fetch_one(&pool)
-            .await
-            .unwrap(),
-    })
+            let _: () = state
+                .redis
+                .set("user".to_owned() + &*uuid.to_string(), &res)
+                .await
+                .map_err(MyError::RDbError)?;
+
+            Ok(Json(res))
+        }
+        _ => Ok(Json(user_redis)),
+    }
 }
 
 #[utoipa::path(
@@ -195,29 +244,47 @@ async fn get_user_by_cl_or_emp_id(State(pool): State<PgPool>, uuid: Uuid) -> Res
         (status = 404, description = "Clients not found")
     )
 )]
-pub async fn get_clients(State(pool): State<PgPool>) -> Result<Json<Vec<Client>>, MyError> {
-    let clients: Vec<ClientResponse> = sqlx::query_as("select * from tb_client")
-        .fetch_all(&pool)
+pub async fn get_clients(State(mut state): State<AppState>) -> Result<Json<Vec<Client>>, MyError> {
+    let clients_redis: Vec<Client> = state
+        .redis
+        .get("clients")
         .await
-        .map_err(MyError::DBError)?;
+        .map_err(MyError::RDbError)?;
 
-    let mut res: Vec<Client> = Vec::new();
-    let users = get_users(State(pool)).await.unwrap().0;
+    match clients_redis.is_empty() {
+        true => Ok(Json(clients_redis)),
+        false => {
+            let clients: Vec<ClientResponse> = sqlx::query_as("select * from tb_client")
+                .fetch_all(&state.postgres)
+                .await
+                .map_err(MyError::DBError)?;
 
-    let _ = clients.iter().map(|x| {
-        res.push(Client {
-            client_id: x.client_id,
-            client_lastname: x.clone().client_lastname,
-            client_firstname: x.clone().client_firstname,
-            client_middlename: x.clone().client_middlename,
-            client_user: users
-                .into_iter()
-                .find(|y| y.user_id == x.client_user_id)
-                .unwrap(),
-        })
-    });
+            let mut res: Vec<Client> = Vec::new();
+            let users = get_users(State(state.clone())).await.unwrap().0;
 
-    Ok(Json(res))
+            let _ = clients.iter().map(|x| {
+                res.push(Client {
+                    client_id: x.client_id,
+                    client_lastname: x.clone().client_lastname,
+                    client_firstname: x.clone().client_firstname,
+                    client_middlename: x.clone().client_middlename,
+                    client_user: users
+                        .clone()
+                        .into_iter()
+                        .find(|y| x.client_user_id == y.user_id)
+                        .unwrap(),
+                })
+            });
+
+            let _: () = state
+                .redis
+                .set("clients", &res)
+                .await
+                .map_err(MyError::RDbError)?;
+
+            Ok(Json(res))
+        }
+    }
 }
 
 #[utoipa::path(
@@ -229,22 +296,46 @@ pub async fn get_clients(State(pool): State<PgPool>) -> Result<Json<Vec<Client>>
     )
 )]
 pub async fn get_client_by_id(
-    State(pool): State<PgPool>,
-    id: Query<i32>,
+    State(mut state): State<AppState>,
+    Query(id): Query<i32>,
 ) -> Result<Json<Client>, MyError> {
-    let client: ClientResponse = sqlx::query_as("select * from tb_client where client_id = $1")
-        .bind(&id.0)
-        .fetch_one(&pool)
+    let client_redis: Client = state
+        .redis
+        .get("client".to_owned() + &*id.to_string())
         .await
-        .map_err(MyError::DBError)?;
+        .map_err(MyError::RDbError)?;
 
-    Ok(Json(Client {
-        client_id: client.client_id,
-        client_lastname: client.client_lastname,
-        client_firstname: client.client_firstname,
-        client_middlename: client.client_middlename,
-        client_user: get_user_by_cl_or_emp_id(State(pool), client.client_user_id).unwrap(),
-    }))
+    match client_redis.client_id {
+        0 => {
+            let client: ClientResponse =
+                sqlx::query_as("select * from tb_client where client_id = $1")
+                    .bind(&id)
+                    .fetch_one(&state.postgres)
+                    .await
+                    .map_err(MyError::DBError)?;
+
+            let user = get_user_by_id(State(state.clone()), Query(client.client_user_id))
+                .await
+                .unwrap()
+                .0;
+            let res = Client {
+                client_id: client.client_id,
+                client_lastname: client.client_lastname,
+                client_firstname: client.client_firstname,
+                client_middlename: client.client_middlename,
+                client_user: user,
+            };
+
+            let _: () = state
+                .redis
+                .set("client".to_owned() + &*id.to_string(), &res)
+                .await
+                .map_err(MyError::RDbError)?;
+
+            Ok(Json(res))
+        }
+        _ => Ok(Json(client_redis)),
+    }
 }
 
 #[utoipa::path(
@@ -256,18 +347,18 @@ pub async fn get_client_by_id(
     )
 )]
 pub async fn add_client(
-    State(pool): State<PgPool>,
+    State(state): State<AppState>,
     Json(client): Json<Client>,
 ) -> Result<StatusCode, MyError> {
-    let mut trans = PgPool::begin(&pool).await.unwrap();
+    let trans = PgPool::begin(&state.postgres).await.unwrap();
 
     let _ = sqlx::query("insert into tb_user (user_id, user_login, user_password, user_role_id) values ($1, $2, $3, $4)")
         .bind(&client.client_user.user_id).bind(&client.client_user.user_login).bind(&client.client_user.user_password).bind(&client.client_user.user_role.role_id)
-        .execute(&pool).await.map_err(MyError::DBError)?;
+        .execute(&state.postgres).await.map_err(MyError::DBError)?;
 
     let _ = sqlx::query("insert into tb_client (client_lastname, client_firstname, client_middlename, client_user_id) values ($1, $2, $3, $4)")
         .bind(&client.client_lastname).bind(&client.client_firstname).bind(&client.client_middlename).bind(&client.client_user.user_id)
-        .execute(&pool).await.map_err(MyError::DBError)?;
+        .execute(&state.postgres).await.map_err(MyError::DBError)?;
 
     trans.commit().await.unwrap();
 
@@ -283,18 +374,18 @@ pub async fn add_client(
     )
 )]
 pub async fn update_client(
-    State(pool): State<PgPool>,
+    State(state): State<AppState>,
     Json(client): Json<Client>,
 ) -> Result<StatusCode, MyError> {
-    let mut trans = PgPool::begin(&pool).await.unwrap();
+    let trans = PgPool::begin(&state.postgres).await.unwrap();
 
     let _ = sqlx::query("update tb_user set user_login = $1, user_password = $2, user_role_id = $3 where user_id = $4")
         .bind(&client.client_user.user_login).bind(&client.client_user.user_password).bind(&client.client_user.user_role.role_id).bind(&client.client_user.user_id)
-        .execute(&pool).await.map_err(MyError::DBError)?;
+        .execute(&state.postgres).await.map_err(MyError::DBError)?;
 
     let _ = sqlx::query("update tb_client set client_lastname = $1, client_firstname = $2, client_middlename = $3 where client_id = $4")
         .bind(&client.client_lastname).bind(&client.client_firstname).bind(&client.client_middlename).bind(&client.client_id)
-        .execute(&pool).await.map_err(MyError::DBError)?;
+        .execute(&state.postgres).await.map_err(MyError::DBError)?;
 
     trans.commit().await.unwrap();
 
@@ -310,20 +401,20 @@ pub async fn update_client(
     )
 )]
 pub async fn delete_client(
-    State(pool): State<PgPool>,
+    State(state): State<AppState>,
     Json(client): Json<Client>,
 ) -> Result<StatusCode, MyError> {
-    let mut trans = PgPool::begin(&pool).await.unwrap();
+    let trans = PgPool::begin(&state.postgres).await.unwrap();
 
     let _ = sqlx::query("delete from tb_client where client_id = $1")
         .bind(&client.client_id)
-        .execute(&pool)
+        .execute(&state.postgres)
         .await
         .map_err(MyError::DBError)?;
 
     let _ = sqlx::query("delete from tb_user where user_id = $1")
         .bind(&client.client_user.user_id)
-        .execute(&pool)
+        .execute(&state.postgres)
         .await
         .map_err(MyError::DBError)?;
 
@@ -340,33 +431,54 @@ pub async fn delete_client(
         (status = 404, description = "Employees not found")
     )
 )]
-pub async fn get_employees(State(pool): State<PgPool>) -> Result<Json<Vec<Employee>>, MyError> {
-    let emps: Vec<EmployeeResponse> = sqlx::query_as("select * from tb_employee")
-        .fetch_all(&pool)
-        .await
-        .map_err(MyError::DBError)?;
+pub async fn get_employees(
+    State(mut state): State<AppState>,
+) -> Result<Json<Vec<Employee>>, MyError> {
+    let emps_redis: Vec<Employee> = state.redis.get("emps").await.map_err(MyError::RDbError)?;
 
-    let users = get_users(State(pool)).await.unwrap().0;
-    let mut res: Vec<Employee> = Vec::new();
+    match emps_redis.is_empty() {
+        true => {
+            let emps: Vec<EmployeeResponse> = sqlx::query_as("select * from tb_employee")
+                .fetch_all(&state.postgres)
+                .await
+                .map_err(MyError::DBError)?;
 
-    let _ = emps.iter().map(async move |x| {
-        res.push(Employee {
-            employee_id: x.employee_id,
-            employee_lastname: x.clone().employee_lastname,
-            employee_firstname: x.clone().employee_firstname,
-            employee_middlename: x.clone().employee_middlename,
-            employee_position: sqlx::query_as("select * from tb_position where position_id = $1")
-                .bind(&x.employee_position_id)
-                .fetch_one(&pool)
-                .await?,
-            employee_user: users
-                .into_iter()
-                .find(|y| y.user_id == x.employee_user_id)
-                .unwrap(),
-        })
-    });
+            let users = get_users(State(state.clone())).await.unwrap().0;
+            let mut res: Vec<Employee> = Vec::new();
+            let poses = get_positions(State(state.clone()))
+                .await
+                .unwrap_or_default()
+                .0;
 
-    Ok(Json(res))
+            let _ = emps.iter().map(|x| {
+                res.push(Employee {
+                    employee_id: x.employee_id,
+                    employee_lastname: x.clone().employee_lastname,
+                    employee_firstname: x.clone().employee_firstname,
+                    employee_middlename: x.clone().employee_middlename,
+                    employee_position: poses
+                        .clone()
+                        .into_iter()
+                        .find(|y| x.employee_position_id == y.position_id)
+                        .unwrap_or_default(),
+                    employee_user: users
+                        .clone()
+                        .into_iter()
+                        .find(|y| y.user_id == x.employee_user_id)
+                        .unwrap_or_default(),
+                })
+            });
+
+            let _: () = state
+                .redis
+                .set("emps", &res)
+                .await
+                .map_err(MyError::RDbError)?;
+
+            Ok(Json(res))
+        }
+        false => Ok(Json(emps_redis)),
+    }
 }
 
 #[utoipa::path(
@@ -378,27 +490,54 @@ pub async fn get_employees(State(pool): State<PgPool>) -> Result<Json<Vec<Employ
     )
 )]
 pub async fn get_employee_by_id(
-    State(pool): State<PgPool>,
-    uuid: Query<Uuid>,
+    State(mut state): State<AppState>,
+    Query(uuid): Query<Uuid>,
 ) -> Result<Json<Employee>, MyError> {
-    let emp: EmployeeResponse = sqlx::query_as("select * from tb_employee where employee_id = $1")
-        .bind(&uuid.0)
-        .fetch_one(&pool)
+    let emp_redis: Employee = state
+        .redis
+        .get("emp".to_owned() + &*uuid.to_string())
         .await
-        .map_err(MyError::DBError)?;
+        .map_err(MyError::RDbError)?;
 
-    Ok(Json(Employee {
-        employee_id: emp.employee_id,
-        employee_lastname: emp.employee_lastname,
-        employee_firstname: emp.employee_firstname,
-        employee_middlename: emp.employee_middlename,
-        employee_position: sqlx::query_as("select * from tb_position where position_id = $1")
-            .bind(&emp.employee_position_id)
-            .fetch_one(&pool)
-            .await
-            .unwrap(),
-        employee_user: get_user_by_cl_or_emp_id(State(pool), emp.employee_user_id).unwrap(),
-    }))
+    match emp_redis.employee_id {
+        u if u == Uuid::default() => {
+            let emp: EmployeeResponse =
+                sqlx::query_as("select * from tb_employee where employee_id = $1")
+                    .bind(&uuid)
+                    .fetch_one(&state.postgres)
+                    .await
+                    .map_err(MyError::DBError)?;
+
+            let user = get_user_by_id(State(state.clone()), Query(emp.employee_user_id))
+                .await
+                .unwrap()
+                .0;
+
+            let res = Employee {
+                employee_id: emp.employee_id,
+                employee_lastname: emp.employee_lastname,
+                employee_firstname: emp.employee_firstname,
+                employee_middlename: emp.employee_middlename,
+                employee_position: sqlx::query_as(
+                    "select * from tb_position where position_id = $1",
+                )
+                .bind(&emp.employee_position_id)
+                .fetch_one(&state.postgres)
+                .await
+                .map_err(MyError::DBError)?,
+                employee_user: user,
+            };
+
+            let _: () = state
+                .redis
+                .set("emp".to_owned() + &*uuid.to_string(), &res)
+                .await
+                .map_err(MyError::RDbError)?;
+
+            Ok(Json(res))
+        }
+        _ => Ok(Json(emp_redis)),
+    }
 }
 
 #[utoipa::path(
@@ -410,18 +549,18 @@ pub async fn get_employee_by_id(
     )
 )]
 pub async fn add_employee(
-    State(pool): State<PgPool>,
+    State(state): State<AppState>,
     Json(emp): Json<Employee>,
 ) -> Result<StatusCode, MyError> {
-    let mut trans = PgPool::begin(&pool).await.unwrap();
+    let trans = PgPool::begin(&state.postgres).await.unwrap();
 
     let _ = sqlx::query("insert into tb_user (user_id, user_login, user_password, user_role_id) values ($1, $2, $3, $4)")
         .bind(&emp.employee_user.user_id).bind(&emp.employee_user.user_login).bind(&emp.employee_user.user_password).bind(&emp.employee_user.user_role.role_id)
-        .execute(&pool).await.map_err(MyError::DBError)?;
+        .execute(&state.postgres).await.map_err(MyError::DBError)?;
 
     let _ = sqlx::query("insert into tb_employee (employee_lastname, employee_firstname, employee_middlename, employee_position_id, employee_user_id) values ($1, $2, $3, $4, $5)")
         .bind(&emp.employee_lastname).bind(&emp.employee_firstname).bind(&emp.employee_middlename).bind(&emp.employee_position.position_id).bind(&emp.employee_user.user_id)
-        .execute(&pool).await.map_err(MyError::DBError)?;
+        .execute(&state.postgres).await.map_err(MyError::DBError)?;
 
     trans.commit().await.unwrap();
 
@@ -437,18 +576,18 @@ pub async fn add_employee(
     )
 )]
 pub async fn update_employee(
-    State(pool): State<PgPool>,
+    State(state): State<AppState>,
     Json(emp): Json<Employee>,
 ) -> Result<StatusCode, MyError> {
-    let mut trans = PgPool::begin(&pool).await.unwrap();
+    let trans = PgPool::begin(&state.postgres).await.unwrap();
 
     let _ = sqlx::query("update tb_user set user_login = $1, user_password = $2, user_role_id = $3 where user_id = $4")
         .bind(&emp.employee_user.user_login).bind(&emp.employee_user.user_password).bind(&emp.employee_user.user_role.role_id).bind(&emp.employee_user.user_id)
-        .execute(&pool).await.map_err(MyError::DBError)?;
+        .execute(&state.postgres).await.map_err(MyError::DBError)?;
 
     let _ = sqlx::query("update tb_employee set employee_lastname = $1, employee_firstname = $2, employee_middlename = $3, employee_position_id = $4 where employee_id = $5")
         .bind(&emp.employee_lastname).bind(&emp.employee_firstname).bind(&emp.employee_middlename).bind(&emp.employee_position.position_id).bind(&emp.employee_id)
-        .execute(&pool).await.map_err(MyError::DBError)?;
+        .execute(&state.postgres).await.map_err(MyError::DBError)?;
 
     trans.commit().await.unwrap();
 
@@ -464,20 +603,20 @@ pub async fn update_employee(
     )
 )]
 pub async fn delete_employee(
-    State(pool): State<PgPool>,
+    State(state): State<AppState>,
     Json(emp): Json<Employee>,
 ) -> Result<StatusCode, MyError> {
-    let mut trans = PgPool::begin(&pool).await.unwrap();
+    let trans = PgPool::begin(&state.postgres).await.unwrap();
 
     let _ = sqlx::query("delete from tb_employee where employee_id = $1")
         .bind(&emp.employee_id)
-        .execute(&pool)
+        .execute(&state.postgres)
         .await
         .map_err(MyError::DBError)?;
 
     let _ = sqlx::query("delete from tb_user where user_id = $1")
         .bind(&emp.employee_user.user_id)
-        .execute(&pool)
+        .execute(&state.postgres)
         .await
         .map_err(MyError::DBError)?;
 

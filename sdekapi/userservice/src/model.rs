@@ -1,15 +1,18 @@
 use ::serde::{Deserialize, Serialize};
+use redis_macros::{FromRedisValue, ToRedisArgs};
 use sqlx::prelude::*;
 use sqlx::types::*;
 use utoipa::ToSchema;
 
-#[derive(Clone, Debug, FromRow, Deserialize, Serialize, ToSchema)]
+#[derive(
+    Clone, Debug, FromRow, Serialize, Deserialize, ToSchema, FromRedisValue, ToRedisArgs, Default,
+)]
 pub struct RoleResponse {
     pub role_id: i32,
     pub role_name: String,
 }
 
-#[derive(Clone, Debug, FromRow, Deserialize, Serialize)]
+#[derive(Clone, Debug, FromRow, Deserialize, Serialize, Default, ToSchema)]
 pub struct UserResponse {
     pub user_id: Uuid,
     pub user_login: String,
@@ -17,7 +20,7 @@ pub struct UserResponse {
     pub user_role_id: i32,
 }
 
-#[derive(Clone, Debug, Deserialize, Serialize, ToSchema)]
+#[derive(Clone, Debug, Deserialize, Serialize, ToSchema, FromRedisValue, ToRedisArgs, Default)]
 pub struct User {
     pub user_id: Uuid,
     pub user_login: String,
@@ -25,14 +28,16 @@ pub struct User {
     pub user_role: RoleResponse,
 }
 
-#[derive(Clone, Debug, FromRow, Deserialize, Serialize, ToSchema)]
+#[derive(
+    Clone, Debug, FromRow, Deserialize, Serialize, ToSchema, FromRedisValue, ToRedisArgs, Default,
+)]
 pub struct PositionResponse {
     pub position_id: i32,
     pub position_name: String,
     pub position_base_pay: i32,
 }
 
-#[derive(Clone, Debug, FromRow, Deserialize, Serialize)]
+#[derive(Clone, Debug, FromRow, Deserialize, Serialize, Default, ToSchema)]
 pub struct ClientResponse {
     pub client_id: i32,
     pub client_lastname: String,
@@ -41,7 +46,7 @@ pub struct ClientResponse {
     pub client_user_id: Uuid,
 }
 
-#[derive(Clone, Debug, Deserialize, Serialize, ToSchema)]
+#[derive(Clone, Debug, Deserialize, Serialize, ToSchema, FromRedisValue, ToRedisArgs, Default)]
 pub struct Client {
     pub client_id: i32,
     pub client_lastname: String,
@@ -50,7 +55,7 @@ pub struct Client {
     pub client_user: User,
 }
 
-#[derive(Clone, Debug, FromRow, Deserialize, Serialize)]
+#[derive(Clone, Debug, FromRow, Deserialize, Serialize, Default, ToSchema)]
 pub struct EmployeeResponse {
     pub employee_id: Uuid,
     pub employee_lastname: String,
@@ -60,7 +65,7 @@ pub struct EmployeeResponse {
     pub employee_user_id: Uuid,
 }
 
-#[derive(Clone, Debug, Deserialize, Serialize, ToSchema)]
+#[derive(Clone, Debug, Deserialize, Serialize, ToSchema, FromRedisValue, ToRedisArgs, Default)]
 pub struct Employee {
     pub employee_id: Uuid,
     pub employee_lastname: String,
