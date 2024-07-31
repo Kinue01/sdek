@@ -1,11 +1,9 @@
 use std::time::Duration;
 
-use axum::{
-    http::Method,
-    Router,
-    routing::{delete, get, post, put},
-};
+use axum::{http::Method, Router, routing::get};
 use dotenvy::dotenv;
+use redis::aio::MultiplexedConnection;
+use sqlx::PgPool;
 use sqlx::postgres::PgPoolOptions;
 use tower_http::{
     cors::{Any, CorsLayer},
@@ -22,10 +20,43 @@ mod model;
 
 #[derive(OpenApi)]
 #[openapi(
-    paths(handlers::get_users, handlers::get_roles),
-    components(schemas(User, RoleResponse, Client, Employee, PositionResponse))
+    paths(
+        handlers::get_users,
+        handlers::get_roles,
+        handlers::get_user_by_id,
+        handlers::get_clients,
+        handlers::get_client_by_id,
+        handlers::add_client,
+        handlers::update_client,
+        handlers::delete_client,
+        handlers::get_positions,
+        handlers::add_position,
+        handlers::update_position,
+        handlers::delete_position,
+        handlers::get_employees,
+        handlers::get_employee_by_id,
+        handlers::add_employee,
+        handlers::update_employee,
+        handlers::delete_employee
+    ),
+    components(schemas(
+        User,
+        RoleResponse,
+        Client,
+        Employee,
+        PositionResponse,
+        UserResponse,
+        ClientResponse,
+        EmployeeResponse
+    ))
 )]
 struct ApiDoc;
+
+#[derive(Clone)]
+struct AppState {
+    postgres: PgPool,
+    redis: MultiplexedConnection,
+}
 
 #[tokio::main]
 async fn main() {
@@ -54,6 +85,17 @@ async fn main() {
         .await
         .unwrap();
 
+    let redis = redis::Client::open("redis://127.0.0.1/")
+        .unwrap()
+        .get_multiplexed_async_connection()
+        .await
+        .unwrap();
+
+    let state = AppState {
+        postgres: pool,
+        redis,
+    };
+
     let app = Router::new()
         .route("/api/roles", get(get_roles))
         .route("/api/users", get(get_users).get(get_user_by_id))
@@ -81,7 +123,7 @@ async fn main() {
                 .delete(delete_employee),
         )
         .merge(SwaggerUi::new("/swagger-ui").url("/api-doc/openapi.json", ApiDoc::openapi()))
-        .with_state(pool)
+        .with_state(state)
         .layer(tracing)
         .layer(cors);
 
