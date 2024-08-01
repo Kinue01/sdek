@@ -98,11 +98,12 @@ async fn main() {
 
     let app = Router::new()
         .route("/api/roles", get(get_roles))
-        .route("/api/users", get(get_users).get(get_user_by_id))
+        .route("/api/users", get(get_users))
+        .route("/api/user", get(get_user_by_id))
+        .route("/api/clients", get(get_clients))
         .route(
-            "/api/clients",
-            get(get_clients)
-                .get(get_client_by_id)
+            "/api/client",
+            get(get_client_by_id)
                 .post(add_client)
                 .patch(update_client)
                 .delete(delete_client),
@@ -114,15 +115,15 @@ async fn main() {
                 .patch(update_position)
                 .delete(delete_position),
         )
+        .route("/api/employees", get(get_employees))
         .route(
-            "/api/employees",
-            get(get_employees)
-                .get(get_employee_by_id)
+            "/api/employee",
+            get(get_employee_by_id)
                 .post(add_employee)
                 .patch(update_employee)
                 .delete(delete_employee),
         )
-        .merge(SwaggerUi::new("/swagger-ui").url("/api-doc/openapi.json", ApiDoc::openapi()))
+        .merge(SwaggerUi::new("/swagger").url("/api-doc/openapi.json", ApiDoc::openapi()))
         .with_state(state)
         .layer(tracing)
         .layer(cors);
