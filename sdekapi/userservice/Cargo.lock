@@ -1086,6 +1086,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "num-bigint"
+version = "0.4.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a5e44f723f1133c9deac646763579fdb3ac745e418f2a7af9cd0c431da1f20b9"
+dependencies = [
+ "num-integer",
+ "num-traits",
+]
+
+[[package]]
 name = "num-bigint-dig"
 version = "0.8.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1527,6 +1537,21 @@ version = "0.25.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e0d7a6955c7511f60f3ba9e86c6d02b3c3f144f8c24b288d1f4e18074ab8bbec"
 dependencies = [
+ "combine",
+ "itoa",
+ "percent-encoding",
+ "ryu",
+ "sha1_smol",
+ "socket2",
+ "url",
+]
+
+[[package]]
+name = "redis"
+version = "0.26.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8cc5b667390cb038bc65fc4b18c06e2550469f7e06a02d886f1a018a11f63563"
+dependencies = [
  "ahash",
  "arc-swap",
  "async-trait",
@@ -1535,9 +1560,12 @@ dependencies = [
  "futures",
  "futures-util",
  "itoa",
+ "num-bigint",
  "percent-encoding",
  "pin-project-lite",
  "ryu",
+ "serde",
+ "serde_json",
  "sha1_smol",
  "socket2",
  "tokio",
@@ -1553,7 +1581,7 @@ version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d8b5407866b6626d251b18c878f043d37f43124680f26a806595a61714ab049a"
 dependencies = [
- "redis",
+ "redis 0.25.4",
  "redis-macros-derive",
  "serde",
  "serde_json",
@@ -2683,7 +2711,7 @@ dependencies = [
  "dotenvy",
  "native-tls",
  "postgres-native-tls",
- "redis",
+ "redis 0.26.0",
  "redis-macros",
  "serde",
  "serde_json",
@@ -2720,6 +2748,7 @@ dependencies = [
  "quote",
  "regex",
  "syn 2.0.71",
+ "uuid",
 ]
 
 [[package]]

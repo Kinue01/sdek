@@ -21,12 +21,8 @@ impl IntoResponse for MyError {
                 .body(body::Body::from(err.to_string()))
                 .unwrap(),
             MyError::RDbError(ref err) => Response::builder()
-                .status(StatusCode::INTERNAL_SERVER_ERROR)
+                .status(StatusCode::BAD_REQUEST)
                 .body(body::Body::from(err.to_string()))
-                .unwrap(),
-            _ => Response::builder()
-                .status(StatusCode::INTERNAL_SERVER_ERROR)
-                .body(body::Body::default())
                 .unwrap(),
         }
     }

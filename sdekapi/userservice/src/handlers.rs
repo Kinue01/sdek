@@ -1,7 +1,9 @@
 use axum::extract::{Json, Query, State};
 use axum::http::StatusCode;
-use redis::AsyncCommands;
+use redis::{AsyncCommands, JsonAsyncCommands};
+use serde::Deserialize;
 use sqlx::PgPool;
+use utoipa::IntoParams;
 use uuid::Uuid;
 
 use crate::{AppState, error::MyError, model::*};
@@ -17,8 +19,9 @@ use crate::{AppState, error::MyError, model::*};
 pub async fn get_roles(
     State(mut state): State<AppState>,
 ) -> Result<Json<Vec<RoleResponse>>, MyError> {
+    let roles_redis_json: String = state.redis.get("roles").await.unwrap_or_default();
     let roles_redis: Vec<RoleResponse> =
-        state.redis.get("roles").await.map_err(MyError::RDbError)?;
+        serde_json::from_str(&roles_redis_json).unwrap_or_default();
 
     match roles_redis.is_empty() {
         true => {
@@ -27,9 +30,9 @@ pub async fn get_roles(
                 .await
                 .map_err(MyError::DBError)?;
 
-            let _: () = state
+            state
                 .redis
-                .set("roles", &roles)
+                .json_set("roles", "$", &roles)
                 .await
                 .map_err(MyError::RDbError)?;
 
@@ -50,8 +53,9 @@ pub async fn get_roles(
 pub async fn get_positions(
     State(mut state): State<AppState>,
 ) -> Result<Json<Vec<PositionResponse>>, MyError> {
+    let poses_redis_json: String = state.redis.get("poses").await.map_err(MyError::RDbError)?;
     let poses_redis: Vec<PositionResponse> =
-        state.redis.get("poses").await.map_err(MyError::RDbError)?;
+        serde_json::from_str(&poses_redis_json).unwrap_or_default();
 
     match poses_redis.is_empty() {
         true => {
@@ -60,11 +64,7 @@ pub async fn get_positions(
                 .await
                 .map_err(MyError::DBError)?;
 
-            let _: () = state
-                .redis
-                .set("poses", &poses)
-                .await
-                .map_err(MyError::RDbError)?;
+            let _: () = state.redis.json_set("poses", "$", &poses).await.unwrap();
 
             Ok(Json(poses))
         }
@@ -74,7 +74,8 @@ pub async fn get_positions(
 
 #[utoipa::path(
     post,
-    path = "/api/positions",
+    path = "/api/position",
+    request_body(content = Json<PositionResponse>, description = "Position"),
     responses(
         (status = 201, description = "Position created"),
         (status = 500, description = "Can`t create position")
@@ -97,7 +98,8 @@ pub async fn add_position(
 
 #[utoipa::path(
     patch,
-    path = "/api/positions",
+    path = "/api/position",
+    request_body(content = Json<PositionResponse>, description = "Position"),
     responses(
         (status = 200, description = "Position updated"),
         (status = 500, description = "Can`t update position")
@@ -122,7 +124,8 @@ pub async fn update_position(
 
 #[utoipa::path(
     delete,
-    path = "/api/positions",
+    path = "/api/position",
+    request_body(content = Json<i32>, description = "Position id"),
     responses(
         (status = 200, description = "Position deleted"),
         (status = 500, description = "Can`t delete position")
@@ -150,7 +153,8 @@ pub async fn delete_position(
     )
 )]
 pub async fn get_users(State(mut state): State<AppState>) -> Result<Json<Vec<User>>, MyError> {
-    let users_redis: Vec<User> = state.redis.get("users").await.map_err(MyError::RDbError)?;
+    let users_redis_json: String = state.redis.get("users").await.unwrap_or_default();
+    let users_redis: Vec<User> = serde_json::from_str(&users_redis_json).unwrap_or_default();
 
     match users_redis.is_empty() {
         true => {
@@ -175,16 +179,17 @@ pub async fn get_users(State(mut state): State<AppState>) -> Result<Json<Vec<Use
                 })
             });
 
-            let _: () = state
-                .redis
-                .set("users", &res)
-                .await
-                .map_err(MyError::RDbError)?;
+            let _: () = state.redis.json_set("users", "$", &res).await.unwrap();
 
             Ok(Json(res))
         }
         false => Ok(Json(users_redis)),
     }
+}
+
+#[derive(Deserialize, IntoParams)]
+struct UserSearchQuery {
+    uuid: Uuid,
 }
 
 #[utoipa::path(
@@ -193,22 +198,26 @@ pub async fn get_users(State(mut state): State<AppState>) -> Result<Json<Vec<Use
     responses(
         (status = 200, description = "Ok", body = User),
         (status = 404, description = "User not found")
+    ),
+    params(
+        UserSearchQuery
     )
 )]
 pub async fn get_user_by_id(
     State(mut state): State<AppState>,
-    Query(uuid): Query<Uuid>,
+    uuid: Query<Uuid>,
 ) -> Result<Json<User>, MyError> {
-    let user_redis: User = state
+    let user_redis_json: String = state
         .redis
-        .get("user".to_owned() + &*uuid.to_string())
+        .get("user".to_owned() + &*uuid.0.to_string())
         .await
-        .map_err(MyError::RDbError)?;
+        .unwrap_or_default();
+    let user_redis: User = serde_json::from_str(&user_redis_json).unwrap_or_default();
 
     match user_redis.user_id {
         u if u == Uuid::default() => {
             let user: UserResponse = sqlx::query_as("select * from tb_user where user_id = $1")
-                .bind(&uuid)
+                .bind(&uuid.0)
                 .fetch_one(&state.postgres)
                 .await
                 .map_err(MyError::DBError)?;
@@ -226,9 +235,9 @@ pub async fn get_user_by_id(
 
             let _: () = state
                 .redis
-                .set("user".to_owned() + &*uuid.to_string(), &res)
+                .json_set("user".to_owned() + &*uuid.0.to_string(), "$", &res)
                 .await
-                .map_err(MyError::RDbError)?;
+                .unwrap();
 
             Ok(Json(res))
         }
@@ -245,11 +254,8 @@ pub async fn get_user_by_id(
     )
 )]
 pub async fn get_clients(State(mut state): State<AppState>) -> Result<Json<Vec<Client>>, MyError> {
-    let clients_redis: Vec<Client> = state
-        .redis
-        .get("clients")
-        .await
-        .map_err(MyError::RDbError)?;
+    let clients_redis_json: String = state.redis.get("clients").await.unwrap_or_default();
+    let clients_redis: Vec<Client> = serde_json::from_str(&clients_redis_json).unwrap_or_default();
 
     match clients_redis.is_empty() {
         true => Ok(Json(clients_redis)),
@@ -276,15 +282,16 @@ pub async fn get_clients(State(mut state): State<AppState>) -> Result<Json<Vec<C
                 })
             });
 
-            let _: () = state
-                .redis
-                .set("clients", &res)
-                .await
-                .map_err(MyError::RDbError)?;
+            let _: () = state.redis.json_set("clients", "$", &res).await.unwrap();
 
             Ok(Json(res))
         }
     }
+}
+
+#[derive(Deserialize, IntoParams)]
+struct ClientSearchQuery {
+    id: i32,
 }
 
 #[utoipa::path(
@@ -293,23 +300,27 @@ pub async fn get_clients(State(mut state): State<AppState>) -> Result<Json<Vec<C
     responses(
         (status = 200, description = "Ok", body = Client),
         (status = 404, description = "Client not found")
+    ),
+    params(
+        ClientSearchQuery
     )
 )]
 pub async fn get_client_by_id(
     State(mut state): State<AppState>,
-    Query(id): Query<i32>,
+    id: Query<i32>,
 ) -> Result<Json<Client>, MyError> {
-    let client_redis: Client = state
+    let client_redis_json: String = state
         .redis
-        .get("client".to_owned() + &*id.to_string())
+        .get("client".to_owned() + &*id.0.to_string())
         .await
-        .map_err(MyError::RDbError)?;
+        .unwrap_or_default();
+    let client_redis: Client = serde_json::from_str(&client_redis_json).unwrap_or_default();
 
     match client_redis.client_id {
         0 => {
             let client: ClientResponse =
                 sqlx::query_as("select * from tb_client where client_id = $1")
-                    .bind(&id)
+                    .bind(&id.0)
                     .fetch_one(&state.postgres)
                     .await
                     .map_err(MyError::DBError)?;
@@ -328,9 +339,9 @@ pub async fn get_client_by_id(
 
             let _: () = state
                 .redis
-                .set("client".to_owned() + &*id.to_string(), &res)
+                .json_set("client".to_owned() + &*id.0.to_string(), "$", &res)
                 .await
-                .map_err(MyError::RDbError)?;
+                .unwrap();
 
             Ok(Json(res))
         }
@@ -340,7 +351,8 @@ pub async fn get_client_by_id(
 
 #[utoipa::path(
     post,
-    path = "/api/clients",
+    path = "/api/client",
+    request_body(content = Json<Client>, description = "Client"),
     responses(
         (status =  201, description = "Client created"),
         (status = 500, description = "Can`t create client")
@@ -367,7 +379,8 @@ pub async fn add_client(
 
 #[utoipa::path(
     patch,
-    path = "/api/clients",
+    path = "/api/client",
+    request_body(content = Json<Client>, description = "Client"),
     responses(
         (status = 200, description = "Client updated"),
         (status = 500, description = "Can`t update client")
@@ -394,7 +407,8 @@ pub async fn update_client(
 
 #[utoipa::path(
     delete,
-    path = "/api/clients",
+    path = "/api/client",
+    request_body(content = Json<Client>, description = "Client"),
     responses(
         (status = 200, description = "Client deleted"),
         (status = 500, description = "Can`t delete client")
@@ -434,7 +448,8 @@ pub async fn delete_client(
 pub async fn get_employees(
     State(mut state): State<AppState>,
 ) -> Result<Json<Vec<Employee>>, MyError> {
-    let emps_redis: Vec<Employee> = state.redis.get("emps").await.map_err(MyError::RDbError)?;
+    let emps_redis_json: String = state.redis.get("emps").await.unwrap_or_default();
+    let emps_redis: Vec<Employee> = serde_json::from_str(&emps_redis_json).unwrap_or_default();
 
     match emps_redis.is_empty() {
         true => {
@@ -469,16 +484,17 @@ pub async fn get_employees(
                 })
             });
 
-            let _: () = state
-                .redis
-                .set("emps", &res)
-                .await
-                .map_err(MyError::RDbError)?;
+            let _: () = state.redis.json_set("emps", "$", &res).await.unwrap();
 
             Ok(Json(res))
         }
         false => Ok(Json(emps_redis)),
     }
+}
+
+#[derive(Deserialize, IntoParams)]
+struct EmpSearchQuery {
+    uuid: Uuid,
 }
 
 #[utoipa::path(
@@ -487,23 +503,27 @@ pub async fn get_employees(
     responses(
         (status = 200, description = "Ok", body = Employee),
         (status = 404, description = "Employee not found")
+    ),
+    params(
+        EmpSearchQuery
     )
 )]
 pub async fn get_employee_by_id(
     State(mut state): State<AppState>,
-    Query(uuid): Query<Uuid>,
+    uuid: Query<Uuid>,
 ) -> Result<Json<Employee>, MyError> {
-    let emp_redis: Employee = state
+    let emp_redis_json: String = state
         .redis
-        .get("emp".to_owned() + &*uuid.to_string())
+        .get("emp".to_owned() + &*uuid.0.to_string())
         .await
-        .map_err(MyError::RDbError)?;
+        .unwrap_or_default();
+    let emp_redis: Employee = serde_json::from_str(&emp_redis_json).unwrap_or_default();
 
     match emp_redis.employee_id {
         u if u == Uuid::default() => {
             let emp: EmployeeResponse =
                 sqlx::query_as("select * from tb_employee where employee_id = $1")
-                    .bind(&uuid)
+                    .bind(&uuid.0)
                     .fetch_one(&state.postgres)
                     .await
                     .map_err(MyError::DBError)?;
@@ -530,9 +550,9 @@ pub async fn get_employee_by_id(
 
             let _: () = state
                 .redis
-                .set("emp".to_owned() + &*uuid.to_string(), &res)
+                .json_set("emp".to_owned() + &*uuid.0.to_string(), "$", &res)
                 .await
-                .map_err(MyError::RDbError)?;
+                .unwrap();
 
             Ok(Json(res))
         }
@@ -542,7 +562,8 @@ pub async fn get_employee_by_id(
 
 #[utoipa::path(
     post,
-    path = "/api/employees",
+    path = "/api/employee",
+    request_body(content = Json<Employee>, description = "Employee"),
     responses(
         (status = 201, description = "Employee created"),
         (status = 500, description = "Can`t create employee")
@@ -569,7 +590,8 @@ pub async fn add_employee(
 
 #[utoipa::path(
     patch,
-    path = "/api/employees",
+    path = "/api/employee",
+    request_body(content = Json<Employee>, description = "Employee"),
     responses(
         (status = 200, description = "Employee updated"),
         (status = 500, description = "Can`t update employee")
@@ -596,7 +618,8 @@ pub async fn update_employee(
 
 #[utoipa::path(
     delete,
-    path = "/api/employees",
+    path = "/api/employee",
+    request_body(content = Json<Employee>, description = "Employee"),
     responses(
         (status = 200, description = "Employee deleted"),
         (status = 500, description = "Can`t delete employee")

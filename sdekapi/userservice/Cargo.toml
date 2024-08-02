@@ -10,7 +10,7 @@ derive_more = "0.99.18"
 dotenvy = "0.15.7"
 native-tls = "0.2.12"
 postgres-native-tls = "0.5.0"
-redis = { version = "0.25.2", features = ["uuid", "aio", "ahash", "tokio-comp", "connection-manager"] }
+redis = { version = "0.26.0", features = ["uuid", "aio", "ahash", "tokio-comp", "connection-manager", "json"] }
 redis-macros = "0.3.0"
 serde = { version = "1.0.204", features = ["derive"] }
 serde_json = "1.0.121"
@@ -19,7 +19,7 @@ tokio = { version = "1.39.2", features = ["full"] }
 tower-http = { version = "0.5.2", features = ["trace", "cors"] }
 tracing = "0.1.40"
 tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
-utoipa = { version = "4.2.3", features = ["axum_extras"] }
+utoipa = { version = "4.2.3", features = ["axum_extras", "uuid"] }
 utoipa-swagger-ui = { version = "7.1.0", features = ["axum"] }
 
 [dependencies.uuid]

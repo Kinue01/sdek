@@ -85,7 +85,7 @@ async fn main() {
         .await
         .unwrap();
 
-    let redis = redis::Client::open("redis://127.0.0.1/")
+    let redis = redis::Client::open("redis://127.0.0.1/?protocol=resp3")
         .unwrap()
         .get_multiplexed_async_connection()
         .await
