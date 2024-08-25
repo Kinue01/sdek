@@ -6,10 +6,26 @@
       <sourceFolder url="file://$MODULE_DIR$/packageservice/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/transportservice/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/userservice/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/navigationservice/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/consumerreadservice/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/consumerservice/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/employeeservice/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/employereadeservice/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/packagereadservice/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/transportreadservice/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/userreadservice/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/messenderservice/target" />
       <excludeFolder url="file://$MODULE_DIR$/packageservice/target" />
       <excludeFolder url="file://$MODULE_DIR$/transportservice/target" />
       <excludeFolder url="file://$MODULE_DIR$/userservice/target" />
+      <excludeFolder url="file://$MODULE_DIR$/navigationservice/target" />
+      <excludeFolder url="file://$MODULE_DIR$/consumerreadservice/target" />
+      <excludeFolder url="file://$MODULE_DIR$/consumerservice/target" />
+      <excludeFolder url="file://$MODULE_DIR$/employeeservice/target" />
+      <excludeFolder url="file://$MODULE_DIR$/employereadeservice/target" />
+      <excludeFolder url="file://$MODULE_DIR$/packagereadservice/target" />
+      <excludeFolder url="file://$MODULE_DIR$/transportreadservice/target" />
+      <excludeFolder url="file://$MODULE_DIR$/userreadservice/target" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

@@ -1,10 +1,13 @@
-use std::time::Duration;
-
 use axum::{http::Method, Router, routing::get};
+use axum::routing::post;
+use axum_session::{SessionConfig, SessionLayer, SessionNullPool, SessionStore};
 use dotenvy::dotenv;
-use redis::aio::MultiplexedConnection;
-use sqlx::PgPool;
-use sqlx::postgres::PgPoolOptions;
+use oauth2::{AuthUrl, ClientId, ClientSecret, RedirectUrl, StandardRevocableToken, TokenUrl};
+use oauth2::basic::{
+    BasicClient, BasicErrorResponse, BasicRevocationErrorResponse, BasicTokenIntrospectionResponse,
+    BasicTokenResponse, BasicTokenType,
+};
+use tower::ServiceBuilder;
 use tower_http::{
     cors::{Any, CorsLayer},
     trace::{self, TraceLayer},
@@ -20,42 +23,22 @@ mod model;
 
 #[derive(OpenApi)]
 #[openapi(
-    paths(
-        handlers::get_users,
-        handlers::get_roles,
-        handlers::get_user_by_id,
-        handlers::get_clients,
-        handlers::get_client_by_id,
-        handlers::add_client,
-        handlers::update_client,
-        handlers::delete_client,
-        handlers::get_positions,
-        handlers::add_position,
-        handlers::update_position,
-        handlers::delete_position,
-        handlers::get_employees,
-        handlers::get_employee_by_id,
-        handlers::add_employee,
-        handlers::update_employee,
-        handlers::delete_employee
-    ),
-    components(schemas(
-        User,
-        RoleResponse,
-        Client,
-        Employee,
-        PositionResponse,
-        UserResponse,
-        ClientResponse,
-        EmployeeResponse
-    ))
+    paths(handlers::send_msg_kafka),
+    components(schemas(User, RoleResponse, Message, CodeResponse))
 )]
 struct ApiDoc;
 
 #[derive(Clone)]
 struct AppState {
-    postgres: PgPool,
-    redis: MultiplexedConnection,
+    oauth_client: oauth2::Client<
+        BasicErrorResponse,
+        BasicTokenResponse,
+        BasicTokenType,
+        BasicTokenIntrospectionResponse,
+        StandardRevocableToken,
+        BasicRevocationErrorResponse,
+    >,
+    event_client: eventstore::Client,
 }
 
 #[tokio::main]
@@ -71,62 +54,65 @@ async fn main() {
         .allow_headers(Any);
 
     let tracing = TraceLayer::new_for_http()
-        .make_span_with(trace::DefaultMakeSpan::new().level(tracing::Level::DEBUG))
-        .on_response(trace::DefaultOnResponse::new().level(tracing::Level::DEBUG));
+        .make_span_with(trace::DefaultMakeSpan::new().level(tracing::Level::INFO))
+        .on_response(trace::DefaultOnResponse::new().level(tracing::Level::INFO));
 
     dotenv().ok();
 
-    let db_url = std::env::var("DATABASE_URL").unwrap();
+    let es_url = std::env::var("EVENTSTORE_URL").unwrap();
 
-    let pool = PgPoolOptions::new()
-        .max_connections(1000000)
-        .acquire_timeout(Duration::from_secs(10))
-        .connect(&db_url)
-        .await
-        .unwrap();
+    let google_client_id = ClientId::new(
+        std::env::var("GOOGLE_CLIENT_ID")
+            .expect("Missing the GOOGLE_CLIENT_ID environment variable."),
+    );
+    let google_client_secret = ClientSecret::new(
+        std::env::var("GOOGLE_CLIENT_SECRET")
+            .expect("Missing the GOOGLE_CLIENT_SECRET environment variable."),
+    );
+    let auth_url = AuthUrl::new(std::env::var("GOOGLE_AUTH_URI").unwrap())
+        .expect("Invalid authorization endpoint URL");
+    let token_url = TokenUrl::new(std::env::var("GOOGLE_TOKEN_URI").unwrap())
+        .expect("Invalid token endpoint URL");
 
-    let redis = redis::Client::open("redis://127.0.0.1/?protocol=resp3")
-        .unwrap()
-        .get_multiplexed_async_connection()
-        .await
-        .unwrap();
+    let oauth_client = BasicClient::new(
+        google_client_id,
+        Some(google_client_secret),
+        auth_url,
+        Some(token_url),
+    )
+    .set_redirect_uri(
+        RedirectUrl::new("http://localhost:8080".to_string()).expect("Invalid redirect URL"),
+    );
+
+    let event_client = eventstore::Client::new(es_url.parse().unwrap()).unwrap();
 
     let state = AppState {
-        postgres: pool,
-        redis,
+        oauth_client,
+        event_client,
     };
 
+    let conf = SessionConfig::default().with_table_name("auth_table");
+    let store = SessionStore::<SessionNullPool>::new(None, conf)
+        .await
+        .unwrap();
+
     let app = Router::new()
-        .route("/api/roles", get(get_roles))
-        .route("/api/users", get(get_users))
-        .route("/api/user", get(get_user_by_id))
-        .route("/api/clients", get(get_clients))
         .route(
-            "/api/client",
-            get(get_client_by_id)
-                .post(add_client)
-                .patch(update_client)
-                .delete(delete_client),
+            "/api/user",
+            post(add_user).patch(update_user).delete(delete_user),
         )
-        .route(
-            "/api/positions",
-            get(get_positions)
-                .post(add_position)
-                .patch(update_position)
-                .delete(delete_position),
-        )
-        .route("/api/employees", get(get_employees))
-        .route(
-            "/api/employee",
-            get(get_employee_by_id)
-                .post(add_employee)
-                .patch(update_employee)
-                .delete(delete_employee),
-        )
+        .route("/api/msg", post(send_msg_kafka))
+        .route("/api/google_get_url", get(google_oauth2_req))
+        .route("/api/google_get_token", post(google_oauth2_token))
+        .route("/api/google_revoke_token", post(revoke_google_token))
         .merge(SwaggerUi::new("/swagger").url("/api-doc/openapi.json", ApiDoc::openapi()))
         .with_state(state)
-        .layer(tracing)
-        .layer(cors);
+        .layer(
+            ServiceBuilder::new()
+                .layer(tracing)
+                .layer(cors)
+                .layer(SessionLayer::new(store)),
+        );
 
     let listener = tokio::net::TcpListener::bind("localhost:8000")
         .await
