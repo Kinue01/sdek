@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:equatable/equatable.dart';
 
 class TransportType with EquatableMixin {
@@ -17,4 +19,21 @@ class TransportType with EquatableMixin {
     type_name,
   ];
 
+  factory TransportType.fromRawJson(String str) =>
+      TransportType.fromMap(json.decode(str));
+
+  String toRawJson() => json.encode(toMap());
+
+  // ---------------------------------------------------------------------------
+  // Maps
+  // ---------------------------------------------------------------------------
+  factory TransportType.fromMap(Map<String, dynamic> json) => TransportType(
+    type_id: json['type_id'],
+    type_name: json['type_name'],
+  );
+
+  Map<String, dynamic> toMap() => {
+    'type_id': type_id,
+    'type_name': type_name,
+  };
 }

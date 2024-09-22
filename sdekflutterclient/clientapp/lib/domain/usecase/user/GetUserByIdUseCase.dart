@@ -1,5 +1,6 @@
 import 'package:clientapp/domain/model/User.dart';
 import 'package:clientapp/domain/repository/user_repository.dart';
+import 'package:uuid/uuid.dart';
 
 class GetUserByIdUseCase {
   UserRepository repository;
@@ -8,7 +9,7 @@ class GetUserByIdUseCase {
     required this.repository
   });
 
-  Future<User> exec(String uuid) async {
+  Future<User> exec(Uuid uuid) async {
     return await repository.getUserById(uuid);
   }
 }

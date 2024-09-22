@@ -1,3 +1,4 @@
+import 'package:clientapp/view/navigation_service/route_handlers.dart';
 import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
 
@@ -7,7 +8,7 @@ class Routes {
       return;
     });
 
-    router.define("/", handler: );
+    router.define("/", handler: rootHandler);
 
 
   }

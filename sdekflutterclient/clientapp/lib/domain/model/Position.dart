@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:equatable/equatable.dart';
 
 class Position with EquatableMixin {
@@ -19,4 +21,24 @@ class Position with EquatableMixin {
     position_name,
     position_base_pay
   ];
+
+  factory Position.fromRawJson(String str) =>
+      Position.fromMap(json.decode(str));
+
+  String toRawJson() => json.encode(toMap());
+
+  // ---------------------------------------------------------------------------
+  // Maps
+  // ---------------------------------------------------------------------------
+  factory Position.fromMap(Map<String, dynamic> json) => Position(
+    position_id: json['position_id'],
+    position_name: json['position_name'],
+    position_base_pay: json['position_base_pay'],
+  );
+
+  Map<String, dynamic> toMap() => {
+    'position_id': position_id,
+    'position_name': position_name,
+    'position_base_pay': position_base_pay,
+  };
 }
