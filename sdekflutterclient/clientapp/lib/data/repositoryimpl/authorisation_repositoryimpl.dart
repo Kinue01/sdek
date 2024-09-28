@@ -10,17 +10,17 @@ class AuthorisationOauthRepositoryImpl implements AuthorisationOauthRepository {
   });
 
   @override
-  Future<String> getTokenByUserId(String uuid) async {
-    return await repository.getTokenByUserId(uuid);
-  }
-
-  @override
   Future<String> googleGetUrl() async {
     return await repository.googleGetUrl();
   }
 
   @override
-  Future<bool> sendAuthCode(OAuth2GoogleCodeResponse response) async {
+  Future<String> sendAuthCode(OAuth2GoogleCodeResponse response) async {
     return await repository.sendAuthCode(response);
+  }
+
+  @override
+  Future<bool> revokeTokenBySecret(String secret) async {
+    return await repository.revokeTokenBySecret(secret);
   }
 }

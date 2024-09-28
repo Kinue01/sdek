@@ -1,10 +1,9 @@
 import 'package:clientapp/domain/model/Transport.dart';
-import 'package:uuid/uuid.dart';
 
 abstract class TransportDataRepository {
   Future<List<Transport>> getTransport();
   Future<Transport> getTransportById(int id);
-  Future<Transport> getTransportByDriverId(Uuid uuid);
+  Future<Transport> getTransportByDriverId(String uuid);
   Future<bool> addTransport(Transport transport);
   Future<bool> updateTransport(Transport transport);
   Future<bool> deleteTransport(Transport transport);

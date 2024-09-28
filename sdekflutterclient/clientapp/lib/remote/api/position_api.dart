@@ -47,7 +47,7 @@ class PositionApiImpl implements PositionApi {
     Response<Map<String, dynamic>> response = await client.get("$readUrl/api/position", options: Options(extra: {'id': id}));
     switch (response.statusCode) {
       case 200:
-        return Position.fromRawJson(response.data!.toString());
+        return Position.fromMap(response.data!);
       default:
         return Position();
     }
@@ -58,7 +58,7 @@ class PositionApiImpl implements PositionApi {
     Response<List<Map<String, dynamic>>> response = await client.get("$readUrl/api/positions");
     switch (response.statusCode) {
       case 200:
-        return response.data!.map((e) => Position.fromRawJson(e.toString())).toList();
+        return response.data!.map((e) => Position.fromMap(e)).toList();
       default:
         return List.empty();
     }

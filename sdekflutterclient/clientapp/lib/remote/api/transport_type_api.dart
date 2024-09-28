@@ -46,7 +46,7 @@ class TransportTypeApiImpl implements TransportTypeApi {
     Response<Map<String, dynamic>> resp = await client.get("$readUrl/api/type", options: Options(extra: {'id': id}));
     switch (resp.statusCode) {
       case 200:
-        return TransportType.fromRawJson(resp.data!.toString());
+        return TransportType.fromMap(resp.data!);
       default:
         return TransportType();
     }
@@ -57,7 +57,7 @@ class TransportTypeApiImpl implements TransportTypeApi {
     Response<List<Map<String, dynamic>>> resp = await client.get("$readUrl/api/types");
     switch (resp.statusCode) {
       case 200:
-        return resp.data!.map((e) => TransportType.fromRawJson(e.toString())).toList();
+        return resp.data!.map((e) => TransportType.fromMap(e)).toList();
       default:
         return List.empty();
     }

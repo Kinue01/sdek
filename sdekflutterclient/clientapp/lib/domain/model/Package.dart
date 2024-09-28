@@ -1,15 +1,13 @@
 import 'dart:convert';
-
 import 'package:clientapp/domain/model/Client.dart';
 import 'package:clientapp/domain/model/PackageItem.dart';
 import 'package:clientapp/domain/model/PackageStatus.dart';
 import 'package:clientapp/domain/model/PackageType.dart';
 import 'package:clientapp/domain/model/Transport.dart';
 import 'package:equatable/equatable.dart';
-import 'package:uuid/uuid.dart';
 
 class Package with EquatableMixin {
-  final Uuid? package_uuid;
+  final String? package_uuid;
   final Transport? package_transport;
   final PackageType? package_type;
   final Client? package_sender;

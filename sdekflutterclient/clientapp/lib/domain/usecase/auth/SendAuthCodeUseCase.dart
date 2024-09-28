@@ -8,7 +8,7 @@ class SendAuthCodeUseCase {
     required this.repository
   });
 
-  Future<bool> exec(OAuth2GoogleCodeResponse resp) async {
+  Future<String> exec(OAuth2GoogleCodeResponse resp) async {
     return await repository.sendAuthCode(resp);
   }
 }

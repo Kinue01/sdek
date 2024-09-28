@@ -1,10 +1,8 @@
 import 'dart:convert';
-
 import 'package:equatable/equatable.dart';
-import 'package:uuid/uuid.dart';
 
 class PackageItem with EquatableMixin {
-  final Uuid? package_id;
+  final String? package_id;
   final String? item_name;
   final int? item_length;
   final int? item_width;

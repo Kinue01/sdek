@@ -1,41 +1,41 @@
 import 'package:clientapp/data/repository/employee_data_repository.dart';
 import 'package:clientapp/domain/model/Employee.dart';
-import 'package:clientapp/domain/repository/employee_repository.dart';
+import 'package:clientapp/remote/api/employee_api.dart';
 
-class EmployeeRepositoryImpl implements EmployeeRepository {
-  EmployeeDataRepository repository;
+class EmployeeDataRepositoryImpl implements EmployeeDataRepository {
+  EmployeeApi employeeApi;
 
-  EmployeeRepositoryImpl({
-    required this.repository
+  EmployeeDataRepositoryImpl({
+    required this.employeeApi
   });
 
   @override
   Future<bool> addEmployee(Employee emp) async {
-    return await repository.addEmployee(emp);
+    return await employeeApi.addEmployee(emp);
   }
 
   @override
   Future<bool> deleteEmployee(Employee emp) async {
-    return await repository.deleteEmployee(emp);
+    return await employeeApi.deleteEmployee(emp);
   }
 
   @override
   Future<Employee> getEmployeeById(String uuid) async {
-    return await repository.getEmployeeById(uuid);
+    return await employeeApi.getEmployeeById(uuid);
   }
 
   @override
   Future<Employee> getEmployeeByUserId(String uuid) async {
-    return await repository.getEmployeeByUserId(uuid);
+    return await employeeApi.getEmployeeByUserId(uuid);
   }
 
   @override
   Future<List<Employee>> getEmployees() async {
-    return await repository.getEmployees();
+    return await employeeApi.getEmployees();
   }
 
   @override
   Future<bool> updateEmplpoyee(Employee emp) async {
-    return await repository.updateEmplpoyee(emp);
+    return await employeeApi.updateEmplpoyee(emp);
   }
 }

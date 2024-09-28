@@ -1,10 +1,10 @@
 import 'package:clientapp/domain/model/Position.dart';
 import 'package:clientapp/domain/repository/position_repository.dart';
 
-class AddUserUseCase {
+class AddPositionUseCase {
   PositionRepository repository;
 
-  AddUserUseCase({
+  AddPositionUseCase({
     required this.repository
   });
 

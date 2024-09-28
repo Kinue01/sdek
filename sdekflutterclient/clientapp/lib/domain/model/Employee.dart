@@ -1,13 +1,10 @@
 import 'dart:convert';
-
 import 'package:clientapp/domain/model/Position.dart';
 import 'package:equatable/equatable.dart';
-import 'package:uuid/uuid.dart';
-
 import 'User.dart';
 
 class Employee with EquatableMixin {
-  final Uuid? employee_id;
+  final String? employee_id;
   final String? employee_lastname;
   final String? employee_firstname;
   final String? employee_middlename;

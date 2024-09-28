@@ -87,6 +87,7 @@ async fn main() {
         .route("/api/employee", get(get_employee_by_id))
         .route("/api/employees", get(get_employees))
         .route("/api/positions", get(get_positions))
+        .route("/api/employee_user", get(get_employee_by_user_id))
         .merge(SwaggerUi::new("/swagger").url("/api-doc/openapi.json", ApiDoc::openapi()))
         .with_state(state.clone())
         .layer(ServiceBuilder::new().layer(tracing).layer(cors));

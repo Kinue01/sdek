@@ -1,10 +1,10 @@
 import 'package:clientapp/domain/model/Position.dart';
 import 'package:clientapp/domain/repository/position_repository.dart';
 
-class DeleteUserUseCase {
+class DeletePositionUseCase {
   PositionRepository repository;
 
-  DeleteUserUseCase({
+  DeletePositionUseCase({
     required this.repository
   });
 

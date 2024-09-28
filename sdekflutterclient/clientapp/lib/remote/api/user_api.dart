@@ -47,7 +47,7 @@ class UserApiImpl implements UserApi {
   Future<User> getUserById(String uuid) async {
     Response<Map<String, dynamic>> resp = await client.get("$readUrl/api/user", options: Options(extra: {'uuid': uuid}));
     if (resp.statusCode == 200) {
-      return User.fromRawJson(resp.data!.toString());
+      return User.fromMap(resp.data!);
     }
     else {
       return User(user_role: Role());
@@ -58,7 +58,7 @@ class UserApiImpl implements UserApi {
   Future<List<User>> getUsers() async {
     Response<List<Map<String, dynamic>>> resp = await client.get("$readUrl/api/user");
     if (resp.statusCode == 200) {
-      return resp.data!.map((e) => User.fromRawJson(e.toString())).toList();
+      return resp.data!.map((e) => User.fromMap(e)).toList();
     }
     else {
       return List.empty();

@@ -1,10 +1,10 @@
 import 'package:clientapp/domain/model/Position.dart';
 import 'package:clientapp/domain/repository/position_repository.dart';
 
-class GetUserByIdUseCase {
+class GetPositionByIdUseCase {
   PositionRepository repository;
 
-  GetUserByIdUseCase({
+  GetPositionByIdUseCase({
     required this.repository
   });
 

@@ -1,36 +1,36 @@
 import 'package:clientapp/data/repository/user_data_repository.dart';
 import 'package:clientapp/domain/model/User.dart';
-import 'package:clientapp/domain/repository/user_repository.dart';
+import 'package:clientapp/remote/api/user_api.dart';
 
-class UserRepositoryImpl implements UserRepository {
-  UserDataRepository repository;
+class UserDataRepositoryImpl implements UserDataRepository {
+  UserApi userApi;
 
-  UserRepositoryImpl({
-    required this.repository
+  UserDataRepositoryImpl({
+    required this.userApi
   });
 
   @override
   Future<bool> addUser(User user) async {
-    return await repository.addUser(user);
+    return await userApi.addUser(user);
   }
 
   @override
   Future<bool> deleteUser(User user) async {
-    return await repository.deleteUser(user);
+    return await userApi.deleteUser(user);
   }
 
   @override
   Future<User> getUserById(String uuid) async {
-    return await repository.getUserById(uuid);
+    return await userApi.getUserById(uuid);
   }
 
   @override
   Future<List<User>> getUsers() async {
-    return await repository.getUsers();
+    return await userApi.getUsers();
   }
 
   @override
   Future<bool> updateUser(User user) async {
-    return await repository.updateUser(user);
+    return await userApi.updateUser(user);
   }
 }

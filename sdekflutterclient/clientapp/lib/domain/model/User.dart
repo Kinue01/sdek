@@ -1,11 +1,9 @@
 import 'dart:convert';
-
 import 'package:equatable/equatable.dart';
-import 'package:uuid/uuid.dart';
 import 'Role.dart';
 
 class User with EquatableMixin {
-  final Uuid? user_id;
+  final String? user_id;
   final String? user_login;
   final String? user_password;
   final String? user_email;

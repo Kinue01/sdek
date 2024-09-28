@@ -19,7 +19,7 @@ class RoleApiImpl implements RoleApi {
   Future<Role> getRoleById(int id) async {
     Response<Map<String, dynamic>> resp = await client.get("$readUrl/api/role", options: Options(extra: {'id': id}));
     if (resp.statusCode == 200) {
-      return Role.fromRawJson(resp.data!.toString());
+      return Role.fromMap(resp.data!);
     }
     else {
       return Role();
@@ -30,7 +30,7 @@ class RoleApiImpl implements RoleApi {
   Future<List<Role>> getRoles() async {
     Response<List<Map<String, dynamic>>> resp = await client.get("$readUrl/api/roles");
     if (resp.statusCode == 200) {
-      return resp.data!.map((e) => Role.fromRawJson(e.toString())).toList();
+      return resp.data!.map((e) => Role.fromMap(e)).toList();
     }
     else {
       return List.empty();
