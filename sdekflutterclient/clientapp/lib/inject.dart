@@ -88,6 +88,16 @@ import 'package:clientapp/domain/usecase/user/DeleteUserUseCase.dart';
 import 'package:clientapp/domain/usecase/user/GetUserByIdUseCase.dart';
 import 'package:clientapp/domain/usecase/user/GetUsersUseCase.dart';
 import 'package:clientapp/domain/usecase/user/UpdateUserUseCase.dart';
+import 'package:clientapp/local/local_storage/client_local_storage.dart';
+import 'package:clientapp/local/local_storage/employee_local_storage.dart';
+import 'package:clientapp/local/local_storage/package_local_storage.dart';
+import 'package:clientapp/local/local_storage/package_status_local_storage.dart';
+import 'package:clientapp/local/local_storage/package_type_local_storage.dart';
+import 'package:clientapp/local/local_storage/position_local_storage.dart';
+import 'package:clientapp/local/local_storage/role_local_storage.dart';
+import 'package:clientapp/local/local_storage/transport_local_storage.dart';
+import 'package:clientapp/local/local_storage/transport_type_local_storage.dart';
+import 'package:clientapp/local/local_storage/user_local_storage.dart';
 import 'package:clientapp/remote/api/MessageApi.dart';
 import 'package:clientapp/remote/api/authorisation_api.dart';
 import 'package:clientapp/remote/api/client_api.dart';
@@ -115,7 +125,7 @@ import 'package:clientapp/remote/repositoryimpl/user_data_repository_impl.dart';
 import 'package:clientapp/view/home_page/controller/home_controller.dart';
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 import 'data/repository/role_data_repository.dart';
 import 'domain/usecase/message/ReceiveMessageUseCase.dart';
 import 'view/send_package_page/controller/send_package_controller.dart';
@@ -142,7 +152,24 @@ Future<void> initGetIt() async {
   getIt.registerLazySingletonAsync<ClientApi>(() async => ClientApiImpl(dio_client: getIt()));
   getIt.registerLazySingletonAsync<AuthorisationApi>(() async => AuthorisationApiImpl(client: getIt()));
   getIt.registerLazySingletonAsync<MessageApi>(() async => MessageApiImpl());
+  
+  
+  // ---------------------------------------------
+  // LOCAL
+  // ---------------------------------------------
+  getIt.registerLazySingletonAsync(() async => SharedPreferencesAsync());
 
+  getIt.registerFactoryAsync<RoleLocalStorage>(() async => RoleLocalStorageImpl(sharedPreferencesAsync: getIt()));
+  getIt.registerFactoryAsync<PositionLocalStorage>(() async => PositionLocalStorageImpl(sharedPreferencesAsync: getIt()));
+  getIt.registerFactoryAsync<UserLocalStorage>(() async => UserLocalStorageImpl(sharedPreferencesAsync: getIt()));
+  getIt.registerFactoryAsync<TransportTypeLocalStorage>(() async => TransportTypeLocalStorageImpl(sharedPreferencesAsync: getIt()));
+  getIt.registerFactoryAsync<TransportLocalStorage>(() async => TransportLocalStorageImpl(sharedPreferencesAsync: getIt()));
+  getIt.registerFactoryAsync<PackageTypeLocalStorage>(() async => PackageTypeLocalStorageImpl(sharedPreferencesAsync: getIt()));
+  getIt.registerFactoryAsync<PackageStatusLocalStorage>(() async => PackageStatusLocalStorageImpl(sharedPreferencesAsync: getIt()));
+  getIt.registerFactoryAsync<PackageLocalStorage>(() async => PackageLocalStorageImpl(sharedPreferencesAsync: getIt()));
+  getIt.registerFactoryAsync<ClientLocalStorage>(() async => ClientLocalStorageImpl(sharedPreferencesAsync: getIt()));
+  getIt.registerFactoryAsync<EmployeeLocalStorage>(() async => EmployeeLocalStorageImpl(sharedPreferencesAsync: getIt()));
+  
 
   // ------------------------------------------
   // DATA
