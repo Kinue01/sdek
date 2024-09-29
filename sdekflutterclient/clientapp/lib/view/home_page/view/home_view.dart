@@ -1,7 +1,20 @@
+import 'package:clientapp/view/navigation_service/FluroApp.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it_mixin/get_it_mixin.dart';
 
-class HomeComponent extends StatefulWidget {
-  const HomeComponent({super.key});
+import '../../application.dart';
+
+class HomePage extends StatelessWidget {
+  const HomePage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return HomeComponent();
+  }
+}
+
+class HomeComponent extends StatefulWidget with GetItStatefulWidgetMixin {
+  HomeComponent({super.key});
 
   @override
   State<StatefulWidget> createState() {
@@ -9,7 +22,7 @@ class HomeComponent extends StatefulWidget {
   }
 }
 
-class HomeViewState extends State<HomeComponent> {
+class HomeViewState extends State<HomeComponent> with GetItStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,10 +42,7 @@ class HomeViewState extends State<HomeComponent> {
             ElevatedButton(
               onPressed: () {
                 // Navigate to Send Package Page
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const SendPackagePage()),
-                );
+                FluroApp.router.navigateTo(context, "/send_package");
               },
               child: const Text('Send a Package'),
             ),
@@ -40,10 +50,7 @@ class HomeViewState extends State<HomeComponent> {
             ElevatedButton(
               onPressed: () {
                 // Navigate to Track Package Page
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const TrackPackagePage()),
-                );
+                FluroApp.router.navigateTo(context, "/track_package");
               },
               child: const Text('Track a Package'),
             ),
@@ -85,30 +92,6 @@ class RecentPackagesList extends StatelessWidget {
           ),
         );
       },
-    );
-  }
-}
-
-class SendPackagePage extends StatelessWidget {
-  const SendPackagePage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Send Package')),
-      body: const Center(child: Text('Send Package Form Here')),
-    );
-  }
-}
-
-class TrackPackagePage extends StatelessWidget {
-  const TrackPackagePage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Track Package')),
-      body: const Center(child: Text('Track Package Form Here')),
     );
   }
 }

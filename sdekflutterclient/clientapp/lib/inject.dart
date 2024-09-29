@@ -118,6 +118,8 @@ import 'package:get_it/get_it.dart';
 
 import 'data/repository/role_data_repository.dart';
 import 'domain/usecase/message/ReceiveMessageUseCase.dart';
+import 'view/send_package_page/controller/send_package_controller.dart';
+import 'view/track_package_page/controller/track_package_controller.dart';
 
 GetIt getIt = GetIt.instance;
 
@@ -249,4 +251,6 @@ Future<void> initGetIt() async {
   // VIEW
   // ----------------------------------------
   getIt.registerLazySingletonAsync(() async => HomeController());
+  getIt.registerLazySingletonAsync(() async => SendPackageController());
+  getIt.registerLazySingletonAsync(() async => TrackPackageController());
 }
