@@ -8,6 +8,8 @@ abstract class ClientLocalStorage {
   Future<bool> saveClients(List<Client> clients);
   Future<List<Client>> getClients();
   Future<Client> getClient(int id);
+  Future<bool> saveClientByUser(Client client);
+  Future<Client> getClientByUser(String uuid);
 }
 
 class ClientLocalStorageImpl implements ClientLocalStorage {
@@ -40,6 +42,20 @@ class ClientLocalStorageImpl implements ClientLocalStorage {
   @override
   Future<bool> saveClients(List<Client> clients) async {
     await sharedPreferencesAsync.setStringList("CLIENTS", clients.map((e) => e.toRawJson()).toList());
+    return true;
+  }
+
+  @override
+  Future<Client> getClientByUser(String uuid) async {
+    final client = await sharedPreferencesAsync.getString("CLIENT_USER_$uuid");
+    return client != null ? Client.fromRawJson(client) : Client(client_user: User(user_role: Role()));
+  }
+
+  @override
+  Future<bool> saveClientByUser(Client client) async {
+    final key = client.client_user.user_id;
+    final json = client.toRawJson();
+    await sharedPreferencesAsync.setString("CLIENT_USER_$key", json);
     return true;
   }
 }

@@ -11,6 +11,8 @@ abstract class EmployeeLocalStorage {
   Future<bool> saveEmployees(List<Employee> emps);
   Future<List<Employee>> getEmployees();
   Future<Employee> getEmployee(String uuid);
+  Future<bool> saveEmployeeByUser(Employee emp);
+  Future<Employee> getEmployeeByUser(String uuid);
 }
 
 class EmployeeLocalStorageImpl implements EmployeeLocalStorage {
@@ -43,6 +45,20 @@ class EmployeeLocalStorageImpl implements EmployeeLocalStorage {
   @override
   Future<bool> saveEmployees(List<Employee> emps) async {
     await sharedPreferencesAsync.setStringList("EMPS", emps.map((e) => e.toRawJson()).toList());
+    return true;
+  }
+
+  @override
+  Future<Employee> getEmployeeByUser(String uuid) async {
+    final emp = await sharedPreferencesAsync.getString("EMP_USER_$uuid");
+    return emp != null ? Employee.fromRawJson(emp) : Employee(employee_position: Position(), employee_user: User(user_role: Role()));
+  }
+
+  @override
+  Future<bool> saveEmployeeByUser(Employee emp) async {
+    final key = emp.employee_user.user_id;
+    final json = emp.toRawJson();
+    await sharedPreferencesAsync.setString("EMP_USER_$key", json);
     return true;
   }
 }

@@ -1,36 +1,77 @@
 import 'package:clientapp/data/repository/package_status_data_repository.dart';
 import 'package:clientapp/domain/model/PackageStatus.dart';
 import 'package:clientapp/domain/repository/package_status_repository.dart';
+import 'package:clientapp/local/local_storage/package_status_local_storage.dart';
 
 class PackageStatusRepositoryImpl implements PackageStatusRepository {
   PackageStatusDataRepository repository;
+  PackageStatusLocalStorage packageStatusLocalStorage;
 
   PackageStatusRepositoryImpl({
-    required this.repository
+    required this.repository,
+    required this.packageStatusLocalStorage
   });
 
   @override
   Future<bool> addStatus(PackageStatus status) async {
-    return await repository.addStatus(status);
+    if (await repository.addStatus(status)) {
+      await packageStatusLocalStorage.savePackageStatus(status);
+      return true;
+    }
+    else {
+      return false;
+    }
   }
 
   @override
   Future<bool> deleteStatus(PackageStatus status) async {
-    return await repository.deleteStatus(status);
+    if (await repository.deleteStatus(status)) {
+      await packageStatusLocalStorage.savePackageStatus(PackageStatus());
+      return true;
+    }
+    else {
+      return false;
+    }
   }
 
   @override
   Future<PackageStatus> getPackageStatusById(int id) async {
-    return await repository.getPackageStatusById(id);
+    final status = await packageStatusLocalStorage.getPackageStatus(id);
+    if (status.status_id != 0) {
+      return status;
+    }
+    else {
+      final res = await repository.getPackageStatusById(id);
+      if (res.status_id != 0) {
+        await packageStatusLocalStorage.savePackageStatus(res);
+      }
+      return res;
+    }
   }
 
   @override
   Future<List<PackageStatus>> getStatuses() async {
-    return await repository.getStatuses();
+    final statuses = await packageStatusLocalStorage.getPackageStatuses();
+    if (statuses != []) {
+      return statuses;
+    }
+    else {
+      final res = await repository.getStatuses();
+      if (res != List.empty()) {
+        await packageStatusLocalStorage.savePackageStatuses(res);
+      }
+      return res;
+    }
   }
 
   @override
   Future<bool> updateStatus(PackageStatus status) async {
-    return await repository.updateStatus(status);
+    if (await repository.updateStatus(status)) {
+      await packageStatusLocalStorage.savePackageStatus(status);
+      return true;
+    }
+    else {
+      return false;
+    }
   }
 }

@@ -11,6 +11,8 @@ abstract class TransportLocalStorage {
   Future<bool> saveTransports(List<Transport> transport);
   Future<Transport> getTransport(int id);
   Future<List<Transport>> getTransports();
+  Future<Transport> getTransportByDriver(String uuid);
+  Future<bool> saveTransportByDriver(Transport transport);
 }
 
 class TransportLocalStorageImpl implements TransportLocalStorage {
@@ -43,6 +45,20 @@ class TransportLocalStorageImpl implements TransportLocalStorage {
   @override
   Future<bool> saveTransports(List<Transport> transport) async {
     await sharedPreferencesAsync.setStringList("TRANSES", transport.map((e) => e.toRawJson()).toList());
+    return true;
+  }
+
+  @override
+  Future<Transport> getTransportByDriver(String uuid) async {
+    final trans = await sharedPreferencesAsync.getString("TRANS_DRIVER_$uuid");
+    return trans != null ? Transport.fromRawJson(trans) : Transport(transport_type: TransportType(), transport_driver: Employee(employee_position: Position(), employee_user: User(user_role: Role())));
+  }
+
+  @override
+  Future<bool> saveTransportByDriver(Transport transport) async {
+    final key = transport.transport_driver.employee_id;
+    final json = transport.toRawJson();
+    await sharedPreferencesAsync.setString("TRANS_DRIVER_$key", json);
     return true;
   }
 }

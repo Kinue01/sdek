@@ -191,16 +191,16 @@ Future<void> initGetIt() async {
   // ------------------------------------------
   // DOMAIN
   // ------------------------------------------
-  getIt.registerFactoryAsync<RoleRepository>(() async => RoleRepositoryImpl(repository: getIt()));
-  getIt.registerFactoryAsync<PositionRepository>(() async => PositionRepositoryImpl(repository: getIt()));
-  getIt.registerFactoryAsync<TransportRepository>(() async => TransportRepositoryImpl(repository: getIt()));
-  getIt.registerFactoryAsync<TransportTypeRepository>(() async => TransportTypeRepositoryImpl(repository: getIt()));
-  getIt.registerFactoryAsync<UserRepository>(() async => UserRepositoryImpl(repository: getIt()));
-  getIt.registerFactoryAsync<PackageRepository>(() async => PackageRepositoryImpl(repository: getIt()));
-  getIt.registerFactoryAsync<PackageStatusRepository>(() async => PackageStatusRepositoryImpl(repository: getIt()));
-  getIt.registerFactoryAsync<PackageTypeRepository>(() async => PackageTypeRepositoryImpl(repository: getIt()));
-  getIt.registerFactoryAsync<EmployeeRepository>(() async => EmployeeRepositoryImpl(repository: getIt()));
-  getIt.registerFactoryAsync<ClientRepository>(() async => ClientRepositoryImpl(repository: getIt()));
+  getIt.registerFactoryAsync<RoleRepository>(() async => RoleRepositoryImpl(repository: getIt(), roleLocalStorage: getIt()));
+  getIt.registerFactoryAsync<PositionRepository>(() async => PositionRepositoryImpl(repository: getIt(), positionLocalStorage: getIt()));
+  getIt.registerFactoryAsync<TransportRepository>(() async => TransportRepositoryImpl(repository: getIt(), transportLocalStorage: getIt()));
+  getIt.registerFactoryAsync<TransportTypeRepository>(() async => TransportTypeRepositoryImpl(repository: getIt(), transportTypeLocalStorage: getIt()));
+  getIt.registerFactoryAsync<UserRepository>(() async => UserRepositoryImpl(repository: getIt(), userLocalStorage: getIt()));
+  getIt.registerFactoryAsync<PackageRepository>(() async => PackageRepositoryImpl(repository: getIt(), packageLocalStorage: getIt()));
+  getIt.registerFactoryAsync<PackageStatusRepository>(() async => PackageStatusRepositoryImpl(repository: getIt(), packageStatusLocalStorage: getIt()));
+  getIt.registerFactoryAsync<PackageTypeRepository>(() async => PackageTypeRepositoryImpl(repository: getIt(), packageTypeLocalStorage: getIt()));
+  getIt.registerFactoryAsync<EmployeeRepository>(() async => EmployeeRepositoryImpl(repository: getIt(), employeeLocalStorage: getIt()));
+  getIt.registerFactoryAsync<ClientRepository>(() async => ClientRepositoryImpl(repository: getIt(), clientLocalStorage: getIt()));
   getIt.registerFactoryAsync<AuthorisationOauthRepository>(() async => AuthorisationOauthRepositoryImpl(repository: getIt()));
   getIt.registerFactoryAsync<MessageRepository>(() async => MessageRepositoryImpl(repository: getIt()));
 
