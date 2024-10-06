@@ -1,5 +1,6 @@
 import 'package:clientapp/data/repository/authorisation_data_repository.dart';
 import 'package:clientapp/domain/model/OAuth2GoogleCodeResponse.dart';
+import 'package:clientapp/domain/model/User.dart';
 import 'package:clientapp/remote/api/authorisation_api.dart';
 
 class AuthorisationDataRepositoryImpl implements AuthorisationOauthDataRepository {
@@ -22,5 +23,10 @@ class AuthorisationDataRepositoryImpl implements AuthorisationOauthDataRepositor
   @override
   Future<String> sendAuthCode(OAuth2GoogleCodeResponse response) async {
     return await authorisationApi.sendAuthCode(response);
+  }
+
+  @override
+  Future<User> getUserByLoginPass(User user) async {
+    return await authorisationApi.getUserByLoginPass(user);
   }
 }

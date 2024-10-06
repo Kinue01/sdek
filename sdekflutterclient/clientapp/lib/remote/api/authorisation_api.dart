@@ -1,3 +1,5 @@
+import 'package:clientapp/domain/model/Role.dart';
+import 'package:clientapp/domain/model/User.dart';
 import 'package:dio/dio.dart';
 import '../../domain/model/OAuth2GoogleCodeResponse.dart';
 
@@ -5,6 +7,7 @@ abstract class AuthorisationApi {
   Future<String> googleGetUrl();
   Future<bool> revokeTokenBySecret(String secret);
   Future<String> sendAuthCode(OAuth2GoogleCodeResponse response);
+  Future<User> getUserByLoginPass(User user);
 }
 
 class AuthorisationApiImpl implements AuthorisationApi {
@@ -14,7 +17,8 @@ class AuthorisationApiImpl implements AuthorisationApi {
     required this.client
   });
 
-  String get url => "http://localhost/userservice";
+  // todo: add to nginx conf
+  String get url => "http://localhost/authservice";
 
   @override
   Future<String> googleGetUrl() async {
@@ -46,6 +50,17 @@ class AuthorisationApiImpl implements AuthorisationApi {
         return true;
       default:
         return false;
+    }
+  }
+
+  @override
+  Future<User> getUserByLoginPass(User user) async {
+    Response<Map<String, dynamic>> response = await client.post("$url/api/user", data: user.toRawJson());
+    switch (response.statusCode) {
+      case 200:
+        return User.fromMap(response.data!);
+      default:
+        return User(user_role: Role());
     }
   }
 }

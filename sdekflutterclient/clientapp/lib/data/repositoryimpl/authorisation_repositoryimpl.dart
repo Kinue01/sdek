@@ -1,5 +1,6 @@
 import 'package:clientapp/data/repository/authorisation_data_repository.dart';
 import 'package:clientapp/domain/model/OAuth2GoogleCodeResponse.dart';
+import 'package:clientapp/domain/model/User.dart';
 import 'package:clientapp/domain/repository/authorisation_repository.dart';
 
 class AuthorisationOauthRepositoryImpl implements AuthorisationOauthRepository {
@@ -22,5 +23,10 @@ class AuthorisationOauthRepositoryImpl implements AuthorisationOauthRepository {
   @override
   Future<bool> revokeTokenBySecret(String secret) async {
     return await repository.revokeTokenBySecret(secret);
+  }
+
+  @override
+  Future<User> getUserByLoginPass(User user) async {
+    return await repository.getUserByLoginPass(user);
   }
 }

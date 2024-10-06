@@ -14,6 +14,7 @@
       <sourceFolder url="file://$MODULE_DIR$/packagereadservice/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/transportreadservice/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/userreadservice/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/authservice/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/messenderservice/target" />
       <excludeFolder url="file://$MODULE_DIR$/packageservice/target" />
       <excludeFolder url="file://$MODULE_DIR$/transportservice/target" />
@@ -26,6 +27,7 @@
       <excludeFolder url="file://$MODULE_DIR$/packagereadservice/target" />
       <excludeFolder url="file://$MODULE_DIR$/transportreadservice/target" />
       <excludeFolder url="file://$MODULE_DIR$/userreadservice/target" />
+      <excludeFolder url="file://$MODULE_DIR$/authservice/target" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
