@@ -11,6 +11,7 @@ class Routes {
     router.define("/", handler: rootHandler);
     router.define("/send_package", handler: sendPackageHandler);
     router.define("/track_package", handler: trackPackageHandler);
+    router.define("/login", handler: loginHandler);
 
   }
 }

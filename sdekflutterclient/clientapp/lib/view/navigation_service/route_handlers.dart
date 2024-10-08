@@ -1,3 +1,4 @@
+import 'package:clientapp/view/login_page/view/login_page.dart';
 import 'package:clientapp/view/send_package_page/page/send_package_page.dart';
 import 'package:clientapp/view/track_package_page/page/track_package_page.dart';
 import 'package:fluro/fluro.dart';
@@ -18,4 +19,9 @@ var sendPackageHandler = Handler(
 var trackPackageHandler = Handler(
     handlerFunc: (BuildContext? context, Map<String, List<String>> params) {
       return const TrackPackagePage();
+    });
+
+var loginHandler = Handler(
+    handlerFunc: (BuildContext? context, Map<String, List<String>> params) {
+      return const LoginPage();
     });

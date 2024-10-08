@@ -1,10 +1,11 @@
 import 'package:clientapp/domain/model/Role.dart';
 import 'package:clientapp/domain/model/User.dart';
 import 'package:clientapp/domain/usecase/auth/GetUserByLoginPassUseCase.dart';
+import 'package:flutter/material.dart';
 
 class LoginPageController {
-  var login = '';
-  var password = '';
+  var login = ValueNotifier("");
+  var password = ValueNotifier("");
   final GetUserByLoginPassUseCase getUserByLoginPassUseCase;
 
   LoginPageController({
@@ -12,6 +13,6 @@ class LoginPageController {
   });
 
   Future<User> logIn() async {
-    return await getUserByLoginPassUseCase.exec(User(user_role: Role(), user_login: login, user_password: password));
+    return await getUserByLoginPassUseCase.exec(User(user_role: Role(), user_login: login.value, user_password: password.value));
   }
 }
