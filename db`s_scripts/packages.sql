@@ -1,3 +1,5 @@
+-- A LOT OF WORK HERE!!!
+
 create table if not exists tb_package_type
 (
 	type_id smallserial primary key,
@@ -8,7 +10,7 @@ create table if not exists tb_package_type
 	type_weight int not null
 );
 
-create table tb_package_status
+create table if not exists tb_package_status
 (
 	status_id smallserial primary key,
 	status_name varchar(30) not null
@@ -34,4 +36,9 @@ create table if not exists tb_package_items
 	item_heigth decimal(5, 1) not null,
 	item_weight decimal(6, 1) not null,
 	foreign key (package_id) references tb_package (package_uuid)
-)
+);
+
+create table if not exists tb_service
+(
+
+);
