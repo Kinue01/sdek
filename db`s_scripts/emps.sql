@@ -1,3 +1,5 @@
+create database employees;
+
 create table if not exists tb_position
 (
 	position_id smallserial primary key,

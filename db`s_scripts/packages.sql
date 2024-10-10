@@ -1,4 +1,4 @@
--- A LOT OF WORK HERE!!!
+create database packages;
 
 create table if not exists tb_package_type
 (
@@ -40,5 +40,17 @@ create table if not exists tb_package_items
 
 create table if not exists tb_service
 (
-
+	service_id smallserial primary key,
+	service_name varchar(50) not null,
+	service_pay decimal(6, 1) not null
 );
+
+create table if not exists tb_package_services
+(
+	package_id uuid not null,
+	service_id smallint not null,
+	service_count int not null,
+	foreign key (package_id) references tb_package (package_id),
+	foreign key (service_id) references tb_package (service_id)
+);
+

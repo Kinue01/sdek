@@ -1,3 +1,5 @@
+create database transports;
+
 create table if not exists tb_transport_type
 (
 	type_id smallserial primary key,

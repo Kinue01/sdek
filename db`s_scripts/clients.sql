@@ -1,3 +1,5 @@
+create database clients;
+
 create table if not exists tb_client
 (
 	client_id serial primary key,

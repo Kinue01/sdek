@@ -1,3 +1,5 @@
+create database users;
+
 create table if not exists tb_role
 (
 	role_id smallserial primary key,
