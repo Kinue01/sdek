@@ -16,4 +16,4 @@ create table if not exists tb_user
 	user_access_token text,
 	user_role_id smallint not null,
 	foreign key (user_role_id) references tb_role (role_id)
-)
+);

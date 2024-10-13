@@ -6,9 +6,9 @@ create table if not exists tb_warehouse_type
 (
 	type_id smallserial primary key,
 	type_name varchar(50) not null,
-	type_small_count int not null,
-	type_med_count int not null,
-	type_huge_count int not null
+	type_small_quantity int not null,
+	type_med_quantity int not null,
+	type_huge_quantity int not null
 );
 
 create table if not exists tb_warehouse
