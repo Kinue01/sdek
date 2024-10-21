@@ -2,42 +2,43 @@ package com.example.warehouseservice.warehouseservice.repository;
 
 import com.eventstore.dbclient.EventData;
 import com.eventstore.dbclient.EventStoreDBClient;
-import com.eventstore.dbclient.WriteResult;
 import com.example.warehouseservice.warehouseservice.model.Warehouse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.AsyncResult;
-import org.springframework.stereotype.Repository;
-
+import org.springframework.stereotype.Service;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
-@Repository
+@Service
 public class WarehouseRepositoryImpl implements WarehouseRepository {
-
     EventStoreDBClient client;
 
+    @Autowired
     public WarehouseRepositoryImpl(EventStoreDBClient client) {
         this.client = client;
     }
 
+    @Async
     @Override
-    public boolean addWarehouse(Warehouse warehouse) throws ExecutionException, InterruptedException {
+    public CompletableFuture<Boolean> addWarehouse(Warehouse warehouse) throws ExecutionException, InterruptedException {
         EventData data = EventData.builderAsJson("warehouse_add", warehouse).build();
         client.appendToStream("warehouse", data).get();
-        return true;
+        return CompletableFuture.completedFuture(true);
     }
 
+    @Async
     @Override
-    public boolean updateWarehouse(Warehouse warehouse) throws ExecutionException, InterruptedException {
+    public CompletableFuture<Boolean> updateWarehouse(Warehouse warehouse) throws ExecutionException, InterruptedException {
         EventData data = EventData.builderAsJson("warehouse_update", warehouse).build();
         client.appendToStream("warehouse", data).get();
-        return true;
+        return CompletableFuture.completedFuture(true);
     }
 
+    @Async
     @Override
-    public boolean deleteWarehouse(Warehouse warehouse) throws ExecutionException, InterruptedException {
+    public CompletableFuture<Boolean> deleteWarehouse(Warehouse warehouse) throws ExecutionException, InterruptedException {
         EventData data = EventData.builderAsJson("warehouse_delete", warehouse).build();
         client.appendToStream("warehouse", data).get();
-        return true;
+        return CompletableFuture.completedFuture(true);
     }
 }

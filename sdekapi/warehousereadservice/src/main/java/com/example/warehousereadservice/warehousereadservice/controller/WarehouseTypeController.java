@@ -4,11 +4,7 @@ import com.example.warehousereadservice.warehousereadservice.model.WarehouseType
 import com.example.warehousereadservice.warehousereadservice.service.UpdateWarehouseTypeDbService;
 import com.example.warehousereadservice.warehousereadservice.service.WarehouseTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.concurrent.ExecutionException;
 
@@ -22,17 +18,20 @@ public class WarehouseTypeController {
     public WarehouseTypeController(WarehouseTypeService service, UpdateWarehouseTypeDbService updateWarehouseTypeDbService) {
         this.service = service;
         this.updateWarehouseTypeDbService = updateWarehouseTypeDbService;
+        this.updateWarehouseTypeDbService.init();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<WarehouseType> getTypeById(@PathVariable int id) throws ExecutionException, InterruptedException {
+    @ResponseBody
+    public WarehouseType getTypeById(@PathVariable int id) throws ExecutionException, InterruptedException {
         var res = service.getType(id);
-        return ResponseEntity.ok(res.get());
+        return res.get();
     }
 
     @GetMapping
-    public ResponseEntity<Iterable<WarehouseType>> getTypes() throws ExecutionException, InterruptedException {
+    @ResponseBody
+    public Iterable<WarehouseType> getTypes() throws ExecutionException, InterruptedException {
         var res = service.getTypes();
-        return ResponseEntity.ok(res.get());
+        return res.get();
     }
 }

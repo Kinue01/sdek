@@ -1,21 +1,18 @@
 package com.example.warehouseservice.warehouseservice.controller;
 
 import com.example.warehouseservice.warehouseservice.model.Warehouse;
-import com.example.warehouseservice.warehouseservice.repository.WarehouseRepository;
+import com.example.warehouseservice.warehouseservice.repository.WarehouseRepositoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.concurrent.ExecutionException;
 
 @RestController
 @RequestMapping(path = "/api", produces = "application/json")
-@CrossOrigin(origins = "*")
 public class WarehouseController {
-
-    WarehouseRepository repository;
+    WarehouseRepositoryImpl repository;
 
     @Autowired
-    public WarehouseController(WarehouseRepository repository) {
+    public WarehouseController(WarehouseRepositoryImpl repository) {
         this.repository = repository;
     }
 
@@ -23,7 +20,7 @@ public class WarehouseController {
     public boolean addWarehouse(@RequestBody Warehouse warehouse) {
         boolean res = false;
         try {
-            res = repository.addWarehouse(warehouse);
+            res = repository.addWarehouse(warehouse).get();
         } catch (ExecutionException | InterruptedException e) {
             System.out.println(e.getMessage());
         }
@@ -31,10 +28,11 @@ public class WarehouseController {
     }
 
     @PatchMapping(path = "/warehouse")
+    @ResponseBody
     public boolean updateWarehouse(@RequestBody Warehouse warehouse) {
         boolean res = false;
         try {
-            res = repository.updateWarehouse(warehouse);
+            res = repository.updateWarehouse(warehouse).get();
         } catch (ExecutionException | InterruptedException e) {
             System.out.println(e.getMessage());
         }
@@ -42,10 +40,11 @@ public class WarehouseController {
     }
 
     @DeleteMapping(path = "/warehouse")
+    @ResponseBody
     public boolean deleteWarehouse(@RequestBody Warehouse warehouse) {
         boolean res = false;
         try {
-            res = repository.deleteWarehouse(warehouse);
+            res = repository.deleteWarehouse(warehouse).get();
         } catch (ExecutionException | InterruptedException e) {
             System.out.println(e.getMessage());
         }

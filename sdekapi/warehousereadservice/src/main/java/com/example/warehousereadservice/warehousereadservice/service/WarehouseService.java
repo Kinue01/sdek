@@ -1,7 +1,7 @@
 package com.example.warehousereadservice.warehousereadservice.service;
 
 import com.example.warehousereadservice.warehousereadservice.model.Warehouse;
-import com.example.warehousereadservice.warehousereadservice.model.WarehouseRedis;
+import com.example.warehousereadservice.warehousereadservice.model.WarehouseType;
 import com.example.warehousereadservice.warehousereadservice.repository.WarehouseRedisRepository;
 import com.example.warehousereadservice.warehousereadservice.repository.WarehouseRepository;
 import org.slf4j.Logger;
@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -37,7 +36,13 @@ public class WarehouseService {
                     res.getWarehouse_name(),
                     res.getWarehouse_address(),
                     res.getWarehouse_point(),
-                    res.getWarehouse_type_id())));
+                    new WarehouseType(
+                            res.getWarehouse_type_id().getType_id(),
+                            res.getWarehouse_type_id().getType_name(),
+                            res.getWarehouse_type_id().getType_small_quantity(),
+                            res.getWarehouse_type_id().getType_med_quantity(),
+                            res.getWarehouse_type_id().getType_huge_quantity()
+                    ))));
         }
         else {
             return CompletableFuture.completedFuture(repository.findById(id));
@@ -57,7 +62,13 @@ public class WarehouseService {
                         item.getWarehouse_name(),
                         item.getWarehouse_address(),
                         item.getWarehouse_point(),
-                        item.getWarehouse_type_id()
+                        new WarehouseType(
+                                item.getWarehouse_type_id().getType_id(),
+                                item.getWarehouse_type_id().getType_name(),
+                                item.getWarehouse_type_id().getType_small_quantity(),
+                                item.getWarehouse_type_id().getType_med_quantity(),
+                                item.getWarehouse_type_id().getType_huge_quantity()
+                        )
                 ));
             });
             return CompletableFuture.completedFuture(res);
