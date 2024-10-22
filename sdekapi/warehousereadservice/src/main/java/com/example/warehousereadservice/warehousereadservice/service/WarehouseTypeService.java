@@ -1,11 +1,11 @@
 package com.example.warehousereadservice.warehousereadservice.service;
 
 import com.example.warehousereadservice.warehousereadservice.model.WarehouseType;
+import com.example.warehousereadservice.warehousereadservice.model.WarehouseTypeRedis;
 import com.example.warehousereadservice.warehousereadservice.repository.WarehouseTypeRedisRepository;
 import com.example.warehousereadservice.warehousereadservice.repository.WarehouseTypeRepository;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
 
@@ -33,32 +33,22 @@ public class WarehouseTypeService {
         }
 
         var db = repository.findById(id);
-        if (db.isPresent()) {
-            return CompletableFuture.completedFuture(db.get());
-        }
-        return null;
+        return db.map(CompletableFuture::completedFuture).orElse(null);
     }
 
     @Async
     public CompletableFuture<Iterable<WarehouseType>> getTypes() {
-        var redis = redisRepository.findAll();
-        if (redis.iterator().hasNext()) {
-            ArrayList<WarehouseType> res = new ArrayList<>();
-            redis.iterator().forEachRemaining(item -> {
-                res.add(new WarehouseType(
-                    item.getType_id(), 
-                    item.getType_name(), 
-                    item.getType_small_quantity(), 
-                    item.getType_med_quantity(), 
+        var redis = (ArrayList<WarehouseTypeRedis>)redisRepository.findAll();
+        if (!redis.isEmpty()) {
+            var res = redis.parallelStream().map(item -> new WarehouseType(
+                    item.getType_id(),
+                    item.getType_name(),
+                    item.getType_small_quantity(),
+                    item.getType_med_quantity(),
                     item.getType_huge_quantity()
-                    )
-                );
-            });
+            )).toList();
             return CompletableFuture.completedFuture(res);
         }
-        else {
-            var remote = repository.findAll();
-            return CompletableFuture.completedFuture(remote);
-        }
+        return CompletableFuture.completedFuture(repository.findAll());
     }
 }

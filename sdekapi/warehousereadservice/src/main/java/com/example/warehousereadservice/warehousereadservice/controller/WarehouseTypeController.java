@@ -5,11 +5,10 @@ import com.example.warehousereadservice.warehousereadservice.service.UpdateWareh
 import com.example.warehousereadservice.warehousereadservice.service.WarehouseTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.concurrent.ExecutionException;
 
 @RestController
-@RequestMapping("/warehouse_types")
+@RequestMapping(value = "/api/warehouse_types", produces = "application/json")
 public class WarehouseTypeController {
     final WarehouseTypeService service;
     final UpdateWarehouseTypeDbService updateWarehouseTypeDbService;
@@ -21,17 +20,25 @@ public class WarehouseTypeController {
         this.updateWarehouseTypeDbService.init();
     }
 
-    @GetMapping("/{id}")
-    @ResponseBody
-    public WarehouseType getTypeById(@PathVariable int id) throws ExecutionException, InterruptedException {
+    @GetMapping
+    public WarehouseType getTypeById(@RequestParam int id) {
         var res = service.getType(id);
-        return res.get();
+        try {
+            return res.get();
+        } catch (InterruptedException | ExecutionException e) {
+            System.out.println("err");
+            return null;
+        }
     }
 
     @GetMapping
-    @ResponseBody
-    public Iterable<WarehouseType> getTypes() throws ExecutionException, InterruptedException {
+    public Iterable<WarehouseType> getTypes() {
         var res = service.getTypes();
-        return res.get();
+        try {
+            return res.get();
+        } catch (InterruptedException | ExecutionException e) {
+            System.out.println("err");
+            return null;
+        }
     }
 }

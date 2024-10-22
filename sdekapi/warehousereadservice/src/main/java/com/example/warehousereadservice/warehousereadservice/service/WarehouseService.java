@@ -1,12 +1,10 @@
 package com.example.warehousereadservice.warehousereadservice.service;
 
+import com.example.warehousereadservice.warehousereadservice.model.Warehouse;
+import com.example.warehousereadservice.warehousereadservice.model.WarehouseRedis;
 import com.example.warehousereadservice.warehousereadservice.model.WarehouseResponse;
-import com.example.warehousereadservice.warehousereadservice.model.WarehouseType;
 import com.example.warehousereadservice.warehousereadservice.repository.WarehouseRedisRepository;
 import com.example.warehousereadservice.warehousereadservice.repository.WarehouseRepository;
-import com.example.warehousereadservice.warehousereadservice.repository.WarehouseTypeRedisRepository;
-import com.example.warehousereadservice.warehousereadservice.repository.WarehouseTypeRepository;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,38 +24,50 @@ public class WarehouseService {
     @Autowired
     public WarehouseService(WarehouseRepository repository, WarehouseRedisRepository redisRepository, WarehouseTypeService typeService) {
         logger.debug("Get dependency");
+
         this.repository = repository;
         this.redisRepository = redisRepository;
         this.typeService = typeService;
     }
 
     @Async
-    public CompletableFuture<WarehouseResponse> getWarehouse(int id) throws InterruptedException, ExecutionException {
+    public CompletableFuture<WarehouseResponse> getWarehouse(int id) {
         logger.info("Get warehouse");
+
         var redis = redisRepository.findById(id);
         if (redis.isPresent()) {
-            return CompletableFuture.completedFuture(
-                new WarehouseResponse(
-                    redis.get().getWarehouse_id(), 
-                    redis.get().getWarehouse_name(), 
-                    redis.get().getWarehouse_address(),
-                    redis.get().getWarehouse_point(),
-                    typeService.getType(redis.get().getWarehouse_type_id()).get()
-                )
-            );
+            try {
+                return CompletableFuture.completedFuture(
+                    new WarehouseResponse(
+                        redis.get().getWarehouse_id(),
+                        redis.get().getWarehouse_name(),
+                        redis.get().getWarehouse_address(),
+                        redis.get().getWarehouse_point(),
+                        typeService.getType(redis.get().getWarehouse_type_id()).get()
+                    )
+                );
+            } catch (InterruptedException | ExecutionException e) {
+                System.out.println("error");
+                return null;
+            }
         }
 
         var remote = repository.findById(id);
         if (remote.isPresent()) {
-            return CompletableFuture.completedFuture(
-                new WarehouseResponse(
-                    remote.get().getWarehouse_id(), 
-                    remote.get().getWarehouse_name(), 
-                    remote.get().getWarehouse_address(),
-                    remote.get().getWarehouse_point(),
-                    typeService.getType(remote.get().getWarehouse_type()).get()
-                )
-            );
+            try {
+                return CompletableFuture.completedFuture(
+                    new WarehouseResponse(
+                        remote.get().getWarehouse_id(),
+                        remote.get().getWarehouse_name(),
+                        remote.get().getWarehouse_address(),
+                        remote.get().getWarehouse_point(),
+                        typeService.getType(remote.get().getWarehouse_type()).get()
+                    )
+                );
+            } catch (InterruptedException | ExecutionException e) {
+                System.out.println("error");
+                return null;
+            }
         }
 
         return null;
@@ -66,49 +76,43 @@ public class WarehouseService {
     @Async
     public CompletableFuture<Iterable<WarehouseResponse>> getWarehouses() {
         logger.info("Get warehouses");
-        var redis = redisRepository.findAll();
-        if (redis.iterator().hasNext()) {
-            ArrayList<WarehouseResponse> res = new ArrayList<>();
-            redis.forEach(item -> {
-                var type = typeRedisRepository.findById(item.getWarehouse_type_id());
-                if (type.isPresent()) {
-                    res.add(new WarehouseResponse(
-                        item.getWarehouse_id(),
-                        item.getWarehouse_name(),
-                        item.getWarehouse_address(),
-                        item.getWarehouse_point(),
-                        new WarehouseType(
-                            item.getWarehouse_type_id(), null, 0, 0, 0)
-                ));
+
+        var redis = (ArrayList<WarehouseRedis>)redisRepository.findAll();
+        if (!redis.isEmpty()) {
+            var res = redis.parallelStream().map(item -> {
+                try {
+                    return new WarehouseResponse(
+                            item.getWarehouse_id(),
+                            item.getWarehouse_name(),
+                            item.getWarehouse_address(),
+                            item.getWarehouse_point(),
+                            typeService.getType(item.getWarehouse_type_id()).get()
+                    );
+                } catch (InterruptedException | ExecutionException e) {
+                    throw new RuntimeException(e);
                 }
-                else {
-                    var typeR = typeRepository.findById(item.getWarehouse_type_id());
-                    if (typeR.isPresent()) {
-                        res.add(new WarehouseResponse(
-                        item.getWarehouse_id(),
-                        item.getWarehouse_name(),
-                        item.getWarehouse_address(),
-                        item.getWarehouse_point(),
-                        new WarehouseType(
-                            item.getWarehouse_type_id(), null, 0, 0, 0)
-                ));
-                    }
-                    else {
-                        res.add(new WarehouseResponse(
-                        item.getWarehouse_id(),
-                        item.getWarehouse_name(),
-                        item.getWarehouse_address(),
-                        item.getWarehouse_point(),
-                        new WarehouseType(
-                            item.getWarehouse_type_id(), null, 0, 0, 0)
-                ));
-                    }
-                }
-            });
+            }).toList();
             return CompletableFuture.completedFuture(res);
         }
-        else {
-            return CompletableFuture.completedFuture(repository.findAll().iterator());
+
+        var remote = (ArrayList<Warehouse>)repository.findAll();
+        if (!remote.isEmpty()) {
+            var res = remote.parallelStream().map(item -> {
+                try {
+                    return new WarehouseResponse(
+                            item.getWarehouse_id(),
+                            item.getWarehouse_name(),
+                            item.getWarehouse_address(),
+                            item.getWarehouse_point(),
+                            typeService.getType(item.getWarehouse_type()).get()
+                    );
+                } catch (ExecutionException | InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }).toList();
+            return CompletableFuture.completedFuture(res);
         }
+
+        return null;
     }
 }

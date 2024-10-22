@@ -1,53 +1,47 @@
 package com.example.warehouseservice.warehouseservice.controller;
 
 import com.example.warehouseservice.warehouseservice.model.Warehouse;
-import com.example.warehouseservice.warehouseservice.repository.WarehouseRepositoryImpl;
+import com.example.warehouseservice.warehouseservice.service.WarehouseService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import java.util.concurrent.ExecutionException;
 
 @RestController
-@RequestMapping(path = "/api", produces = "application/json")
+@RequestMapping(path = "/api/warehouse", produces = "application/json")
 public class WarehouseController {
-    WarehouseRepositoryImpl repository;
+    WarehouseService service;
 
     @Autowired
-    public WarehouseController(WarehouseRepositoryImpl repository) {
-        this.repository = repository;
+    public WarehouseController(WarehouseService service) {
+        this.service = service;
     }
 
-    @PostMapping(path = "/warehouse")
-    public boolean addWarehouse(@RequestBody Warehouse warehouse) {
-        boolean res = false;
+    @PostMapping
+    @ResponseStatus(value = HttpStatus.CREATED)
+    public void addWarehouse(@RequestBody Warehouse warehouse) {
         try {
-            res = repository.addWarehouse(warehouse).get();
+            service.addWarehouse(warehouse).get();
         } catch (ExecutionException | InterruptedException e) {
             System.out.println(e.getMessage());
         }
-        return res;
     }
 
-    @PatchMapping(path = "/warehouse")
-    @ResponseBody
-    public boolean updateWarehouse(@RequestBody Warehouse warehouse) {
-        boolean res = false;
+    @PatchMapping
+    public void updateWarehouse(@RequestBody Warehouse warehouse) {
         try {
-            res = repository.updateWarehouse(warehouse).get();
+            service.updateWarehouse(warehouse).get();
         } catch (ExecutionException | InterruptedException e) {
             System.out.println(e.getMessage());
         }
-        return res;
     }
 
-    @DeleteMapping(path = "/warehouse")
-    @ResponseBody
-    public boolean deleteWarehouse(@RequestBody Warehouse warehouse) {
-        boolean res = false;
+    @DeleteMapping
+    public void deleteWarehouse(@RequestBody Warehouse warehouse) {
         try {
-            res = repository.deleteWarehouse(warehouse).get();
+            service.deleteWarehouse(warehouse).get();
         } catch (ExecutionException | InterruptedException e) {
             System.out.println(e.getMessage());
         }
-        return res;
     }
 }
