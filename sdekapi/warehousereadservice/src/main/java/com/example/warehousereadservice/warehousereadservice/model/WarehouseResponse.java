@@ -1,26 +1,20 @@
 package com.example.warehousereadservice.warehousereadservice.model;
 
-import jakarta.persistence.*;
 import org.springframework.data.geo.Point;
 
-@Entity
-@Table(name = "tb_warehouse")
-public class Warehouse {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class WarehouseResponse {
     int warehouse_id;
-
     String warehouse_name;
     String warehouse_address;
     Point warehouse_point;
-    int warehouse_type_id;
+    WarehouseType warehouse_type;
 
-    public Warehouse(int warehouse_id, String warehouse_name, String warehouse_address, Point warehouse_point, int warehouse_type_id) {
+    public WarehouseResponse(int warehouse_id, String warehouse_name, String warehouse_address, Point warehouse_point, WarehouseType warehouse_type) {
         this.warehouse_id = warehouse_id;
         this.warehouse_name = warehouse_name;
         this.warehouse_address = warehouse_address;
         this.warehouse_point = warehouse_point;
-        this.warehouse_type_id = warehouse_type_id;
+        this.warehouse_type = warehouse_type;
     }
 
     public int getWarehouse_id() {
@@ -55,11 +49,11 @@ public class Warehouse {
         this.warehouse_point = warehouse_point;
     }
 
-    public int getWarehouse_type() {
-        return warehouse_type_id;
+    public WarehouseType getWarehouse_type() {
+        return warehouse_type;
     }
 
-    public void setWarehouse_type(int warehouse_type_id) {
-        this.warehouse_type_id = warehouse_type_id;
+    public void setWarehouse_type(WarehouseType warehouse_type) {
+        this.warehouse_type = warehouse_type;
     }
 }

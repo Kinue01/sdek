@@ -6,10 +6,9 @@ import com.example.warehousereadservice.warehousereadservice.service.WarehouseSe
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -26,10 +25,10 @@ public class WarehouseController {
         this.updateWarehouseDbService.init();
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Warehouse> getWarehouseById(@PathVariable int id) throws ExecutionException, InterruptedException {
-        CompletableFuture<Optional<Warehouse>> res = service.getWarehouse(id);
-        return ResponseEntity.ok(res.get().get());
+    @GetMapping
+    public ResponseEntity<Warehouse> getWarehouseById(@RequestParam int id) throws ExecutionException, InterruptedException {
+        CompletableFuture<Warehouse> res = service.getWarehouse(id);
+        return ResponseEntity.ok(res.get());
     }
 
     @GetMapping

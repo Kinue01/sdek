@@ -12,14 +12,14 @@ public class WarehouseRedis {
     String warehouse_name;
     String warehouse_address;
     Point warehouse_point;
-    WarehouseTypeRedis warehouse_type;
+    int warehouse_type_id;
 
-    public WarehouseRedis(int warehouse_id, String warehouse_name, String warehouse_address, Point warehouse_point, WarehouseTypeRedis warehouse_type_id) {
+    public WarehouseRedis(int warehouse_id, String warehouse_name, String warehouse_address, Point warehouse_point, int warehouse_type_id) {
         this.warehouse_id = warehouse_id;
         this.warehouse_name = warehouse_name;
         this.warehouse_address = warehouse_address;
         this.warehouse_point = warehouse_point;
-        this.warehouse_type = warehouse_type_id;
+        this.warehouse_type_id = warehouse_type_id;
     }
 
     public int getWarehouse_id() {
@@ -54,11 +54,11 @@ public class WarehouseRedis {
         this.warehouse_point = warehouse_point;
     }
 
-    public WarehouseTypeRedis getWarehouse_type_id() {
-        return warehouse_type;
+    public int getWarehouse_type_id() {
+        return warehouse_type_id;
     }
 
-    public void setWarehouse_type_id(WarehouseTypeRedis warehouse_type_id) {
-        this.warehouse_type = warehouse_type_id;
+    public void setWarehouse_type_id(int warehouse_type_id) {
+        this.warehouse_type_id = warehouse_type_id;
     }
 }
