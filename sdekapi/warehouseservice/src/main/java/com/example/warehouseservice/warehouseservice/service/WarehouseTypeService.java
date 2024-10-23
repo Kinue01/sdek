@@ -2,7 +2,6 @@ package com.example.warehouseservice.warehouseservice.service;
 
 import com.eventstore.dbclient.EventData;
 import com.eventstore.dbclient.EventStoreDBClient;
-import com.example.warehouseservice.warehouseservice.model.Warehouse;
 import com.example.warehouseservice.warehouseservice.model.WarehouseType;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;

@@ -1,4 +1,4 @@
-package com.example.deliverypersonellservice.deliverypersonellservice.model;
+package com.example.deliverypersonellreadservice.deliverypersonellreadservice.model;
 
 import java.util.UUID;
 

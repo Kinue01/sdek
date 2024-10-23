@@ -4,7 +4,6 @@ import com.eventstore.dbclient.*;
 import com.example.warehousereadservice.warehousereadservice.model.WarehouseType;
 import com.example.warehousereadservice.warehousereadservice.repository.WarehouseTypeRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -12,7 +11,6 @@ public class UpdateWarehouseTypeDbService {
     EventStoreDBClient client;
     final WarehouseTypeRepository repository;
 
-    @Autowired
     public UpdateWarehouseTypeDbService(EventStoreDBClient client, WarehouseTypeRepository repository) {
         this.client = client;
         this.repository = repository;

@@ -3,7 +3,6 @@ package com.example.warehousereadservice.warehousereadservice.controller;
 import com.example.warehousereadservice.warehousereadservice.model.WarehouseResponse;
 import com.example.warehousereadservice.warehousereadservice.service.UpdateWarehouseDbService;
 import com.example.warehousereadservice.warehousereadservice.service.WarehouseService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -13,7 +12,6 @@ import java.util.concurrent.ExecutionException;
 public class WarehouseController {
     final WarehouseService service;
 
-    @Autowired
     public WarehouseController(WarehouseService service, UpdateWarehouseDbService updateWarehouseDbService) {
         this.service = service;
         updateWarehouseDbService.init();

@@ -2,7 +2,6 @@ package com.example.warehouseservice.warehouseservice.controller;
 
 import com.example.warehouseservice.warehouseservice.model.Warehouse;
 import com.example.warehouseservice.warehouseservice.service.WarehouseService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import java.util.concurrent.ExecutionException;
@@ -12,7 +11,6 @@ import java.util.concurrent.ExecutionException;
 public class WarehouseController {
     WarehouseService service;
 
-    @Autowired
     public WarehouseController(WarehouseService service) {
         this.service = service;
     }

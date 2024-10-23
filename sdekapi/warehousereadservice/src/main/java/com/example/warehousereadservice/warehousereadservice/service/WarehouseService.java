@@ -7,7 +7,6 @@ import com.example.warehousereadservice.warehousereadservice.repository.Warehous
 import com.example.warehousereadservice.warehousereadservice.repository.WarehouseRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
@@ -21,7 +20,6 @@ public class WarehouseService {
     final WarehouseTypeService typeService;
     Logger logger = LoggerFactory.getLogger(WarehouseService.class);
 
-    @Autowired
     public WarehouseService(WarehouseRepository repository, WarehouseRedisRepository redisRepository, WarehouseTypeService typeService) {
         logger.debug("Get dependency");
 
