@@ -1,5 +1,6 @@
 package com.example.deliverypersonellreadservice.deliverypersonellreadservice.controller;
 
+import com.example.deliverypersonellreadservice.deliverypersonellreadservice.service.UpdateDeliveryPersonellDbService;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.example.deliverypersonellreadservice.deliverypersonellreadservice.model.DeliveryPersonResponse;
@@ -14,8 +15,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class DeliveryPersonController {
     DeliveryPersonService service;
 
-    public DeliveryPersonController(DeliveryPersonService service) {
+    public DeliveryPersonController(DeliveryPersonService service, UpdateDeliveryPersonellDbService readService) {
         this.service = service;
+        readService.init();
     }
 
     @GetMapping

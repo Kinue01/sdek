@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:clientapp/data/repository/transport_type_data_repository.dart';
 import 'package:clientapp/domain/model/TransportType.dart';
 import 'package:clientapp/domain/repository/transport_type_repository.dart';

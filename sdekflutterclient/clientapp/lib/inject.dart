@@ -34,6 +34,7 @@ import 'package:clientapp/domain/repository/transport_repository.dart';
 import 'package:clientapp/domain/repository/transport_type_repository.dart';
 import 'package:clientapp/domain/repository/user_repository.dart';
 import 'package:clientapp/domain/usecase/auth/GetGoogleUrlUseCase.dart';
+import 'package:clientapp/domain/usecase/auth/GetUserByLoginPassUseCase.dart';
 import 'package:clientapp/domain/usecase/auth/RevokeTokenBySecretUseCase.dart';
 import 'package:clientapp/domain/usecase/auth/SendAuthCodeUseCase.dart';
 import 'package:clientapp/domain/usecase/client/AddClientUseCase.dart';
@@ -123,6 +124,7 @@ import 'package:clientapp/remote/repositoryimpl/transport_data_repository_impl.d
 import 'package:clientapp/remote/repositoryimpl/transport_type_data_repository_impl.dart';
 import 'package:clientapp/remote/repositoryimpl/user_data_repository_impl.dart';
 import 'package:clientapp/view/home_page/controller/home_controller.dart';
+import 'package:clientapp/view/login_page/controller/login_page_controller.dart';
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -133,151 +135,153 @@ import 'view/track_package_page/controller/track_package_controller.dart';
 
 GetIt getIt = GetIt.instance;
 
-Future<void> initGetIt() async {
+void initGetIt() {
 
   // ----------------------------------------
   // REMOTE
   // ----------------------------------------
-  getIt.registerLazySingletonAsync(() async => Dio());
+  getIt.registerLazySingleton(() => Dio());
 
-  getIt.registerLazySingletonAsync<RoleApi>(() async => RoleApiImpl(client: getIt()));
-  getIt.registerLazySingletonAsync<PositionApi>(() async => PositionApiImpl(client: getIt()));
-  getIt.registerLazySingletonAsync<TransportApi>(() async => TransportApiImpl(client: getIt()));
-  getIt.registerLazySingletonAsync<TransportTypeApi>(() async => TransportTypeApiImpl(client: getIt()));
-  getIt.registerLazySingletonAsync<UserApi>(() async => UserApiImpl(client: getIt()));
-  getIt.registerLazySingletonAsync<PackageApi>(() async => PackageApiImpl(client: getIt()));
-  getIt.registerLazySingletonAsync<PackageStatusApi>(() async => PackageStatusApiImpl(client: getIt()));
-  getIt.registerLazySingletonAsync<PackageTypeApi>(() async => PackageTypeApiImpl(client: getIt()));
-  getIt.registerLazySingletonAsync<EmployeeApi>(() async => EmployeeApiImpl(client: getIt()));
-  getIt.registerLazySingletonAsync<ClientApi>(() async => ClientApiImpl(dio_client: getIt()));
-  getIt.registerLazySingletonAsync<AuthorisationApi>(() async => AuthorisationApiImpl(client: getIt()));
-  getIt.registerLazySingletonAsync<MessageApi>(() async => MessageApiImpl());
+  getIt.registerLazySingleton<RoleApi>(() => RoleApiImpl(client: getIt()));
+  getIt.registerLazySingleton<PositionApi>(() => PositionApiImpl(client: getIt()));
+  getIt.registerLazySingleton<TransportApi>(() => TransportApiImpl(client: getIt()));
+  getIt.registerLazySingleton<TransportTypeApi>(() => TransportTypeApiImpl(client: getIt()));
+  getIt.registerLazySingleton<UserApi>(() => UserApiImpl(client: getIt()));
+  getIt.registerLazySingleton<PackageApi>(() => PackageApiImpl(client: getIt()));
+  getIt.registerLazySingleton<PackageStatusApi>(() => PackageStatusApiImpl(client: getIt()));
+  getIt.registerLazySingleton<PackageTypeApi>(() => PackageTypeApiImpl(client: getIt()));
+  getIt.registerLazySingleton<EmployeeApi>(() => EmployeeApiImpl(client: getIt()));
+  getIt.registerLazySingleton<ClientApi>(() => ClientApiImpl(dio_client: getIt()));
+  getIt.registerLazySingleton<AuthorisationApi>(() => AuthorisationApiImpl(client: getIt()));
+  getIt.registerLazySingleton<MessageApi>(() => MessageApiImpl());
   
   
   // ---------------------------------------------
   // LOCAL
   // ---------------------------------------------
-  getIt.registerLazySingletonAsync(() async => SharedPreferencesAsync());
+  getIt.registerLazySingleton(() => SharedPreferences.getInstance());
 
-  getIt.registerFactoryAsync<RoleLocalStorage>(() async => RoleLocalStorageImpl(sharedPreferencesAsync: getIt()));
-  getIt.registerFactoryAsync<PositionLocalStorage>(() async => PositionLocalStorageImpl(sharedPreferencesAsync: getIt()));
-  getIt.registerFactoryAsync<UserLocalStorage>(() async => UserLocalStorageImpl(sharedPreferencesAsync: getIt()));
-  getIt.registerFactoryAsync<TransportTypeLocalStorage>(() async => TransportTypeLocalStorageImpl(sharedPreferencesAsync: getIt()));
-  getIt.registerFactoryAsync<TransportLocalStorage>(() async => TransportLocalStorageImpl(sharedPreferencesAsync: getIt()));
-  getIt.registerFactoryAsync<PackageTypeLocalStorage>(() async => PackageTypeLocalStorageImpl(sharedPreferencesAsync: getIt()));
-  getIt.registerFactoryAsync<PackageStatusLocalStorage>(() async => PackageStatusLocalStorageImpl(sharedPreferencesAsync: getIt()));
-  getIt.registerFactoryAsync<PackageLocalStorage>(() async => PackageLocalStorageImpl(sharedPreferencesAsync: getIt()));
-  getIt.registerFactoryAsync<ClientLocalStorage>(() async => ClientLocalStorageImpl(sharedPreferencesAsync: getIt()));
-  getIt.registerFactoryAsync<EmployeeLocalStorage>(() async => EmployeeLocalStorageImpl(sharedPreferencesAsync: getIt()));
+  getIt.registerFactory<RoleLocalStorage>(() => RoleLocalStorageImpl(sharedPreferencesAsync: getIt()));
+  getIt.registerFactory<PositionLocalStorage>(() => PositionLocalStorageImpl(sharedPreferencesAsync: getIt()));
+  getIt.registerFactory<UserLocalStorage>(() => UserLocalStorageImpl(sharedPreferencesAsync: getIt()));
+  getIt.registerFactory<TransportTypeLocalStorage>(() => TransportTypeLocalStorageImpl(sharedPreferencesAsync: getIt()));
+  getIt.registerFactory<TransportLocalStorage>(() => TransportLocalStorageImpl(sharedPreferencesAsync: getIt()));
+  getIt.registerFactory<PackageTypeLocalStorage>(() => PackageTypeLocalStorageImpl(sharedPreferencesAsync: getIt()));
+  getIt.registerFactory<PackageStatusLocalStorage>(() => PackageStatusLocalStorageImpl(sharedPreferencesAsync: getIt()));
+  getIt.registerFactory<PackageLocalStorage>(() => PackageLocalStorageImpl(sharedPreferencesAsync: getIt()));
+  getIt.registerFactory<ClientLocalStorage>(() => ClientLocalStorageImpl(sharedPreferencesAsync: getIt()));
+  getIt.registerFactory<EmployeeLocalStorage>(() => EmployeeLocalStorageImpl(sharedPreferencesAsync: getIt()));
   
 
   // ------------------------------------------
   // DATA
   // ------------------------------------------
-  getIt.registerFactoryAsync<RoleDataRepository>(() async => RoleDataRepositoryImpl(roleApi: getIt()));
-  getIt.registerFactoryAsync<PositionDataRepository>(() async => PositionDataRepositoryImpl(positionApi: getIt()));
-  getIt.registerFactoryAsync<TransportDataRepository>(() async => TransportDataRepositoryImpl(transportApi: getIt()));
-  getIt.registerFactoryAsync<TransportTypeDataRepository>(() async => TransportTypeDataRepositoryImpl(transportTypeApi: getIt()));
-  getIt.registerFactoryAsync<UserDataRepository>(() async => UserDataRepositoryImpl(userApi: getIt()));
-  getIt.registerFactoryAsync<PackageDataRepository>(() async => PackageDataRepositoryImpl(packageApi: getIt()));
-  getIt.registerFactoryAsync<PackageStatusDataRepository>(() async => PackageStatusDataRepositoryImpl(packageStatusApi: getIt()));
-  getIt.registerFactoryAsync<PackageTypeDataRepository>(() async => PackageTypeDataRepositoryImpl(packageTypeApi: getIt()));
-  getIt.registerFactoryAsync<EmployeeDataRepository>(() async => EmployeeDataRepositoryImpl(employeeApi: getIt()));
-  getIt.registerFactoryAsync<ClientDataRepository>(() async => ClientDataRepositoryImpl(clientApi: getIt()));
-  getIt.registerFactoryAsync<AuthorisationOauthDataRepository>(() async => AuthorisationDataRepositoryImpl(authorisationApi: getIt()));
-  getIt.registerLazySingletonAsync<MessageDataRepository>(() async => MessageDataRepositoryImpl(messageApi: getIt()));
+  getIt.registerFactory<RoleDataRepository>(() => RoleDataRepositoryImpl(roleApi: getIt()));
+  getIt.registerFactory<PositionDataRepository>(() => PositionDataRepositoryImpl(positionApi: getIt()));
+  getIt.registerFactory<TransportDataRepository>(() => TransportDataRepositoryImpl(transportApi: getIt()));
+  getIt.registerFactory<TransportTypeDataRepository>(() => TransportTypeDataRepositoryImpl(transportTypeApi: getIt()));
+  getIt.registerFactory<UserDataRepository>(() => UserDataRepositoryImpl(userApi: getIt()));
+  getIt.registerFactory<PackageDataRepository>(() => PackageDataRepositoryImpl(packageApi: getIt()));
+  getIt.registerFactory<PackageStatusDataRepository>(() => PackageStatusDataRepositoryImpl(packageStatusApi: getIt()));
+  getIt.registerFactory<PackageTypeDataRepository>(() => PackageTypeDataRepositoryImpl(packageTypeApi: getIt()));
+  getIt.registerFactory<EmployeeDataRepository>(() => EmployeeDataRepositoryImpl(employeeApi: getIt()));
+  getIt.registerFactory<ClientDataRepository>(() => ClientDataRepositoryImpl(clientApi: getIt()));
+  getIt.registerFactory<AuthorisationOauthDataRepository>(() => AuthorisationDataRepositoryImpl(authorisationApi: getIt()));
+  getIt.registerFactory<MessageDataRepository>(() => MessageDataRepositoryImpl(messageApi: getIt()));
 
 
   // ------------------------------------------
   // DOMAIN
   // ------------------------------------------
-  getIt.registerFactoryAsync<RoleRepository>(() async => RoleRepositoryImpl(repository: getIt(), roleLocalStorage: getIt()));
-  getIt.registerFactoryAsync<PositionRepository>(() async => PositionRepositoryImpl(repository: getIt(), positionLocalStorage: getIt()));
-  getIt.registerFactoryAsync<TransportRepository>(() async => TransportRepositoryImpl(repository: getIt(), transportLocalStorage: getIt()));
-  getIt.registerFactoryAsync<TransportTypeRepository>(() async => TransportTypeRepositoryImpl(repository: getIt(), transportTypeLocalStorage: getIt()));
-  getIt.registerFactoryAsync<UserRepository>(() async => UserRepositoryImpl(repository: getIt(), userLocalStorage: getIt()));
-  getIt.registerFactoryAsync<PackageRepository>(() async => PackageRepositoryImpl(repository: getIt(), packageLocalStorage: getIt()));
-  getIt.registerFactoryAsync<PackageStatusRepository>(() async => PackageStatusRepositoryImpl(repository: getIt(), packageStatusLocalStorage: getIt()));
-  getIt.registerFactoryAsync<PackageTypeRepository>(() async => PackageTypeRepositoryImpl(repository: getIt(), packageTypeLocalStorage: getIt()));
-  getIt.registerFactoryAsync<EmployeeRepository>(() async => EmployeeRepositoryImpl(repository: getIt(), employeeLocalStorage: getIt()));
-  getIt.registerFactoryAsync<ClientRepository>(() async => ClientRepositoryImpl(repository: getIt(), clientLocalStorage: getIt()));
-  getIt.registerFactoryAsync<AuthorisationOauthRepository>(() async => AuthorisationOauthRepositoryImpl(repository: getIt()));
-  getIt.registerFactoryAsync<MessageRepository>(() async => MessageRepositoryImpl(repository: getIt()));
+  getIt.registerFactory<RoleRepository>(() => RoleRepositoryImpl(repository: getIt(), roleLocalStorage: getIt()));
+  getIt.registerFactory<PositionRepository>(() => PositionRepositoryImpl(repository: getIt(), positionLocalStorage: getIt()));
+  getIt.registerFactory<TransportRepository>(() => TransportRepositoryImpl(repository: getIt(), transportLocalStorage: getIt()));
+  getIt.registerFactory<TransportTypeRepository>(() => TransportTypeRepositoryImpl(repository: getIt(), transportTypeLocalStorage: getIt()));
+  getIt.registerFactory<UserRepository>(() => UserRepositoryImpl(repository: getIt(), userLocalStorage: getIt()));
+  getIt.registerFactory<PackageRepository>(() => PackageRepositoryImpl(repository: getIt(), packageLocalStorage: getIt()));
+  getIt.registerFactory<PackageStatusRepository>(() => PackageStatusRepositoryImpl(repository: getIt(), packageStatusLocalStorage: getIt()));
+  getIt.registerFactory<PackageTypeRepository>(() => PackageTypeRepositoryImpl(repository: getIt(), packageTypeLocalStorage: getIt()));
+  getIt.registerFactory<EmployeeRepository>(() => EmployeeRepositoryImpl(repository: getIt(), employeeLocalStorage: getIt()));
+  getIt.registerFactory<ClientRepository>(() => ClientRepositoryImpl(repository: getIt(), clientLocalStorage: getIt()));
+  getIt.registerFactory<AuthorisationOauthRepository>(() => AuthorisationOauthRepositoryImpl(repository: getIt()));
+  getIt.registerFactory<MessageRepository>(() => MessageRepositoryImpl(repository: getIt()));
 
 
-  getIt.registerFactoryAsync(() async => GetRolesUseCase(repository: getIt()));
-  getIt.registerFactoryAsync(() async => GetRoleByIdUseCase(repository: getIt()));
+  getIt.registerFactory(() => GetRolesUseCase(repository: getIt()));
+  getIt.registerFactory(() => GetRoleByIdUseCase(repository: getIt()));
 
-  getIt.registerFactoryAsync(() async => AddPositionUseCase(repository: getIt()));
-  getIt.registerFactoryAsync(() async => DeletePositionUseCase(repository: getIt()));
-  getIt.registerFactoryAsync(() async => GetPositionsUseCase(repository: getIt()));
-  getIt.registerFactoryAsync(() async => GetPositionByIdUseCase(repository: getIt()));
-  getIt.registerFactoryAsync(() async => UpdatePositionUseCase(repository: getIt()));
+  getIt.registerFactory(() => AddPositionUseCase(repository: getIt()));
+  getIt.registerFactory(() => DeletePositionUseCase(repository: getIt()));
+  getIt.registerFactory(() => GetPositionsUseCase(repository: getIt()));
+  getIt.registerFactory(() => GetPositionByIdUseCase(repository: getIt()));
+  getIt.registerFactory(() => UpdatePositionUseCase(repository: getIt()));
 
-  getIt.registerFactoryAsync(() async => AddTransportUseCase(repository: getIt()));
-  getIt.registerFactoryAsync(() async => DeleteTransportUseCase(repository: getIt()));
-  getIt.registerFactoryAsync(() async => GetTransportByIdUseCase(repository: getIt()));
-  getIt.registerFactoryAsync(() async => GetTransportByDriverIdUseCase(repository: getIt()));
-  getIt.registerFactoryAsync(() async => GetTransportUseCase(repository: getIt()));
-  getIt.registerFactoryAsync(() async => UpdateTransportUseCase(repository: getIt()));
+  getIt.registerFactory(() => AddTransportUseCase(repository: getIt()));
+  getIt.registerFactory(() => DeleteTransportUseCase(repository: getIt()));
+  getIt.registerFactory(() => GetTransportByIdUseCase(repository: getIt()));
+  getIt.registerFactory(() => GetTransportByDriverIdUseCase(repository: getIt()));
+  getIt.registerFactory(() => GetTransportUseCase(repository: getIt()));
+  getIt.registerFactory(() => UpdateTransportUseCase(repository: getIt()));
 
-  getIt.registerFactoryAsync(() async => AddTransportTypeUseCase(repository: getIt()));
-  getIt.registerFactoryAsync(() async => DeleteTransportTypeUseCase(repository: getIt()));
-  getIt.registerFactoryAsync(() async => GetTransportTypeByIdUseCase(repository: getIt()));
-  getIt.registerFactoryAsync(() async => GetTransportTypesUseCase(repository: getIt()));
-  getIt.registerFactoryAsync(() async => UpdateTransportTypeUseCase(repository: getIt()));
+  getIt.registerFactory(() => AddTransportTypeUseCase(repository: getIt()));
+  getIt.registerFactory(() => DeleteTransportTypeUseCase(repository: getIt()));
+  getIt.registerFactory(() => GetTransportTypeByIdUseCase(repository: getIt()));
+  getIt.registerFactory(() => GetTransportTypesUseCase(repository: getIt()));
+  getIt.registerFactory(() => UpdateTransportTypeUseCase(repository: getIt()));
 
-  getIt.registerFactoryAsync(() async => AddUserUseCase(repository: getIt()));
-  getIt.registerFactoryAsync(() async => DeleteUserUseCase(repository: getIt()));
-  getIt.registerFactoryAsync(() async => GetUserByIdUseCase(repository: getIt()));
-  getIt.registerFactoryAsync(() async => GetUsersUseCase(repository: getIt()));
-  getIt.registerFactoryAsync(() async => UpdateUserUseCase(repository: getIt()));
+  getIt.registerFactory(() => AddUserUseCase(repository: getIt()));
+  getIt.registerFactory(() => DeleteUserUseCase(repository: getIt()));
+  getIt.registerFactory(() => GetUserByIdUseCase(repository: getIt()));
+  getIt.registerFactory(() => GetUsersUseCase(repository: getIt()));
+  getIt.registerFactory(() => UpdateUserUseCase(repository: getIt()));
 
-  getIt.registerFactoryAsync(() async => AddPackageUseCase(repository: getIt()));
-  getIt.registerFactoryAsync(() async => DeletePackageUseCase(repository: getIt()));
-  getIt.registerFactoryAsync(() async => GetPackageByIdUseCase(repository: getIt()));
-  getIt.registerFactoryAsync(() async => GetPackagesByClientIdUseCase(repository: getIt()));
-  getIt.registerFactoryAsync(() async => GetPackagesUseCase(repository: getIt()));
-  getIt.registerFactoryAsync(() async => UpdatePackageUseCase(repository: getIt()));
+  getIt.registerFactory(() => AddPackageUseCase(repository: getIt()));
+  getIt.registerFactory(() => DeletePackageUseCase(repository: getIt()));
+  getIt.registerFactory(() => GetPackageByIdUseCase(repository: getIt()));
+  getIt.registerFactory(() => GetPackagesByClientIdUseCase(repository: getIt()));
+  getIt.registerFactory(() => GetPackagesUseCase(repository: getIt()));
+  getIt.registerFactory(() => UpdatePackageUseCase(repository: getIt()));
 
-  getIt.registerFactoryAsync(() async => AddPackageStatusUseCase(repository: getIt()));
-  getIt.registerFactoryAsync(() async => DeletePackageStatusUseCase(repository: getIt()));
-  getIt.registerFactoryAsync(() async => GetPackageStatusByIdUseCase(repository: getIt()));
-  getIt.registerFactoryAsync(() async => GetPackageStatusesUseCase(repository: getIt()));
-  getIt.registerFactoryAsync(() async => UpdatePackageStatusUseCase(repository: getIt()));
+  getIt.registerFactory(() => AddPackageStatusUseCase(repository: getIt()));
+  getIt.registerFactory(() => DeletePackageStatusUseCase(repository: getIt()));
+  getIt.registerFactory(() => GetPackageStatusByIdUseCase(repository: getIt()));
+  getIt.registerFactory(() => GetPackageStatusesUseCase(repository: getIt()));
+  getIt.registerFactory(() => UpdatePackageStatusUseCase(repository: getIt()));
 
-  getIt.registerFactoryAsync(() async => AddPackageTypeUseCase(repository: getIt()));
-  getIt.registerFactoryAsync(() async => DeletePackageTypeUseCase(repository: getIt()));
-  getIt.registerFactoryAsync(() async => GetPackageTypeByIdUseCase(repository: getIt()));
-  getIt.registerFactoryAsync(() async => GetPackageTypesUseCase(repository: getIt()));
-  getIt.registerFactoryAsync(() async => UpdatePackageTypeUseCase(repository: getIt()));
+  getIt.registerFactory(() => AddPackageTypeUseCase(repository: getIt()));
+  getIt.registerFactory(() => DeletePackageTypeUseCase(repository: getIt()));
+  getIt.registerFactory(() => GetPackageTypeByIdUseCase(repository: getIt()));
+  getIt.registerFactory(() => GetPackageTypesUseCase(repository: getIt()));
+  getIt.registerFactory(() => UpdatePackageTypeUseCase(repository: getIt()));
 
-  getIt.registerFactoryAsync(() async => AddEmployeeUseCase(repository: getIt()));
-  getIt.registerFactoryAsync(() async => DeleteEmployeeUseCase(repository: getIt()));
-  getIt.registerFactoryAsync(() async => GetEmployeeByIdUseCase(repository: getIt()));
-  getIt.registerFactoryAsync(() async => GetEmployeeByUserIdUseCase(repository: getIt()));
-  getIt.registerFactoryAsync(() async => GetEmployeesUseCase(repository: getIt()));
-  getIt.registerFactoryAsync(() async => UpdateEmployeeUseCase(repository: getIt()));
+  getIt.registerFactory(() => AddEmployeeUseCase(repository: getIt()));
+  getIt.registerFactory(() => DeleteEmployeeUseCase(repository: getIt()));
+  getIt.registerFactory(() => GetEmployeeByIdUseCase(repository: getIt()));
+  getIt.registerFactory(() => GetEmployeeByUserIdUseCase(repository: getIt()));
+  getIt.registerFactory(() => GetEmployeesUseCase(repository: getIt()));
+  getIt.registerFactory(() => UpdateEmployeeUseCase(repository: getIt()));
 
-  getIt.registerFactoryAsync(() async => AddClientUseCase(repository: getIt()));
-  getIt.registerFactoryAsync(() async => DeleteClientUseCase(repository: getIt()));
-  getIt.registerFactoryAsync(() async => GetClientByIdUseCase(repository: getIt()));
-  getIt.registerFactoryAsync(() async => GetClientByUserIdUseCase(repository: getIt()));
-  getIt.registerFactoryAsync(() async => GetClientsUseCase(repository: getIt()));
-  getIt.registerFactoryAsync(() async => UpdateClientUseCase(repository: getIt()));
+  getIt.registerFactory(() => AddClientUseCase(repository: getIt()));
+  getIt.registerFactory(() => DeleteClientUseCase(repository: getIt()));
+  getIt.registerFactory(() => GetClientByIdUseCase(repository: getIt()));
+  getIt.registerFactory(() => GetClientByUserIdUseCase(repository: getIt()));
+  getIt.registerFactory(() => GetClientsUseCase(repository: getIt()));
+  getIt.registerFactory(() => UpdateClientUseCase(repository: getIt()));
 
-  getIt.registerFactoryAsync(() async => GetGoogleUrlUseCase(repository: getIt()));
-  getIt.registerFactoryAsync(() async => RevokeTokenBySecretUseCase(repository: getIt()));
-  getIt.registerFactoryAsync(() async => SendAuthCodeUseCase(repository: getIt()));
+  getIt.registerFactory(() => GetGoogleUrlUseCase(repository: getIt()));
+  getIt.registerFactory(() => RevokeTokenBySecretUseCase(repository: getIt()));
+  getIt.registerFactory(() => SendAuthCodeUseCase(repository: getIt()));
+  getIt.registerFactory(() => GetUserByLoginPassUseCase(repository: getIt()));
 
-  getIt.registerFactoryAsync(() async => SendMessageUseCase(repository: getIt()));
-  getIt.registerFactoryAsync(() async => ReceiveMessageUseCase(repository: getIt()));
+  getIt.registerFactory(() => SendMessageUseCase(repository: getIt()));
+  getIt.registerFactory(() => ReceiveMessageUseCase(repository: getIt()));
 
 
   // ----------------------------------------
   // VIEW
   // ----------------------------------------
-  getIt.registerLazySingletonAsync(() async => HomeController());
-  getIt.registerLazySingletonAsync(() async => SendPackageController());
-  getIt.registerLazySingletonAsync(() async => TrackPackageController());
+  getIt.registerLazySingleton(() => HomeController());
+  getIt.registerLazySingleton(() => SendPackageController());
+  getIt.registerLazySingleton(() => TrackPackageController());
+  getIt.registerLazySingleton(() => LoginPageController(getUserByLoginPassUseCase: getIt())); // не зареган ???
 }

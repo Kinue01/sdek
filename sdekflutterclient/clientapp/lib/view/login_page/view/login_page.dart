@@ -1,3 +1,4 @@
+import 'package:clientapp/domain/model/User.dart';
 import 'package:clientapp/view/login_page/controller/login_page_controller.dart';
 import 'package:clientapp/view/navigation_service/FluroApp.dart';
 import 'package:flutter/material.dart';
@@ -22,82 +23,66 @@ class LoginComponent extends StatefulWidget with GetItStatefulWidgetMixin {
 }
 
 class LoginViewState extends State<LoginComponent> with GetItStateMixin {
-  // final _loginController = TextEditingController();
-  // final _passController = TextEditingController();
-  //
-  // _changeLogin() {
-  //   get<LoginPageController>().login = _loginController.text;
-  // }
-  //
-  // _changePass() {
-  //   get<LoginPageController>().password = _passController.text;
-  // }
-  //
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   _loginController.addListener(_changeLogin);
-  //   _passController.addListener(_changePass);
-  // }
-  //
-  // @override
-  // void dispose() {
-  //   super.dispose();
-  //   _loginController.dispose();
-  //   _passController.dispose();
-  // }
+  late LoginPageController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = get<LoginPageController>();
+  }
 
   void onLogin() async {
-    await get<LoginPageController>().logIn();
-    FluroApp.router.navigateTo(context, "/"); //todo think smth
+    //User res = await controller.logIn();
+    FluroApp.router.navigateTo(context, "/home");
   }
 
   @override
   Widget build(BuildContext context) {
-    String login = watchX((LoginPageController c) => c.login);
-    String pass = watchX((LoginPageController c) => c.password);
+    String login = watchX((LoginPageController controller) => controller.login);
+    String pass = watchX((LoginPageController controller) => controller.password);
 
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(5),
-        child: Column(
-          children: <Widget>[
-            Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10),
-              child: TextFormField(
-                decoration: const InputDecoration(
-                    border: UnderlineInputBorder(),
-                    labelText: 'Login'
-                ),
-                onChanged: (text) {
-                  login = text;
-                },
-                //controller: _loginController,
+      body: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              Image.asset("assets/images/logo.png", width: 400, height: 400,),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  SizedBox(
+                    width: 300,
+                    child: TextField(
+                      decoration: const InputDecoration(
+                          border: UnderlineInputBorder(),
+                          labelText: 'Логин'
+                      ),
+                      onChanged: (text) {
+                        login = text;
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  SizedBox(
+                    width: 300,
+                    child: TextField(
+                      decoration: const InputDecoration(
+                          border: UnderlineInputBorder(),
+                          labelText: 'Пароль'
+                      ),
+                      onChanged: (text) {
+                        pass = text;
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: onLogin,
+                    child: const Text('Войти')
+                  ),
+                ],
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10),
-              child: TextFormField(
-                decoration: const InputDecoration(
-                    border: UnderlineInputBorder(),
-                    labelText: 'Password'
-                ),
-                onChanged: (text) {
-                  pass = text;
-                },
-                //controller: _passController,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10),
-              child: ElevatedButton(
-                  onPressed: onLogin,
-                  child: const Text('Войти')
-              )
-            ),
-          ],
-        )
-      ),
+            ],
+          )
     );
   }
 }

@@ -3,12 +3,11 @@ import 'package:clientapp/view/send_package_page/page/send_package_page.dart';
 import 'package:clientapp/view/track_package_page/page/track_package_page.dart';
 import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
-
 import '../home_page/view/home_view.dart';
 
 var rootHandler = Handler(
     handlerFunc: (BuildContext? context, Map<String, List<String>> params) {
-      return const HomePage();
+      return const LoginPage();
     });
 
 var sendPackageHandler = Handler(
@@ -21,7 +20,7 @@ var trackPackageHandler = Handler(
       return const TrackPackagePage();
     });
 
-var loginHandler = Handler(
+var homeHandler = Handler(
     handlerFunc: (BuildContext? context, Map<String, List<String>> params) {
-      return const LoginPage();
+      return const HomePage();
     });
