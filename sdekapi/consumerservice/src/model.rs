@@ -1,6 +1,6 @@
 use ::serde::{Deserialize, Serialize};
-use sqlx::types::*;
 use utoipa::ToSchema;
+use uuid::Uuid;
 
 #[derive(Clone, Debug, Serialize, Deserialize, ToSchema, Default)]
 pub struct RoleResponse {
@@ -15,6 +15,7 @@ pub struct User {
     pub user_password: String,
     pub user_email: String,
     pub user_phone: String,
+    pub user_access_token: String,
     pub user_role: RoleResponse,
 }
 

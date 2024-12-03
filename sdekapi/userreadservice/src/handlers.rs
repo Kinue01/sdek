@@ -1,7 +1,7 @@
 use axum::extract::{Query, State};
 use axum::Json;
 use futures::StreamExt;
-use redis::AsyncCommands;
+use redis::{AsyncCommands, JsonAsyncCommands};
 use serde::Deserialize;
 use utoipa::IntoParams;
 use uuid::Uuid;
@@ -21,7 +21,7 @@ use crate::model::{RoleResponse, User, UserResponse};
 pub async fn get_roles(
     State(mut state): State<AppState>,
 ) -> Result<Json<Vec<RoleResponse>>, MyError> {
-    let roles_redis: Vec<RoleResponse> = state.redis.get("roles").await.unwrap_or_default();
+    let roles_redis: Vec<RoleResponse> = state.redis.json_get("roles", "$").await.unwrap_or_default();
 
     match roles_redis.is_empty() {
         true => {
@@ -32,7 +32,7 @@ pub async fn get_roles(
 
             let _: () = state
                 .redis
-                .set("roles", &roles)
+                .json_set("roles", "$", &roles)
                 .await
                 .map_err(MyError::RDbError)?;
 
@@ -100,7 +100,7 @@ pub async fn get_role_by_id(
     )
 )]
 pub async fn get_users(State(mut state): State<AppState>) -> Result<Json<Vec<User>>, MyError> {
-    let users_redis: Vec<User> = state.redis.get("users").await.unwrap_or_default();
+    let users_redis: Vec<User> = state.redis.json_get("users", "$").await.unwrap_or_default();
 
     match users_redis.is_empty() {
         true => {
@@ -108,6 +108,8 @@ pub async fn get_users(State(mut state): State<AppState>) -> Result<Json<Vec<Use
                 .fetch_all(&state.postgres)
                 .await
                 .map_err(MyError::DBError)?;
+            
+            let length = users.len();
 
             let res = futures::stream::iter(users)
                 .map(|x| async {
@@ -135,11 +137,11 @@ pub async fn get_users(State(mut state): State<AppState>) -> Result<Json<Vec<Use
                     .await
                     .unwrap_or_default()
                 })
-                .buffer_unordered(10)
+                .buffer_unordered(length)
                 .collect::<Vec<_>>()
                 .await;
 
-            let _: () = state.redis.set("users", &res).await.unwrap();
+            let _: () = state.redis.json_set("users", "$", &res).await.map_err(MyError::RDbError)?;
 
             Ok(Json(res))
         }
@@ -216,24 +218,25 @@ pub async fn get_user_by_id(
 pub async fn update_db(State(mut state): State<AppState>) {
     let mut stream = state
         .event_client
-        .read_stream("user", &Default::default())
-        .await
-        .unwrap();
-
-    while let Some(event) = stream.next().await.unwrap() {
+        .subscribe_to_stream("user", &Default::default())
+        .await;
+    
+    loop {
+        let event = stream.next().await.unwrap();
         let ev = event.get_original_event().as_json::<User>().unwrap();
         match event.event.unwrap().event_type.as_str() {
             "user_add" => {
-                let _ = sqlx::query!("insert into tb_user (user_login, user_password, user_email, user_phone, user_access_token, user_role_id) values (1, 2, 3, 4, 5, 6)")
-                    .bind(&ev.user_login).bind(&ev.user_password).bind(&ev.user_email).bind(&ev.user_phone).bind(&ev.user_access_token).bind(&ev.user_role.role_id)
+                let _ = sqlx::query!("insert into tb_user (user_id, user_login, user_password, user_email, user_phone, user_access_token, user_role_id) values ($1, $2, $3, $4, $5, $6, $7)", &ev.user_id, &ev.user_login, &ev.user_password, &ev.user_email, &ev.user_phone, &ev.user_access_token, &ev.user_role.role_id)
                     .execute(&state.postgres)
-                    .await.map_err(MyError::DBError);
+                    .await.map_err(MyError::DBError).unwrap();
+                
+                let _: () = state.redis.del("users").await.unwrap();
             }
             "user_update" => {
                 let _ = sqlx::query!("update tb_user set user_login = $1, user_password = $2, user_email = $3, user_phone = $4, user_access_token = $5, user_role_id = $6 where user_id = $7", &ev.user_login, &ev.user_password, &ev.user_email, &ev.user_phone, &ev.user_access_token, &ev.user_role.role_id, &ev.user_id)
                     .execute(&state.postgres)
-                    .await.map_err(MyError::DBError);
-
+                    .await.map_err(MyError::DBError).unwrap();
+                
                 let _: () = state
                     .redis
                     .del("user".to_string() + &*ev.user_id.to_string())
@@ -244,7 +247,7 @@ pub async fn update_db(State(mut state): State<AppState>) {
                 let _ = sqlx::query!("delete from tb_user where user_id = $1", &ev.user_id)
                     .execute(&state.postgres)
                     .await
-                    .map_err(MyError::DBError);
+                    .map_err(MyError::DBError).unwrap();
 
                 let _: () = state
                     .redis

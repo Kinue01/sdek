@@ -1,41 +1,28 @@
 package com.example.warehousereadservice.warehousereadservice.controller;
 
 import com.example.warehousereadservice.warehousereadservice.model.WarehouseResponse;
-import com.example.warehousereadservice.warehousereadservice.service.UpdateWarehouseDbService;
 import com.example.warehousereadservice.warehousereadservice.service.WarehouseService;
 import org.springframework.web.bind.annotation.*;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 
+import java.util.List;
+
+@CrossOrigin(origins = "*")
 @RestController
-@RequestMapping(value = "/api/warehouses", produces = "application/json")
+@RequestMapping(value = "/warehousereadservice/api", produces = "application/json")
 public class WarehouseController {
-    final WarehouseService service;
+    private final WarehouseService service;
 
-    public WarehouseController(WarehouseService service, UpdateWarehouseDbService updateWarehouseDbService) {
+    public WarehouseController(WarehouseService service) {
         this.service = service;
-        updateWarehouseDbService.init();
     }
 
-    @GetMapping
+    @GetMapping("/warehouse")
     public WarehouseResponse getWarehouseById(@RequestParam int id) {
-        try {
-            CompletableFuture<WarehouseResponse> res = service.getWarehouse(id);
-            return res.get();
-        } catch (InterruptedException | ExecutionException e) {
-            System.out.println("aaa error");
-            return null;
-        }
+        return service.getWarehouse(id).join();
     }
 
-    @GetMapping
-    public Iterable<WarehouseResponse> getWarehouses() {
-        try {
-            CompletableFuture<Iterable<WarehouseResponse>> res = service.getWarehouses();
-            return res.get();
-        } catch (InterruptedException | ExecutionException e) {
-            System.out.println("aaa error");
-            return null;
-        }
+    @GetMapping("/warehouses")
+    public List<WarehouseResponse> getWarehouses() {
+        return service.getWarehouses().join();
     }
 }

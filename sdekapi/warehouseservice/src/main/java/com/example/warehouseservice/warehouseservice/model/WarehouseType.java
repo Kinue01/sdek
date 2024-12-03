@@ -1,12 +1,16 @@
 package com.example.warehouseservice.warehouseservice.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class WarehouseType {
-    public int type_id;
-    public String type_name;
-    public int type_small_quantity;
-    public int type_med_quantity;
-    public int type_huge_quantity;
+    short type_id;
+    String type_name;
+    int type_small_quantity;
+    int type_med_quantity;
+    int type_huge_quantity;
 }

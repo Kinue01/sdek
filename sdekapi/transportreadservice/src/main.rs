@@ -35,7 +35,6 @@ struct AppState {
     redis: MultiplexedConnection,
     mongo: Client,
     event_client: eventstore::Client,
-    http_client: reqwest::Client,
 }
 
 #[tokio::main]
@@ -78,38 +77,42 @@ async fn main() {
 
     let event_client = eventstore::Client::new(es_url.parse().unwrap_or_default()).unwrap();
 
-    let http_client = reqwest::ClientBuilder::new().build().unwrap();
-
     let state = AppState {
         postgres,
         redis,
         mongo,
         event_client,
-        http_client,
     };
 
     let app = Router::new()
-        .route("/api/transport", get(get_transport_by_id))
-        .route("/api/transports", get(get_transport))
-        .route("/api/transport_types", get(get_transport_types))
-        .route("/api/transport_type", get(get_transport_type_by_id))
-        .route("/api/transport_driver", get(get_transport_by_driver_id))
-        .merge(SwaggerUi::new("/swagger").url("/api-doc/openapi.json", ApiDoc::openapi()))
+        .route("/transportreadservice/api/transport", get(get_transport_by_id))
+        .route("/transportreadservice/api/transports", get(get_transport))
+        .route("/transportreadservice/api/transport_types", get(get_transport_types))
+        .route("/transportreadservice/api/transport_type", get(get_transport_type_by_id))
+        .route("/transportreadservice/api/transport_driver", get(get_transport_by_driver_id))
+        .merge(SwaggerUi::new("/transportreadservice/swagger").url("/transportreadservice/api-doc/openapi.json", ApiDoc::openapi()))
         .with_state(state.clone())
         .layer(ServiceBuilder::new().layer(tracing).layer(cors));
 
-    let listener = tokio::net::TcpListener::bind("localhost:8015")
+    let listener = tokio::net::TcpListener::bind("transportreadservice:8015")
         .await
         .unwrap();
     tracing::info!("listening on {}", listener.local_addr().unwrap());
 
-    tokio::spawn(update_db_types(State(state.clone())))
-        .await
-        .unwrap();
-    tokio::spawn(update_db_main(State(state.clone())))
-        .await
-        .unwrap();
-    tokio::spawn(update_mongo(State(state))).await.unwrap();
+    let st = state.clone();
+    tokio::spawn(async move {
+        update_db_types(State(st)).await
+    });
+    
+    let st2 = state.clone();
+    tokio::spawn(async move {
+        update_db_main(State(st2)).await
+    });
+    
+    let st3 = state.clone();
+    tokio::spawn(async move {
+        update_mongo(State(st3)).await
+    });
 
     axum::serve(listener, app).await.unwrap();
 }

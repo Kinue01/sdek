@@ -46,28 +46,28 @@ async fn main() {
 
     let app = Router::new()
         .route(
-            "/api/type",
+            "/packageservice/api/type",
             post(add_package_type)
                 .patch(update_package_type)
                 .delete(delete_package_type),
         )
         .route(
-            "/api/status",
+            "/packageservice/api/status",
             post(add_package_status)
                 .patch(update_package_status)
                 .delete(delete_package_status),
         )
         .route(
-            "/api/package",
+            "/packageservice/api/package",
             post(add_package)
                 .patch(update_package)
                 .delete(delete_package),
         )
-        .merge(SwaggerUi::new("/swagger").url("/api-doc/openapi.json", ApiDoc::openapi()))
+        .merge(SwaggerUi::new("/packageservice/swagger").url("/packageservice/api-doc/openapi.json", ApiDoc::openapi()))
         .with_state(event_client)
         .layer(ServiceBuilder::new().layer(tracing).layer(cors));
 
-    let listener = tokio::net::TcpListener::bind("localhost:8003")
+    let listener = tokio::net::TcpListener::bind("packageservice:8003")
         .await
         .unwrap();
     tracing::info!("listening on {}", listener.local_addr().unwrap());

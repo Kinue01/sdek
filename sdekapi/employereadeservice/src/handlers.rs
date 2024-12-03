@@ -1,7 +1,8 @@
+use std::clone::Clone;
 use axum::extract::{Query, State};
 use axum::Json;
 use futures::StreamExt;
-use redis::AsyncCommands;
+use redis::{AsyncCommands, JsonAsyncCommands};
 use serde::Deserialize;
 use utoipa::IntoParams;
 use uuid::Uuid;
@@ -21,7 +22,7 @@ use crate::model::*;
 pub async fn get_employees(
     State(mut state): State<AppState>,
 ) -> Result<Json<Vec<Employee>>, MyError> {
-    let emps_redis: Vec<Employee> = state.redis.get("emps").await.unwrap_or_default();
+    let emps_redis: Vec<Employee> = state.redis.json_get("emps", "$").await.unwrap_or_default();
 
     match emps_redis.is_empty() {
         true => {
@@ -29,27 +30,16 @@ pub async fn get_employees(
                 .fetch_all(&state.postgres)
                 .await
                 .map_err(MyError::DBError)?;
-
+            
             let res = futures::stream::iter(emps)
                 .map(|x| async {
-                    let postgres = state.postgres.clone();
-                    let http = state.http_client.clone();
+                    let postgres = state.clone().postgres.clone();
 
                     tokio::spawn(async move {
-                        let user: User = serde_json::from_str(
-                            http.get(format!(
-                                "http://localhost:8010/api/user?uuid={}",
-                                x.clone().employee_user_id
-                            ))
-                            .send()
+                        let user = sqlx::query_as!(UserResponse, "select * from tb_fuser where user_id = $1", &x.clone().employee_user_id)
+                            .fetch_one(&postgres)
                             .await
-                            .unwrap()
-                            .text()
-                            .await
-                            .unwrap()
-                            .as_str(),
-                        )
-                        .unwrap();
+                            .map_err(MyError::DBError).unwrap();
 
                         Employee {
                             employee_id: x.employee_id,
@@ -69,23 +59,13 @@ pub async fn get_employees(
                                 user_id: user.user_id,
                                 user_login: user.user_login,
                                 user_password: user.user_password,
-                                user_email: user.user_email,
+                                user_email: user.user_email.expect("REASON"),
                                 user_phone: user.user_phone,
-                                user_access_token: user.user_access_token,
-                                user_role: serde_json::from_str(
-                                    http.get(format!(
-                                        "http://localhost:8010/api/role?id={}",
-                                        &user.user_role.role_id
-                                    ))
-                                    .send()
+                                user_access_token: user.user_access_token.expect("REASON"),
+                                user_role: sqlx::query_as!(RoleResponse, "select * from tb_fuser_role where role_id = $1", user.user_role_id)
+                                    .fetch_one(&postgres)
                                     .await
-                                    .unwrap()
-                                    .text()
-                                    .await
-                                    .unwrap()
-                                    .as_str(),
-                                )
-                                .unwrap(),
+                                    .map_err(MyError::DBError).expect("REASON"),
                             },
                         }
                     })
@@ -96,7 +76,7 @@ pub async fn get_employees(
                 .collect::<Vec<_>>()
                 .await;
 
-            let _: () = state.redis.set("emps", &res).await.unwrap();
+            let _: () = state.redis.json_set("emps", "$", &res).await.unwrap();
 
             Ok(Json(res))
         }
@@ -126,7 +106,7 @@ pub async fn get_employee_by_id(
 ) -> Result<Json<Employee>, MyError> {
     let emp_redis: Employee = state
         .redis
-        .get("emp".to_owned() + &*uuid.0.to_string())
+        .json_get("emp".to_owned() + &*uuid.0.to_string(), "$")
         .await
         .unwrap_or_default();
 
@@ -141,22 +121,10 @@ pub async fn get_employee_by_id(
             .await
             .map_err(MyError::DBError)?;
 
-            let user: User = serde_json::from_str(
-                state
-                    .http_client
-                    .get(format!(
-                        "http://localhost:8010/api/user?uuid={}",
-                        emp.employee_user_id
-                    ))
-                    .send()
-                    .await
-                    .unwrap()
-                    .text()
-                    .await
-                    .unwrap()
-                    .as_str(),
-            )
-            .unwrap();
+            let user = sqlx::query_as!(UserResponse, "select * from tb_fuser where user_id = $1", &emp.employee_user_id)
+                .fetch_one(&state.postgres)
+                .await
+                .map_err(MyError::DBError)?;
 
             let res = Employee {
                 employee_id: emp.employee_id,
@@ -171,12 +139,23 @@ pub async fn get_employee_by_id(
                 .fetch_one(&state.postgres)
                 .await
                 .map_err(MyError::DBError)?,
-                employee_user: user,
+                employee_user: User {
+                    user_id: user.user_id,
+                    user_login: user.user_login,
+                    user_password: user.user_password,
+                    user_email: user.user_email.expect("REASON"),
+                    user_phone: user.user_phone,
+                    user_access_token: user.user_access_token.expect("REASON"),
+                    user_role: sqlx::query_as!(RoleResponse, "select * from tb_fuser_role where role_id = $1", user.user_role_id)
+                        .fetch_one(&state.postgres)
+                        .await
+                        .map_err(MyError::DBError)?,
+                },
             };
 
             let _: () = state
                 .redis
-                .set("emp".to_owned() + &*uuid.0.to_string(), &res)
+                .json_set("emp".to_owned() + &*uuid.0.to_string(), "$", &res)
                 .await
                 .unwrap();
 
@@ -201,28 +180,16 @@ pub async fn get_employee_by_user_id(
 
     let emp_redis: Employee = state
         .redis
-        .get("emp".to_owned() + &*emp.employee_id.to_string())
+        .json_get("emp".to_owned() + &*emp.employee_id.to_string(), "$")
         .await
         .unwrap_or_default();
 
     match emp_redis.employee_id {
         u if u == Uuid::default() => {
-            let user: User = serde_json::from_str(
-                state
-                    .http_client
-                    .get(format!(
-                        "http://localhost:8010/api/user?uuid={}",
-                        emp.employee_user_id
-                    ))
-                    .send()
-                    .await
-                    .unwrap()
-                    .text()
-                    .await
-                    .unwrap()
-                    .as_str(),
-            )
-            .unwrap();
+            let user = sqlx::query_as!(UserResponse, "select * from tb_fuser where user_id = $1", emp.employee_user_id)
+                .fetch_one(&state.postgres)
+                .await
+                .map_err(MyError::DBError)?;
 
             let res = Employee {
                 employee_id: emp.employee_id,
@@ -237,12 +204,23 @@ pub async fn get_employee_by_user_id(
                 .fetch_one(&state.postgres)
                 .await
                 .map_err(MyError::DBError)?,
-                employee_user: user,
+                employee_user: User {
+                    user_id: user.user_id,
+                    user_login: user.user_login,
+                    user_password: user.user_password,
+                    user_email: user.user_email.expect("REASON"),
+                    user_phone: user.user_phone,
+                    user_access_token: user.user_access_token.expect("REASON"),
+                    user_role: sqlx::query_as!(RoleResponse, "select * from tb_fuser_role where role_id = $1", user.user_role_id)
+                        .fetch_one(&state.postgres)
+                        .await
+                        .map_err(MyError::DBError)?,
+                },
             };
 
             let _: () = state
                 .redis
-                .set("emp".to_owned() + &*uuid.0.to_string(), &res)
+                .json_set("emp".to_owned() + &*uuid.0.to_string(), "$", &res)
                 .await
                 .unwrap();
 
@@ -264,7 +242,7 @@ pub async fn get_positions(
     State(mut state): State<AppState>,
 ) -> Result<Json<Vec<PositionResponse>>, MyError> {
     let poses_redis: Vec<PositionResponse> =
-        state.redis.get("poses").await.map_err(MyError::RDbError)?;
+        state.redis.json_get("poses", "$").await.map_err(MyError::RDbError)?;
 
     match poses_redis.is_empty() {
         true => {
@@ -273,7 +251,7 @@ pub async fn get_positions(
                 .await
                 .map_err(MyError::DBError)?;
 
-            let _: () = state.redis.set("poses", &poses).await.unwrap();
+            let _: () = state.redis.json_set("poses", "$", &poses).await.unwrap();
 
             Ok(Json(poses))
         }
@@ -303,7 +281,7 @@ pub async fn get_position_by_id(
 ) -> Result<Json<PositionResponse>, MyError> {
     let pos_redis: PositionResponse = state
         .redis
-        .get("pos".to_string() + &*id.0.to_string())
+        .json_get("pos".to_string() + &*id.0.to_string(),"$")
         .await
         .map_err(MyError::RDbError)?;
 
@@ -320,7 +298,7 @@ pub async fn get_position_by_id(
 
             let _: () = state
                 .redis
-                .set("pos".to_string() + &*id.0.to_string(), &pos)
+                .json_set("pos".to_string() + &*id.0.to_string(), "$", &pos)
                 .await
                 .unwrap();
 
@@ -333,15 +311,16 @@ pub async fn get_position_by_id(
 pub async fn update_db_poses(State(mut state): State<AppState>) {
     let mut stream = state
         .event_client
-        .read_stream("position", &Default::default())
-        .await
-        .unwrap();
+        .subscribe_to_stream("position", &Default::default())
+        .await;
 
-    while let Some(event) = stream.next().await.unwrap() {
+    loop {
+        let event = stream.next().await.unwrap();
         let ev = event
             .get_original_event()
             .as_json::<PositionResponse>()
             .unwrap();
+        let _: () = state.redis.json_del("poses", "$").await.unwrap();
         match event.event.unwrap().event_type.as_str() {
             "position_add" => {
                 let _ = sqlx::query!(
@@ -349,39 +328,33 @@ pub async fn update_db_poses(State(mut state): State<AppState>) {
                     &ev.position_name,
                     &ev.position_base_pay
                 )
-                .execute(&state.postgres)
-                .await
-                .map_err(MyError::DBError);
+                    .execute(&state.postgres)
+                    .await
+                    .map_err(MyError::DBError).unwrap();
             }
             "position_update" => {
                 let _ = sqlx::query!("update tb_position set position_name = $1, position_base_pay = $2 where position_id = $3", &ev.position_name, &ev.position_base_pay, &ev.position_id)
                     .execute(&state.postgres)
-                    .await.map_err(MyError::DBError);
-
-                let pos = get_position_by_id(State(state.clone()), Query(ev.position_id))
-                    .await
-                    .unwrap_or_default()
-                    .0;
+                    .await.map_err(MyError::DBError).unwrap();
 
                 let _: () = state
                     .redis
-                    .set("pos".to_string() + &*ev.position_id.to_string(), pos)
+                    .json_del("pos".to_string() + &*ev.position_id.to_string(), "$")
                     .await
                     .unwrap();
             }
             "position_delete" => {
                 let _ = sqlx::query!(
-                    "insert into tb_position (position_name, position_base_pay) values ($1, $2)",
-                    &ev.position_name,
-                    &ev.position_base_pay
+                    "delete from tb_position where position_id = $1",
+                    &ev.position_id
                 )
-                .execute(&state.postgres)
-                .await
-                .map_err(MyError::DBError);
-
+                    .execute(&state.postgres)
+                    .await
+                    .map_err(MyError::DBError).unwrap();
+                
                 let _: () = state
                     .redis
-                    .del("pos".to_string() + &*ev.position_id.to_string())
+                    .json_del("pos".to_string() + &*ev.position_id.to_string(), "$")
                     .await
                     .unwrap();
             }
@@ -393,26 +366,27 @@ pub async fn update_db_poses(State(mut state): State<AppState>) {
 pub async fn update_db_main(State(mut state): State<AppState>) {
     let mut stream = state
         .event_client
-        .read_stream("employee", &Default::default())
-        .await
-        .unwrap();
+        .subscribe_to_stream("employee", &Default::default())
+        .await;
 
-    while let Some(event) = stream.next().await.unwrap() {
+    loop {
+        let event = stream.next().await.unwrap();
         let ev = event.get_original_event().as_json::<Employee>().unwrap();
+        let _: () = state.redis.json_del("emps", "$").await.unwrap();
         match event.event.unwrap().event_type.as_str() {
             "employee_add" => {
                 let _ = sqlx::query!("insert into tb_employee (employee_lastname, employee_firstname, employee_middlename, employee_position_id, employee_user_id) values ($1, $2, $3, $4, $5)", &ev.employee_lastname, &ev.employee_firstname, &ev.employee_middlename, &ev.employee_position.position_id, &ev.employee_user.user_id)
                     .execute(&state.postgres)
-                    .await.map_err(MyError::DBError);
+                    .await.map_err(MyError::DBError).unwrap();
             }
             "employee_update" => {
                 let _ = sqlx::query!("update tb_employee set employee_lastname = $1, employee_firstname = $2, employee_middlename = $3, employee_position_id = $4, employee_user_id = $5 where employee_id = $6", &ev.employee_lastname, &ev.employee_firstname, &ev.employee_middlename, &ev.employee_position.position_id, &ev.employee_user.user_id, &ev.employee_id)
                     .execute(&state.postgres)
-                    .await.map_err(MyError::DBError);
+                    .await.map_err(MyError::DBError).unwrap();
 
                 let _: () = state
                     .redis
-                    .del("emp".to_owned() + &*ev.employee_id.to_string())
+                    .json_del("emp".to_owned() + &*ev.employee_id.to_string(), "$")
                     .await
                     .unwrap();
             }
@@ -421,13 +395,13 @@ pub async fn update_db_main(State(mut state): State<AppState>) {
                     "delete from tb_employee where employee_id = $1",
                     &ev.employee_user.user_id
                 )
-                .execute(&state.postgres)
-                .await
-                .map_err(MyError::DBError);
+                    .execute(&state.postgres)
+                    .await
+                    .map_err(MyError::DBError).unwrap();
 
                 let _: () = state
                     .redis
-                    .del("emp".to_owned() + &*ev.employee_id.to_string())
+                    .json_del("emp".to_owned() + &*ev.employee_id.to_string(), "$")
                     .await
                     .unwrap();
             }

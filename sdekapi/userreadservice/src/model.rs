@@ -9,7 +9,7 @@ pub struct RoleResponse {
     pub role_name: String,
 }
 
-#[derive(Clone, Debug, Deserialize, Serialize, Default, ToSchema, FromRedisValue, ToRedisArgs)]
+#[derive(Clone, Debug, Deserialize, Serialize, Default, ToSchema)]
 pub struct UserResponse {
     pub user_id: Uuid,
     pub user_login: String,

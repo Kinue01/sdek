@@ -1,11 +1,9 @@
-create database items;
-
 create extension postgres_fdw;
 
 create table if not exists tb_item
 (
 	item_id serial primary key,
-	item_name varchar(25) not null,
+	item_name varchar(150) not null,
 	item_description varchar(200) not null,
 	item_length decimal(5, 1) not null,
 	item_width decimal(5, 1) not null,
@@ -41,6 +39,12 @@ create foreign table tb_fpackage
     package_payer_id smallint NOT NULL
 ) server fpackage options (table_name 'tb_package');
 
+insert into tb_item (item_name, item_description, item_length, item_width, item_heigth, item_weight)
+values ('Отвертка с насадками/битами Smartbuy SBT-SCBS-31P1', 'Инструменты', 6, 10, 5, 1.25);
+
+insert into tb_package_items
+values ('8a1b056a-8c11-4929-9e47-11b13787e68a', 1, 1);
+
 create or replace function fkey_package_func() returns trigger
 as $$
 declare
@@ -56,3 +60,5 @@ $$ language plpgsql;
 
 create or replace trigger fkey_package before insert or update or delete
 on tb_package_items for each row execute function fkey_package_func();
+
+drop trigger fkey_package on tb_package_items;

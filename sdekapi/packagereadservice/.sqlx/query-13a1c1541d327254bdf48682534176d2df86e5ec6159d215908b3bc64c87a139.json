@@ -1,0 +1,40 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "select * from tb_fwarehouse where warehouse_id = $1",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "warehouse_id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 1,
+        "name": "warehouse_name",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 2,
+        "name": "warehouse_address",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 3,
+        "name": "warehouse_type_id",
+        "type_info": "Int2"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int4"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "13a1c1541d327254bdf48682534176d2df86e5ec6159d215908b3bc64c87a139"
+}

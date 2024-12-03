@@ -1,27 +1,13 @@
 package com.example.deliverypersonellservice.deliverypersonellservice.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class TransportStatus {
-    int status_id;
+    short status_id;
     String status_name;
-
-    public TransportStatus(int status_id, String status_name) {
-        this.status_id = status_id;
-        this.status_name = status_name;
-    }
-
-    public int getType_id() {
-        return status_id;
-    }
-
-    public void setType_id(int status_id) {
-        this.status_id = status_id;
-    }
-
-    public String getType_name() {
-        return status_name;
-    }
-
-    public void setType_name(String status_name) {
-        this.status_name = status_name;
-    }
 }

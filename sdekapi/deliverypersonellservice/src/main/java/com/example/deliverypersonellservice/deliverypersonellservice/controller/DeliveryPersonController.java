@@ -7,8 +7,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.deliverypersonellservice.deliverypersonellservice.model.DeliveryPerson;
 import com.example.deliverypersonellservice.deliverypersonellservice.service.DeliveryPersonService;
 
-import java.util.concurrent.ExecutionException;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -17,9 +15,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 
 @RestController
-@RequestMapping(value = "/api/delivery_person", produces = "application/json")
+@RequestMapping(value = "/deliverypersonellservice/api/delivery_person", produces = "application/json")
 public class DeliveryPersonController {
-    DeliveryPersonService service;
+    private final DeliveryPersonService service;
 
     public DeliveryPersonController(DeliveryPersonService service) {
         this.service = service;
@@ -28,31 +26,16 @@ public class DeliveryPersonController {
     @PostMapping
     @ResponseStatus(value = HttpStatus.CREATED)
     public DeliveryPerson addPerson(@RequestBody DeliveryPerson person) {
-        try {
-            return service.addPerson(person).get();
-        }
-        catch (ExecutionException | InterruptedException e) {
-            return null;
-        }
+        return service.addPerson(person).join();
     }
     
     @PatchMapping
     public DeliveryPerson updatePerson(@RequestBody DeliveryPerson person) {
-        try {
-            return service.updatePerson(person).get();
-        }
-        catch (ExecutionException | InterruptedException e) {
-            return null;
-        }
+        return service.updatePerson(person).join();
     }
 
     @DeleteMapping
     public DeliveryPerson deletePerson(@RequestBody DeliveryPerson person) {
-        try {
-            return service.deletePerson(person).get();
-        }
-        catch (ExecutionException | InterruptedException e) {
-            return null;
-        }
+        return service.deletePerson(person).join();
     }
 }

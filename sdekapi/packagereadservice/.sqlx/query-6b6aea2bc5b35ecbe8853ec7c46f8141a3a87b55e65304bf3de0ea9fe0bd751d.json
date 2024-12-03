@@ -1,0 +1,14 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "delete from tb_fpackage_items where package_id = $1",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Uuid"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "6b6aea2bc5b35ecbe8853ec7c46f8141a3a87b55e65304bf3de0ea9fe0bd751d"
+}

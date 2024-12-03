@@ -1,0 +1,19 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "insert into tb_fitem (item_id, item_name, item_description, item_length, item_width, item_heigth, item_weight) values ((select max(item_id) from tb_fitem) + 1, $1, $2, $3, $4, $5, $6)",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Varchar",
+        "Varchar",
+        "Numeric",
+        "Numeric",
+        "Numeric",
+        "Numeric"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "5b7f9bbecd8b03b9ea284e4c5147a845aba5c370aa7a63c3e423da4a656eb671"
+}

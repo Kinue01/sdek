@@ -27,8 +27,7 @@ mod model;
 
 #[derive(OpenApi)]
 #[openapi(
-    paths(handlers::send_msg_kafka),
-    components(schemas(User, RoleResponse, Message, CodeResponse))
+    components(schemas(User, RoleResponse, CodeResponse))
 )]
 struct ApiDoc;
 
@@ -105,7 +104,7 @@ async fn main() {
 
     let state = AppState {
         oauth_client,
-        postgres,
+        postgres: pool,
         redis
     };
 
@@ -115,11 +114,11 @@ async fn main() {
         .unwrap();
 
     let app = Router::new()
-        .route("/api/user", post(get_user_by_login_pass))
-        .route("/api/google_get_url", get(google_oauth2_req))
-        .route("/api/google_get_token", post(google_oauth2_token))
-        .route("/api/google_revoke_token", post(revoke_google_token))
-        .merge(SwaggerUi::new("/swagger").url("/api-doc/openapi.json", ApiDoc::openapi()))
+        .route("/authservice/api/user", post(get_user_by_login_pass))
+        .route("/authservice/api/google_get_url", get(google_oauth2_req))
+        .route("/authservice/api/google_get_token", post(google_oauth2_token))
+        .route("/authservice/api/google_revoke_token", post(revoke_google_token))
+        .merge(SwaggerUi::new("/authservice/swagger").url("/authservice/api-doc/openapi.json", ApiDoc::openapi()))
         .with_state(state)
         .layer(
             ServiceBuilder::new()
@@ -128,7 +127,7 @@ async fn main() {
                 .layer(SessionLayer::new(store)),
         );
 
-    let listener = tokio::net::TcpListener::bind("localhost:8020")
+    let listener = tokio::net::TcpListener::bind("authservice:8020")
         .await
         .unwrap();
     tracing::info!("listening on {}", listener.local_addr().unwrap());

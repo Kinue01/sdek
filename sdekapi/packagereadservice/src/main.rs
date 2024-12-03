@@ -5,7 +5,6 @@ use axum::http::Method;
 use axum::Router;
 use axum::routing::get;
 use dotenvy::dotenv;
-use mongodb::Client;
 use redis::aio::MultiplexedConnection;
 use sqlx::{Pool, Postgres};
 use sqlx::postgres::PgPoolOptions;
@@ -16,11 +15,7 @@ use tower_http::trace::TraceLayer;
 use utoipa::OpenApi;
 use utoipa_swagger_ui::SwaggerUi;
 
-use crate::handlers::{
-    get_client_packages_by_id, get_package_by_id, get_package_status_by_id, get_package_statuses,
-    get_package_type_by_id, get_package_types, get_packages, update_db_main, update_db_statuses,
-    update_db_types,
-};
+use crate::handlers::{get_client_packages_by_id, get_package_by_id, get_package_status_by_id, get_package_statuses, get_package_type_by_id, get_package_types, get_packages, get_packages_paytypes, update_db_main, update_db_statuses, update_db_types};
 
 mod error;
 mod handlers;
@@ -34,9 +29,7 @@ struct ApiDoc;
 struct AppState {
     postgres: Pool<Postgres>,
     redis: MultiplexedConnection,
-    mongo: Client,
     event_client: eventstore::Client,
-    http_client: reqwest::Client,
 }
 #[tokio::main]
 async fn main() {
@@ -74,44 +67,46 @@ async fn main() {
         .await
         .unwrap();
 
-    let mongo = Client::with_uri_str(mongo_url).await.unwrap();
-
     let event_client = eventstore::Client::new(es_url.parse().unwrap_or_default()).unwrap();
-
-    let http_client = reqwest::ClientBuilder::new().build().unwrap();
 
     let state = AppState {
         postgres,
         redis,
-        mongo,
         event_client,
-        http_client,
     };
 
     let app = Router::new()
-        .route("/api/packages", get(get_packages))
-        .route("/api/package", get(get_package_by_id))
-        .route("/api/package_types", get(get_package_types))
-        .route("/api/package_type", get(get_package_type_by_id))
-        .route("/api/package_statuses", get(get_package_statuses))
-        .route("/api/package_status", get(get_package_status_by_id))
-        .route("/api/client_packages", get(get_client_packages_by_id))
-        .merge(SwaggerUi::new("/swagger").url("/api-doc/openapi.json", ApiDoc::openapi()))
+        .route("/packagereadservice/api/packages", get(get_packages))
+        .route("/packagereadservice/api/package", get(get_package_by_id))
+        .route("/packagereadservice/api/package_types", get(get_package_types))
+        .route("/packagereadservice/api/package_type", get(get_package_type_by_id))
+        .route("/packagereadservice/api/package_statuses", get(get_package_statuses))
+        .route("/packagereadservice/api/package_status", get(get_package_status_by_id))
+        .route("/packagereadservice/api/client_packages", get(get_client_packages_by_id))
+        .route("/packagereadservice/api/package_paytypes", get(get_packages_paytypes))
+        .merge(SwaggerUi::new("/packagereadservice/swagger").url("/packagereadservice/api-doc/openapi.json", ApiDoc::openapi()))
         .with_state(state.clone())
         .layer(ServiceBuilder::new().layer(tracing).layer(cors));
 
-    let listener = tokio::net::TcpListener::bind("localhost:8013")
+    let listener = tokio::net::TcpListener::bind("packagereadservice:8013")
         .await
         .unwrap();
     tracing::info!("listening on {}", listener.local_addr().unwrap());
 
-    tokio::spawn(update_db_types(State(state.clone())))
-        .await
-        .unwrap();
-    tokio::spawn(update_db_statuses(State(state.clone())))
-        .await
-        .unwrap();
-    tokio::spawn(update_db_main(State(state))).await.unwrap();
+    let st = state.clone();
+    tokio::spawn(async move {
+        update_db_types(State(st)).await
+    });
+    
+    let st2 = state.clone();
+    tokio::spawn(async move {
+        update_db_statuses(State(st2)).await
+    });
+    
+    let st3 = state.clone();
+    tokio::spawn(async move {
+        update_db_main(State(st3)).await
+    });
 
     axum::serve(listener, app).await.unwrap();
 }

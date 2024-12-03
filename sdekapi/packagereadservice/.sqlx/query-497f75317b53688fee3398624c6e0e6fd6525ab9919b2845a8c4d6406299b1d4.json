@@ -1,0 +1,28 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "select * from tb_ftransport_type where type_id = $1",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "type_id",
+        "type_info": "Int2"
+      },
+      {
+        "ordinal": 1,
+        "name": "type_name",
+        "type_info": "Varchar"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int2"
+      ]
+    },
+    "nullable": [
+      false,
+      false
+    ]
+  },
+  "hash": "497f75317b53688fee3398624c6e0e6fd6525ab9919b2845a8c4d6406299b1d4"
+}

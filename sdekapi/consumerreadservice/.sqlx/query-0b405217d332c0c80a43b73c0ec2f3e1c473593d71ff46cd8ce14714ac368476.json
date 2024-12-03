@@ -1,0 +1,17 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "update tb_client set client_lastname = $1, client_firstname = $2, client_middlename = $3 where client_id = $4",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Varchar",
+        "Varchar",
+        "Varchar",
+        "Int4"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "0b405217d332c0c80a43b73c0ec2f3e1c473593d71ff46cd8ce14714ac368476"
+}

@@ -1,0 +1,46 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "select * from tb_ftransport where transport_id = $1",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "transport_id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 1,
+        "name": "transport_name",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 2,
+        "name": "transport_reg_number",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 3,
+        "name": "transport_type_id",
+        "type_info": "Int2"
+      },
+      {
+        "ordinal": 4,
+        "name": "transport_status_id",
+        "type_info": "Int2"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int4"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "242658c9523be7c261927a75f4550371284be59bc3cc220f6ab5bf50906bc6f9"
+}

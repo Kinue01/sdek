@@ -30,7 +30,6 @@ struct AppState {
     postgres: Pool<Postgres>,
     redis: MultiplexedConnection,
     event_client: eventstore::Client,
-    http_client: reqwest::Client,
 }
 
 #[tokio::main]
@@ -70,29 +69,29 @@ async fn main() {
 
     let event_client = eventstore::Client::new(es_url.parse().unwrap_or_default()).unwrap();
 
-    let http_client = reqwest::ClientBuilder::new().build().unwrap();
-
     let state = AppState {
         postgres,
         redis,
         event_client,
-        http_client,
     };
 
     let app = Router::new()
-        .route("/api/clients", get(get_clients))
-        .route("/api/client", get(get_client_by_id))
-        .route("/api/client_user", get(get_client_by_user_id))
-        .merge(SwaggerUi::new("/swagger").url("/api-doc/openapi.json", ApiDoc::openapi()))
+        .route("/customerreadservice/api/clients", get(get_clients))
+        .route("/customerreadservice/api/client", get(get_client_by_id))
+        .route("/customerreadservice/api/client_user", get(get_client_by_user_id))
+        .merge(SwaggerUi::new("/customerreadservice/swagger").url("/customerreadservice/api-doc/openapi.json", ApiDoc::openapi()))
         .with_state(state.clone())
         .layer(ServiceBuilder::new().layer(tracing).layer(cors));
 
-    let listener = tokio::net::TcpListener::bind("localhost:8011")
+    let listener = tokio::net::TcpListener::bind("consumerreadservice:8011")
         .await
         .unwrap();
     tracing::info!("listening on {}", listener.local_addr().unwrap());
 
-    tokio::spawn(update_db(State(state))).await.unwrap();
+    let st = state.clone();
+    tokio::spawn(async move {
+        update_db(State(st)).await
+    });
 
     axum::serve(listener, app).await.unwrap();
 }

@@ -1,101 +1,41 @@
 package com.example.deliverypersonellreadservice.deliverypersonellreadservice.service;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
+
+import com.example.deliverypersonellreadservice.deliverypersonellreadservice.mapper.DeliveryPersonToDeliveryPersonResponseMapper;
+import com.example.deliverypersonellreadservice.deliverypersonellreadservice.model.DeliveryPerson;
+import org.modelmapper.ModelMapper;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-import com.example.deliverypersonellreadservice.deliverypersonellreadservice.model.DeliveryPerson;
-import com.example.deliverypersonellreadservice.deliverypersonellreadservice.model.DeliveryPersonRedis;
 import com.example.deliverypersonellreadservice.deliverypersonellreadservice.model.DeliveryPersonResponse;
-import com.example.deliverypersonellreadservice.deliverypersonellreadservice.model.Transport;
-import com.example.deliverypersonellreadservice.deliverypersonellreadservice.repository.DeliveryPersonRedisRepository;
 import com.example.deliverypersonellreadservice.deliverypersonellreadservice.repository.DeliveryPersonRepository;
 
 @Service
 public class DeliveryPersonService {
-    DeliveryPersonRepository repository;
-    DeliveryPersonRedisRepository redisRepository;
+    private final DeliveryPersonRepository repository;
+    private final DeliveryPersonToDeliveryPersonResponseMapper mapper;
 
-    public DeliveryPersonService(DeliveryPersonRepository repository, DeliveryPersonRedisRepository redisRepository) {
-        this.redisRepository = redisRepository;
+    public DeliveryPersonService(DeliveryPersonRepository repository, DeliveryPersonToDeliveryPersonResponseMapper mapper) {
         this.repository = repository;
+        this.mapper = mapper;
     }
 
     @Async
-    public CompletableFuture<Iterable<DeliveryPersonResponse>> getPersons() {
-        var redis = (ArrayList<DeliveryPersonRedis>)redisRepository.findAll();
-        if (!redis.isEmpty()) {
-            var res = redis.parallelStream().map(item -> {
-                var user = new RestTemplate().getForEntity("http://localhost:8001/api/users", com.example.deliverypersonellreadservice.deliverypersonellreadservice.model.User.class);
-                    var transport = new RestTemplate().getForEntity("http://localhost:8011/api/transports", Transport.class);
-
-                    return new DeliveryPersonResponse(
-                        item.getPerson_id(), 
-                        item.getPerson_lastname(), 
-                        item.getPerson_firstname(),
-                        item.getPerson_middlename(),
-                        user.getBody(),
-                        transport.getBody()
-                    );
-            }).toList();
-            return CompletableFuture.completedFuture(res);
-        }
-
-        var remote = (ArrayList<DeliveryPerson>)repository.findAll();
-        if (!remote.isEmpty()) {
-            var res = remote.parallelStream().map(item -> {
-                var user = new RestTemplate().getForEntity("http://localhost:8001/api/users", com.example.deliverypersonellreadservice.deliverypersonellreadservice.model.User.class);
-                    var transport = new RestTemplate().getForEntity("http://localhost:8011/api/transports", Transport.class);
-
-                    return new DeliveryPersonResponse(
-                        item.getPerson_id(),
-                        item.getPerson_lastname(),
-                        item.getPerson_firstname(),
-                        item.getPerson_middlename(),
-                        user.getBody(),
-                        transport.getBody()
-                    );
-            }).toList();
-            return CompletableFuture.completedFuture(res);
-        }
-
-        return null;
+    @Cacheable("deliveryPersonal")
+    public CompletableFuture<List<DeliveryPersonResponse>> getPersons() {
+        return CompletableFuture.completedFuture(
+                repository.findAll().parallelStream().map(mapper::map).collect(Collectors.toList())
+        );
     }
 
     @Async
+    @Cacheable("delivery_person")
     public CompletableFuture<DeliveryPersonResponse> getPersonById(int id) {
-        var redis = redisRepository.findById(id);
-        if (redis.isPresent()) {
-            return CompletableFuture.completedFuture(
-                new DeliveryPersonResponse(
-                    redis.get().getPerson_id(), 
-                    redis.get().getPerson_lastname(),
-                    redis.get().getPerson_firstname(), 
-                    redis.get().getPerson_middlename(), 
-                    redis.get().getPerson_user_id(), 
-                    redis.get().getPerson_transport_id()
-                )
-            );
-        }
-
-        var remote = repository.findById(id);
-        if (remote.isPresent()) {
-            var user = new RestTemplate().getForEntity("http://localhost:8001/api/users", com.example.deliverypersonellreadservice.deliverypersonellreadservice.model.User.class);
-                var transport = new RestTemplate().getForEntity("http://localhost:8011/api/transports", Transport.class);
-
-                return CompletableFuture.completedFuture(
-                    new DeliveryPersonResponse(
-                        remote.get().getPerson_id(), 
-                        remote.get().getPerson_lastname(),
-                        remote.get().getPerson_firstname(), 
-                        remote.get().getPerson_middlename(), 
-                        user.getBody(), 
-                        transport.getBody()
-                    )
-                );
-        }
-
-        return null;
+        var person = repository.findById(id).orElse(null);
+        assert person != null;
+        return CompletableFuture.completedFuture(mapper.map(person));
     }
 }

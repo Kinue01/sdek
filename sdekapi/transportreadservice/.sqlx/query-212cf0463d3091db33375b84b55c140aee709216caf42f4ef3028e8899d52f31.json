@@ -1,0 +1,22 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "select person_transport_id from tb_fdelivery_person where person_id = $1",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "person_transport_id",
+        "type_info": "Int4"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int4"
+      ]
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "212cf0463d3091db33375b84b55c140aee709216caf42f4ef3028e8899d52f31"
+}

@@ -15,7 +15,7 @@ class TransportTypeRepositoryImpl implements TransportTypeRepository {
   @override
   Future<bool> addTransportType(TransportType type) async {
     if (await repository.addTransportType(type)) {
-      await transportTypeLocalStorage.saveTransportType(type);
+      //await transportTypeLocalStorage.saveTransportType(type);
       return true;
     }
     else {
@@ -26,7 +26,7 @@ class TransportTypeRepositoryImpl implements TransportTypeRepository {
   @override
   Future<bool> deleteTransportType(TransportType type) async {
     if (await repository.deleteTransportType(type)) {
-      await transportTypeLocalStorage.saveTransportType(TransportType());
+      //await transportTypeLocalStorage.saveTransportType(TransportType());
       return true;
     }
     else {
@@ -36,38 +36,40 @@ class TransportTypeRepositoryImpl implements TransportTypeRepository {
 
   @override
   Future<TransportType> getTransportTypeById(int id) async {
-    final type = await transportTypeLocalStorage.getTransportType(id);
-    if (type.type_id != 0) {
-      return type;
-    }
-    else {
-      final res = await repository.getTransportTypeById(id);
-      if (res.type_id != 0) {
-        await transportTypeLocalStorage.saveTransportType(res);
-      }
-      return res;
-    }
+    // final type = await transportTypeLocalStorage.getTransportType(id);
+    // if (type.type_id != 0) {
+    //   return type;
+    // }
+    // else {
+    //   final res = await repository.getTransportTypeById(id);
+    //   if (res.type_id != 0) {
+    //     await transportTypeLocalStorage.saveTransportType(res);
+    //   }
+    //   return res;
+    // }
+    return await repository.getTransportTypeById(id);
   }
 
   @override
   Future<List<TransportType>> getTransportTypes() async {
-    final types = await transportTypeLocalStorage.getTransportTypes();
-    if (types != []) {
-      return types;
-    }
-    else {
-      final res = await repository.getTransportTypes();
-      if (res != List.empty()) {
-        await transportTypeLocalStorage.saveTransportTypes(res);
-      }
-      return res;
-    }
+    // final types = await transportTypeLocalStorage.getTransportTypes();
+    // if (types != []) {
+    //   return types;
+    // }
+    // else {
+    //   final res = await repository.getTransportTypes();
+    //   if (res != List.empty()) {
+    //     await transportTypeLocalStorage.saveTransportTypes(res);
+    //   }
+    //   return res;
+    // }
+    return await repository.getTransportTypes();
   }
 
   @override
   Future<bool> updateTransportType(TransportType type) async {
     if (await repository.updateTransportType(type)) {
-      await transportTypeLocalStorage.saveTransportType(type);
+      //await transportTypeLocalStorage.saveTransportType(type);
       return true;
     }
     else {

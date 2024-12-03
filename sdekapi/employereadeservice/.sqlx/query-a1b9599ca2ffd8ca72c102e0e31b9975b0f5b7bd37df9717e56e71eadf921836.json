@@ -1,0 +1,34 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "select * from tb_position where position_id = $1",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "position_id",
+        "type_info": "Int2"
+      },
+      {
+        "ordinal": 1,
+        "name": "position_name",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 2,
+        "name": "position_base_pay",
+        "type_info": "Int4"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int2"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "a1b9599ca2ffd8ca72c102e0e31b9975b0f5b7bd37df9717e56e71eadf921836"
+}

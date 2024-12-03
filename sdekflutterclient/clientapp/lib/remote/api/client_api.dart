@@ -57,7 +57,7 @@ class ClientApiImpl implements ClientApi {
 
   @override
   Future<Client> getClientByUserId(String uuid) async {
-    Response<Map<String, dynamic>> response = await dio_client.get("$readUrl/api/client_user", options: Options(extra: {'uuid': uuid}));
+    Response<Map<String, dynamic>> response = await dio_client.get("$readUrl/api/client_user?uuid=$uuid");
     switch (response.statusCode) {
       case 200:
         return Client.fromMap(response.data!);
@@ -68,7 +68,7 @@ class ClientApiImpl implements ClientApi {
 
   @override
   Future<List<Client>> getClients() async {
-    Response<List<Map<String, dynamic>>> response = await dio_client.get("$readUrl/api/clients");
+    Response<List<dynamic>> response = await dio_client.get("$readUrl/api/clients");
     switch (response.statusCode) {
       case 200:
         return response.data!.map((e) => Client.fromMap(e)).toList();

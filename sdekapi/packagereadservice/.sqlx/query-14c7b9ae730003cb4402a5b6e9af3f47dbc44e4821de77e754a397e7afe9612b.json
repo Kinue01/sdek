@@ -1,0 +1,46 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "select * from tb_package_type where type_id = $1",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "type_id",
+        "type_info": "Int2"
+      },
+      {
+        "ordinal": 1,
+        "name": "type_name",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 2,
+        "name": "type_length",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 3,
+        "name": "type_width",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 4,
+        "name": "type_height",
+        "type_info": "Int4"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int2"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "14c7b9ae730003cb4402a5b6e9af3f47dbc44e4821de77e754a397e7afe9612b"
+}

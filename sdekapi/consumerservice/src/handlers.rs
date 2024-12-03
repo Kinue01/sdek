@@ -9,7 +9,7 @@ use crate::model::Client;
 #[utoipa::path(
     post,
     path = "/api/client",
-    request_body(content = Json<Client>, description = "Client"),
+    request_body(content = Client, description = "Client"),
     responses(
         (status =  201, description = "Client created"),
         (status = 500, description = "Can`t create client")
@@ -37,7 +37,7 @@ pub async fn add_client(
 #[utoipa::path(
     patch,
     path = "/api/client",
-    request_body(content = Json<Client>, description = "Client"),
+    request_body(content = Client, description = "Client"),
     responses(
         (status = 200, description = "Client updated"),
         (status = 500, description = "Can`t update client")
@@ -65,7 +65,7 @@ pub async fn update_client(
 #[utoipa::path(
     delete,
     path = "/api/client",
-    request_body(content = Json<Client>, description = "Client"),
+    request_body(content = Client, description = "Client"),
     responses(
         (status = 200, description = "Client deleted"),
         (status = 500, description = "Can`t delete client")

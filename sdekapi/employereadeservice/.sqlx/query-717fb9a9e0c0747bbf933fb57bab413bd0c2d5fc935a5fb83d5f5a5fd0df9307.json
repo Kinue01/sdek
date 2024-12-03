@@ -1,0 +1,19 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "update tb_employee set employee_lastname = $1, employee_firstname = $2, employee_middlename = $3, employee_position_id = $4, employee_user_id = $5 where employee_id = $6",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Varchar",
+        "Varchar",
+        "Varchar",
+        "Int2",
+        "Uuid",
+        "Uuid"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "717fb9a9e0c0747bbf933fb57bab413bd0c2d5fc935a5fb83d5f5a5fd0df9307"
+}

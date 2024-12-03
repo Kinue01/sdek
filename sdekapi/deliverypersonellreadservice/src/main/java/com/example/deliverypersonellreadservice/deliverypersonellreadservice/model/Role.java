@@ -1,27 +1,19 @@
 package com.example.deliverypersonellreadservice.deliverypersonellreadservice.model;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Entity
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Table(name = "tb_frole")
 public class Role {
-    int role_id;
+    @Id
+    short role_id;
     String role_name;
-
-    public Role(int role_id, String role_name) {
-        this.role_id = role_id;
-        this.role_name = role_name;
-    }
-
-    public int getType_id() {
-        return role_id;
-    }
-
-    public void setType_id(int role_id) {
-        this.role_id = role_id;
-    }
-
-    public String getType_name() {
-        return role_name;
-    }
-
-    public void setType_name(String role_name) {
-        this.role_name = role_name;
-    }
 }

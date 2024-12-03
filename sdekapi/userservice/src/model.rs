@@ -15,13 +15,8 @@ pub struct User {
     pub user_password: String,
     pub user_email: String,
     pub user_phone: String,
+    pub user_access_token: String,
     pub user_role: RoleResponse,
-}
-
-#[derive(Clone, Debug, Default, Deserialize, Serialize, ToSchema)]
-pub struct CodeResponse {
-    pub code: String,
-    pub state: String,
 }
 
 #[derive(Clone, Debug, Default, Deserialize, Serialize, ToSchema)]

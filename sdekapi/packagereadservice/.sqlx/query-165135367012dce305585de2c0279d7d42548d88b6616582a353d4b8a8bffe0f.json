@@ -1,0 +1,88 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "select * from tb_package where package_sender_id = $1",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "package_uuid",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 1,
+        "name": "package_send_date",
+        "type_info": "Date"
+      },
+      {
+        "ordinal": 2,
+        "name": "package_receive_date",
+        "type_info": "Date"
+      },
+      {
+        "ordinal": 3,
+        "name": "package_weight",
+        "type_info": "Numeric"
+      },
+      {
+        "ordinal": 4,
+        "name": "package_deliveryperson_id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 5,
+        "name": "package_type_id",
+        "type_info": "Int2"
+      },
+      {
+        "ordinal": 6,
+        "name": "package_status_id",
+        "type_info": "Int2"
+      },
+      {
+        "ordinal": 7,
+        "name": "package_sender_id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 8,
+        "name": "package_receiver_id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 9,
+        "name": "package_warehouse_id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 10,
+        "name": "package_paytype_id",
+        "type_info": "Int2"
+      },
+      {
+        "ordinal": 11,
+        "name": "package_payer_id",
+        "type_info": "Int4"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int4"
+      ]
+    },
+    "nullable": [
+      false,
+      true,
+      true,
+      true,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "165135367012dce305585de2c0279d7d42548d88b6616582a353d4b8a8bffe0f"
+}

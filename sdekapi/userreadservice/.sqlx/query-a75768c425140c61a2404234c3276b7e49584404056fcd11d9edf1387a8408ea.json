@@ -1,0 +1,58 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "select * from tb_user where user_id = $1",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "user_id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 1,
+        "name": "user_login",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 2,
+        "name": "user_password",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 3,
+        "name": "user_email",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 4,
+        "name": "user_phone",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 5,
+        "name": "user_access_token",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 6,
+        "name": "user_role_id",
+        "type_info": "Int2"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      true,
+      false,
+      true,
+      false
+    ]
+  },
+  "hash": "a75768c425140c61a2404234c3276b7e49584404056fcd11d9edf1387a8408ea"
+}

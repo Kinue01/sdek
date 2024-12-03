@@ -1,0 +1,76 @@
+services:
+  eventstore:
+    image: eventstore/eventstore
+    container_name: eventstore
+    environment:
+      - EVENTSTORE_CLUSTER_SIZE=1
+      - EVENTSTORE_RUN_PROJECTIONS=All
+      - EVENTSTORE_START_STANDARD_PROJECTIONS=true
+      - EVENTSTORE_HTTP_PORT=2113
+      - EVENTSTORE_INSECURE=true
+      - EVENTSTORE_ENABLE_ATOM_PUB_OVER_HTTP=true
+    ports:
+      - "2113:2113"
+      - "1112:1112"
+      - "1113:1113"
+    volumes:
+      - type: volume
+        source: eventstore-volume-data
+        target: /var/lib/eventstore
+      - type: volume
+        source: eventstore-volume-logs
+        target: /var/log/eventstore
+  nginx:
+    image: nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./default.conf:/etc/nginx/conf.d/default.conf
+  redis:
+    image: redis/redis-stack:6.2.6-v17
+    container_name: redis
+    ports:
+      - "6379:6379"
+      - "9000:8001"
+  pgdb:
+    image: postgis/postgis:17-3.5-alpine
+    container_name: pgdb
+    command: ["postgres", "-c", "log_statement=all"]
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1
+      POSTGRES_DB: postgres
+      POSTGRES_HOST: pgdb
+      PGUSER: postgres
+      POSTGRES_MULTIPLE_DATABASES: users,warehouses,transport,clients,delivery_personell,employees,packages,items,services
+    ports:
+      - "6000:5432"
+    volumes:
+      - ./db`s_scripts/:/db_scripts/
+      - ./db`s_scripts/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
+      - postgres_data:/var/lib/postgresql/data/
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 1s
+      timeout: 5s
+      retries: 10
+  arango:
+    image: arangodb
+    container_name: arangodb
+    ports:
+      - "8529:8529"
+    environment:
+      ARANGO_ROOT_PASSWORD: 123
+    volumes:
+      - arangodb_data:/var/lib/arangodb3
+      - arangodb_apps_data:/var/lib/arangodb3-apps
+    
+
+volumes:
+  eventstore-volume-data:
+  eventstore-volume-logs:
+  postgres_data:
+  arangodb_data:
+  arangodb_apps_data:

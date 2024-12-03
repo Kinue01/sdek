@@ -16,7 +16,7 @@ class UserRepositoryImpl implements UserRepository {
   @override
   Future<bool> addUser(User user) async {
     if (await repository.addUser(user)) {
-      await userLocalStorage.saveUser(user);
+      //await userLocalStorage.saveUser(user);
       return true;
     }
     else {
@@ -27,7 +27,7 @@ class UserRepositoryImpl implements UserRepository {
   @override
   Future<bool> deleteUser(User user) async {
     if (await repository.deleteUser(user)) {
-      await userLocalStorage.saveUser(User(user_role: Role()));
+      //await userLocalStorage.saveUser(User(user_role: Role()));
       return true;
     }
     else {
@@ -37,38 +37,40 @@ class UserRepositoryImpl implements UserRepository {
 
   @override
   Future<User> getUserById(String uuid) async {
-    final user = await userLocalStorage.getUser(uuid);
-    if (user.user_id != "") {
-      return user;
-    }
-    else {
-      final res = await repository.getUserById(uuid);
-      if (res.user_id != "") {
-        await userLocalStorage.saveUser(res);
-      }
-      return res;
-    }
+    // final user = await userLocalStorage.getUser(uuid);
+    // if (user.user_id != "") {
+    //   return user;
+    // }
+    // else {
+    //   final res = await repository.getUserById(uuid);
+    //   if (res.user_id != "") {
+    //     await userLocalStorage.saveUser(res);
+    //   }
+    //   return res;
+    // }
+    return await repository.getUserById(uuid);
   }
 
   @override
   Future<List<User>> getUsers() async {
-    final users = await userLocalStorage.getUsers();
-    if (users != []) {
-      return users;
-    }
-    else {
-      final res = await repository.getUsers();
-      if (res != List.empty()) {
-        await userLocalStorage.saveUsers(res);
-      }
-      return res;
-    }
+    // final users = await userLocalStorage.getUsers();
+    // if (users != []) {
+    //   return users;
+    // }
+    // else {
+    //   final res = await repository.getUsers();
+    //   if (res != List.empty()) {
+    //     await userLocalStorage.saveUsers(res);
+    //   }
+    //   return res;
+    // }
+    return await repository.getUsers();
   }
 
   @override
   Future<bool> updateUser(User user) async {
     if (await repository.updateUser(user)) {
-      await userLocalStorage.saveUser(user);
+      //await userLocalStorage.saveUser(user);
       return true;
     }
     else {

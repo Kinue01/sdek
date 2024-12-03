@@ -24,8 +24,9 @@ pub struct User {
     pub user_id: Uuid,
     pub user_login: String,
     pub user_password: String,
-    pub user_email: Option<String>,
+    pub user_email: String,
     pub user_phone: String,
+    pub user_access_token: String,
     pub user_role: RoleResponse,
 }
 

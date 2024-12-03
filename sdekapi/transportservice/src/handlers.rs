@@ -14,7 +14,7 @@ pub async fn add_transport_type(
 ) -> Result<StatusCode, MyError> {
     let event = EventData::json("transport_type_add", t_type).unwrap();
     let _ = state
-        .append_to_stream("transport_type", Default::default(), event)
+        .append_to_stream("transport_type", &Default::default(), event)
         .await
         .unwrap();
 
@@ -27,7 +27,7 @@ pub async fn update_transport_type(
 ) -> Result<StatusCode, MyError> {
     let event = EventData::json("transport_type_update", t_type).unwrap();
     let _ = state
-        .append_to_stream("transport_type", Default::default(), event)
+        .append_to_stream("transport_type", &Default::default(), event)
         .await
         .unwrap();
 
@@ -40,7 +40,7 @@ pub async fn delete_transport_type(
 ) -> Result<StatusCode, MyError> {
     let event = EventData::json("transport_type_delete", t_type).unwrap();
     let _ = state
-        .append_to_stream("transport_type", Default::default(), event)
+        .append_to_stream("transport_type", &Default::default(), event)
         .await
         .unwrap();
 
@@ -53,7 +53,7 @@ pub async fn add_transport(
 ) -> Result<StatusCode, MyError> {
     let event = EventData::json("transport_add", transport).unwrap();
     let _ = state
-        .append_to_stream("transport", Default::default(), event)
+        .append_to_stream("transport", &Default::default(), event)
         .await
         .unwrap();
 
@@ -66,7 +66,7 @@ pub async fn update_transport(
 ) -> Result<StatusCode, MyError> {
     let event = EventData::json("transport_update", transport).unwrap();
     let _ = state
-        .append_to_stream("transport", Default::default(), event)
+        .append_to_stream("transport", &Default::default(), event)
         .await
         .unwrap();
 
@@ -79,7 +79,7 @@ pub async fn delete_transport(
 ) -> Result<StatusCode, MyError> {
     let event = EventData::json("transport_delete", transport).unwrap();
     let _ = state
-        .append_to_stream("transport", Default::default(), event)
+        .append_to_stream("transport", &Default::default(), event)
         .await
         .unwrap();
 
@@ -94,6 +94,6 @@ async fn handle_socket(mut socket: WebSocket, mut state: Client) {
     loop {
         let msg = socket.recv().await.unwrap().unwrap();
         let event = EventData::binary("transport_geo_changed", msg.into_data().into());
-        let _ = state.append_to_stream("transport_geo", Default::default(), event);
+        let _ = state.append_to_stream("transport_geo", &Default::default(), event);
     }
 }

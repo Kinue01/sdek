@@ -15,7 +15,7 @@ class PackageTypeRepositoryImpl implements PackageTypeRepository {
   @override
   Future<bool> addType(PackageType type) async {
     if (await repository.addType(type)) {
-      await packageTypeLocalStorage.savePackageType(type);
+      //await packageTypeLocalStorage.savePackageType(type);
       return true;
     }
     else {
@@ -26,7 +26,7 @@ class PackageTypeRepositoryImpl implements PackageTypeRepository {
   @override
   Future<bool> deleteType(PackageType type) async {
     if (await repository.deleteType(type)) {
-      await packageTypeLocalStorage.savePackageType(PackageType());
+      //await packageTypeLocalStorage.savePackageType(PackageType());
       return true;
     }
     else {
@@ -36,38 +36,40 @@ class PackageTypeRepositoryImpl implements PackageTypeRepository {
 
   @override
   Future<PackageType> getTypeById(int id) async {
-    final type = await packageTypeLocalStorage.getPackageType(id);
-    if (type.type_id != 0) {
-      return type;
-    }
-    else {
-      final res = await repository.getTypeById(id);
-      if (res.type_id != 0) {
-        await packageTypeLocalStorage.savePackageType(res);
-      }
-      return res;
-    }
+    // final type = await packageTypeLocalStorage.getPackageType(id);
+    // if (type.type_id != 0) {
+    //   return type;
+    // }
+    // else {
+    //   final res = await repository.getTypeById(id);
+    //   if (res.type_id != 0) {
+    //     await packageTypeLocalStorage.savePackageType(res);
+    //   }
+    //   return res;
+    // }
+    return await repository.getTypeById(id);
   }
 
   @override
   Future<List<PackageType>> getTypes() async {
-    final types = await packageTypeLocalStorage.getPackageTypes();
-    if (types != []) {
-      return types;
-    }
-    else {
-      final res = await repository.getTypes();
-      if (res != List.empty()) {
-        await packageTypeLocalStorage.savePackageTypes(res);
-      }
-      return res;
-    }
+    // final types = await packageTypeLocalStorage.getPackageTypes();
+    // if (types != []) {
+    //   return types;
+    // }
+    // else {
+    //   final res = await repository.getTypes();
+    //   if (res != List.empty()) {
+    //     await packageTypeLocalStorage.savePackageTypes(res);
+    //   }
+    //   return res;
+    // }
+    return await repository.getTypes();
   }
 
   @override
   Future<bool> updateType(PackageType type) async {
     if (await repository.updateType(type)) {
-      await packageTypeLocalStorage.savePackageType(type);
+      //await packageTypeLocalStorage.savePackageType(type);
       return true;
     }
     else {

@@ -1,0 +1,52 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "select * from tb_fdelivery_person where person_id = $1",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "person_id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 1,
+        "name": "person_lastname",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 2,
+        "name": "person_firstname",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 3,
+        "name": "person_middlename",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 4,
+        "name": "person_user_id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 5,
+        "name": "person_transport_id",
+        "type_info": "Int4"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int4"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "5f6af05040a3cf0ef9e8e0632d7e5f8a97b7805f2de51097b17528fbbd808983"
+}

@@ -12,6 +12,7 @@ class Routes {
     router.define("/send_package", handler: sendPackageHandler);
     router.define("/track_package", handler: trackPackageHandler);
     router.define("/home", handler: homeHandler);
+    router.define("/details", handler: detailsHandler);
 
   }
 }

@@ -12,7 +12,6 @@ use utoipa::OpenApi;
 use utoipa_swagger_ui::SwaggerUi;
 
 use handlers::*;
-use mongodb::Client;
 
 mod error;
 mod handlers;
@@ -46,23 +45,23 @@ async fn main() {
 
     let app = Router::new()
         .route(
-            "/api/type",
+            "/transportservice/api/type",
             post(add_transport_type)
                 .patch(update_transport_type)
                 .delete(delete_transport_type),
         )
         .route(
-            "/api/transport",
+            "/transportservice/api/transport",
             post(add_transport)
                 .patch(update_transport)
                 .delete(delete_transport),
         )
-        .route("/api/track_transport", get(ws_transport_update))
-        .merge(SwaggerUi::new("/swagger").url("/api-doc/openapi.json", ApiDoc::openapi()))
+        .route("/transportservice/api/track_transport", get(ws_transport_update))
+        .merge(SwaggerUi::new("/transportservice/swagger").url("/transportservice/api-doc/openapi.json", ApiDoc::openapi()))
         .with_state(event_client)
         .layer(ServiceBuilder::new().layer(tracing).layer(cors));
 
-    let listener = tokio::net::TcpListener::bind("localhost:8005")
+    let listener = tokio::net::TcpListener::bind("transportservice:8005")
         .await
         .unwrap();
     tracing::info!("listening on {}", listener.local_addr().unwrap());

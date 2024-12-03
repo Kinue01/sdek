@@ -15,7 +15,7 @@ class PackageRepositoryImpl implements PackageRepository {
   @override
   Future<bool> addPackage(Package package) async {
     if (await repository.addPackage(package)) {
-      await packageLocalStorage.savePackage(package);
+      //await packageLocalStorage.savePackage(package);
       return true;
     }
     else {
@@ -26,7 +26,7 @@ class PackageRepositoryImpl implements PackageRepository {
   @override
   Future<bool> deletePackage(Package package) async {
     if (await repository.deletePackage(package)) {
-      await packageLocalStorage.savePackage(Package());
+      //await packageLocalStorage.savePackage(Package());
       return true;
     }
     else {
@@ -36,35 +36,36 @@ class PackageRepositoryImpl implements PackageRepository {
 
   @override
   Future<Package> getPackageById(String uuid) async {
-    final pack = await packageLocalStorage.getPackage(uuid);
-    if (pack.package_uuid != "") {
-      return pack;
-    }
-    else {
-      final res = await repository.getPackageById(uuid);
-      if (res.package_uuid != "") {
-        await packageLocalStorage.savePackage(res);
-      }
-      return res;
-    }
+    // final pack = await packageLocalStorage.getPackage(uuid);
+    // if (pack.package_uuid != "") {
+    //   return pack;
+    // }
+    // else {
+    //   final res = await repository.getPackageById(uuid);
+    //   if (res.package_uuid != "") {
+    //     await packageLocalStorage.savePackage(res);
+    //   }
+    //   return res;
+    // }
+    return await repository.getPackageById(uuid);
   }
 
   @override
   Future<List<Package>> getPackages() async {
-    final packs = await packageLocalStorage.getPackages();
-    if (packs != []) {
-      return packs;
-    }
-    else {
-      final res = await repository.getPackages();
-      if (res != List.empty()) {
-        await packageLocalStorage.savePackages(res);
-      }
-      return res;
-    }
+    // final packs = await packageLocalStorage.getPackages();
+    // if (packs != []) {
+    //   return packs;
+    // }
+    // else {
+    //   final res = await repository.getPackages();
+    //   if (res != List.empty()) {
+    //     await packageLocalStorage.savePackages(res);
+    //   }
+    //   return res;
+    // }
+    return await repository.getPackages();
   }
 
-  // ЧЁ-ТО ПРИДУМАТЬ, ПЛЮС НАДО КАК-ТО УДАЛЯТЬ ИЗ КЕША ДАННЫЕ
   @override
   Future<List<Package>> getPackagesByClientId(int id) async {
     return await repository.getPackagesByClientId(id);
@@ -73,7 +74,7 @@ class PackageRepositoryImpl implements PackageRepository {
   @override
   Future<bool> updatePackage(Package package) async {
     if (await repository.updatePackage(package)) {
-      await packageLocalStorage.savePackage(package);
+      //await packageLocalStorage.savePackage(package);
       return true;
     }
     else {

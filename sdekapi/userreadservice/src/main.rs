@@ -1,10 +1,12 @@
+use std::thread;
 use std::time::Duration;
 
 use axum::extract::State;
 use axum::http::Method;
-use axum::Router;
+use axum::{middleware, Router};
 use axum::routing::get;
 use dotenvy::dotenv;
+use futures::TryFutureExt;
 use redis::aio::MultiplexedConnection;
 use sqlx::PgPool;
 use sqlx::postgres::PgPoolOptions;
@@ -14,9 +16,10 @@ use tower_http::trace;
 use tower_http::trace::TraceLayer;
 use utoipa::OpenApi;
 use utoipa_swagger_ui::SwaggerUi;
-
+use uuid::Variant::Future;
 use crate::handlers::{get_role_by_id, get_roles, get_user_by_id, get_users, update_db};
 use crate::model::*;
+use crate::error::*;
 
 mod error;
 mod handlers;
@@ -65,10 +68,10 @@ async fn main() {
 
     let pool = PgPoolOptions::new()
         .max_connections(1000000)
-        .acquire_timeout(Duration::from_secs(10))
-        .connect(&pg_url)
+        .acquire_timeout(Duration::from_secs(120))
+        .connect(pg_url.as_str())
         .await
-        .unwrap();
+        .map_err(MyError::DBError).unwrap();
 
     let redis = redis::Client::open(redis_url)
         .unwrap()
@@ -85,20 +88,23 @@ async fn main() {
     };
 
     let app = Router::new()
-        .route("/api/roles", get(get_roles))
-        .route("/api/role", get(get_role_by_id))
-        .route("/api/users", get(get_users))
-        .route("/api/user", get(get_user_by_id))
-        .merge(SwaggerUi::new("/swagger").url("/api-doc/openapi.json", ApiDoc::openapi()))
+        .route("/userreadservice/api/roles", get(get_roles))
+        .route("/userreadservice/api/role", get(get_role_by_id))
+        .route("/userreadservice/api/users", get(get_users))
+        .route("/userreadservice/api/user", get(get_user_by_id))
+        .merge(SwaggerUi::new("/userreadservice/swagger").url("/userreadservice/api-doc/openapi.json", ApiDoc::openapi()))
         .with_state(state.clone())
         .layer(ServiceBuilder::new().layer(tracing).layer(cors));
 
-    let listener = tokio::net::TcpListener::bind("localhost:8010")
+    let listener = tokio::net::TcpListener::bind("userreadservice:8010")
         .await
         .unwrap();
     tracing::info!("listening on {}", listener.local_addr().unwrap());
 
-    tokio::spawn(update_db(State(state))).await.unwrap();
+    let st = state.clone();
+    tokio::spawn(async move {
+        update_db(State(st)).await
+    });
 
     axum::serve(listener, app).await.unwrap();
 }

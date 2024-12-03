@@ -3,6 +3,7 @@ package com.example.warehouseservice.warehouseservice;
 import com.eventstore.dbclient.EventStoreDBClient;
 import com.eventstore.dbclient.EventStoreDBClientSettings;
 import com.eventstore.dbclient.EventStoreDBConnectionString;
+import org.springdoc.core.configuration.SpringDocConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -12,7 +13,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 public class AppConfig {
     @Bean
     public EventStoreDBClient eventStoreDBClient() {
-        EventStoreDBClientSettings settings = EventStoreDBConnectionString.parseOrThrow("esdb://admin:@localhost:2113");
+        final EventStoreDBClientSettings settings = EventStoreDBConnectionString.parseOrThrow("esdb://admin:@eventstore:2113?tls=false");
         return EventStoreDBClient.create(settings);
     }
 }

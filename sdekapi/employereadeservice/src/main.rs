@@ -15,10 +15,7 @@ use tower_http::trace::TraceLayer;
 use utoipa::OpenApi;
 use utoipa_swagger_ui::SwaggerUi;
 
-use crate::handlers::{
-    get_employee_by_id, get_employees, get_position_by_id, get_positions, update_db_main,
-    update_db_poses,
-};
+use crate::handlers::{get_employee_by_id, get_employee_by_user_id, get_employees, get_position_by_id, get_positions, update_db_main, update_db_poses};
 
 mod error;
 mod handlers;
@@ -33,7 +30,6 @@ struct AppState {
     postgres: PgPool,
     redis: MultiplexedConnection,
     event_client: eventstore::Client,
-    http_client: reqwest::Client,
 }
 
 #[tokio::main]
@@ -73,35 +69,36 @@ async fn main() {
 
     let event_client = eventstore::Client::new(es_url.parse().unwrap()).unwrap();
 
-    let client = reqwest::ClientBuilder::new().build().unwrap();
-
     let state = AppState {
         postgres: pool,
         redis,
         event_client,
-        http_client: client,
     };
 
     let app = Router::new()
-        .route("/api/position", get(get_position_by_id))
-        .route("/api/employee", get(get_employee_by_id))
-        .route("/api/employees", get(get_employees))
-        .route("/api/positions", get(get_positions))
-        .route("/api/employee_user", get(get_employee_by_user_id))
-        .merge(SwaggerUi::new("/swagger").url("/api-doc/openapi.json", ApiDoc::openapi()))
+        .route("/employeereadservice/api/position", get(get_position_by_id))
+        .route("/employeereadservice/api/employee", get(get_employee_by_id))
+        .route("/employeereadservice/api/employees", get(get_employees))
+        .route("/employeereadservice/api/positions", get(get_positions))
+        .route("/employeereadservice/api/employee_user", get(get_employee_by_user_id))
+        .merge(SwaggerUi::new("/employeereadservice/swagger").url("/employeereadservice/api-doc/openapi.json", ApiDoc::openapi()))
         .with_state(state.clone())
         .layer(ServiceBuilder::new().layer(tracing).layer(cors));
 
-    let listener = tokio::net::TcpListener::bind("localhost:8012")
+    let listener = tokio::net::TcpListener::bind("employereadeservice:8012")
         .await
         .unwrap();
     tracing::info!("listening on {}", listener.local_addr().unwrap());
 
-    tokio::spawn(update_db_poses(State(state.clone())))
-        .await
-        .unwrap();
+    let st2 = state.clone();
+    tokio::spawn(async move {
+        update_db_poses(State(st2)).await
+    });
 
-    tokio::spawn(update_db_main(State(state))).await.unwrap();
+    let st = state.clone();
+    tokio::spawn(async move {
+        update_db_main(State(st)).await
+    });
 
     axum::serve(listener, app).await.unwrap();
 }

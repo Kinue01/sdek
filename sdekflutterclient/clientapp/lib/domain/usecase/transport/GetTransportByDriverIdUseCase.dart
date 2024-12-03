@@ -8,7 +8,7 @@ class GetTransportByDriverIdUseCase {
     required this.repository
   });
 
-  Future<Transport> exec(String uuid) async {
-    return await repository.getTransportByDriverId(uuid);
+  Future<Transport> exec(int driver) async {
+    return await repository.getTransportByDriverId(driver);
   }
 }

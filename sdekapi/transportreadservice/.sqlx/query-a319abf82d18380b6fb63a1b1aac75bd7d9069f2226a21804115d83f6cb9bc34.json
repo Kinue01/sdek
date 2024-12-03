@@ -1,0 +1,14 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "insert into tb_transport_type (type_name) values ($1)",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Varchar"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "a319abf82d18380b6fb63a1b1aac75bd7d9069f2226a21804115d83f6cb9bc34"
+}

@@ -1,0 +1,46 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "select * from tb_client where client_id = $1",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "client_id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 1,
+        "name": "client_lastname",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 2,
+        "name": "client_firstname",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 3,
+        "name": "client_middlename",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 4,
+        "name": "client_user_id",
+        "type_info": "Uuid"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int4"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "a8e2ff326ff1d1c01aba162d4c7d77122982c0d086dccd2ab5f3e42d74ef4aba"
+}

@@ -12,7 +12,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 public class AppConf {
     @Bean
     public EventStoreDBClient eventStoreDBClient() {
-        EventStoreDBClientSettings settings = EventStoreDBConnectionString.parseOrThrow("esdb://admin:@localhost:2113");
+        final EventStoreDBClientSettings settings = EventStoreDBConnectionString.parseOrThrow("esdb://admin:@eventstore:2113?tls=false");
         return EventStoreDBClient.create(settings);
     }
 }

@@ -55,7 +55,7 @@ class PackageTypeApiImpl implements PackageTypeApi {
 
   @override
   Future<List<PackageType>> getTypes() async {
-    Response<List<Map<String, dynamic>>> response = await client.get("$readUrl/api/types");
+    Response<List<dynamic>> response = await client.get("$readUrl/api/package_types");
     switch (response.statusCode) {
       case 200:
         return response.data!.map((e) => PackageType.fromMap(e)).toList();

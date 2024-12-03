@@ -8,6 +8,8 @@ abstract class UserLocalStorage {
   Future<bool> saveUsers(List<User> users);
   Future<List<User>> getUsers();
   Future<User> getUser(String uuid);
+  Future<bool> saveCurrentUser(User user);
+  Future<User> getCurrentUser();
 }
 
 class UserLocalStorageImpl implements UserLocalStorage {
@@ -40,6 +42,18 @@ class UserLocalStorageImpl implements UserLocalStorage {
   @override
   Future<bool> saveUsers(List<User> users) async {
     await sharedPreferencesAsync.setStringList("USERS", users.map((e) => e.toRawJson()).toList());
+    return true;
+  }
+  
+  @override
+  Future<User> getCurrentUser() async {
+    var res = await sharedPreferencesAsync.getString("CURR_USER");
+    return res != null ? User.fromRawJson(res) : User(user_role: Role());
+  }
+  
+  @override
+  Future<bool> saveCurrentUser(User user) async {
+    await sharedPreferencesAsync.setString("CURR_USER", user.toRawJson());
     return true;
   }
 }

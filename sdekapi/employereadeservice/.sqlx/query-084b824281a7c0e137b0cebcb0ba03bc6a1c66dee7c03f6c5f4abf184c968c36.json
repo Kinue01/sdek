@@ -1,0 +1,14 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "delete from tb_position where position_id = $1",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int2"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "084b824281a7c0e137b0cebcb0ba03bc6a1c66dee7c03f6c5f4abf184c968c36"
+}

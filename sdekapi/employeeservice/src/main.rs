@@ -46,28 +46,28 @@ async fn main() {
     dotenv().ok();
 
     let event_client =
-        Client::new("esdb://admin:@localhost:2113".parse().unwrap_or_default()).unwrap();
+        Client::new("esdb://admin:@eventstore:2113".parse().unwrap_or_default()).unwrap();
 
     let state = AppState { event_client };
 
     let app = Router::new()
         .route(
-            "/api/position",
+            "/employeeservice/api/position",
             post(add_position)
                 .patch(update_position)
                 .delete(delete_position),
         )
         .route(
-            "/api/employee",
+            "/employeeservice/api/employee",
             post(add_employee)
                 .patch(update_employee)
                 .delete(delete_employee),
         )
-        .merge(SwaggerUi::new("/swagger").url("/api-doc/openapi.json", ApiDoc::openapi()))
+        .merge(SwaggerUi::new("/employeeservice/swagger").url("/employeeservice/api-doc/openapi.json", ApiDoc::openapi()))
         .with_state(state)
         .layer(ServiceBuilder::new().layer(tracing).layer(cors));
 
-    let listener = tokio::net::TcpListener::bind("localhost:8002")
+    let listener = tokio::net::TcpListener::bind("employeeservice:8002")
         .await
         .unwrap();
     tracing::info!("listening on {}", listener.local_addr().unwrap());

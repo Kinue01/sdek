@@ -10,6 +10,8 @@ abstract class ClientLocalStorage {
   Future<Client> getClient(int id);
   Future<bool> saveClientByUser(Client client);
   Future<Client> getClientByUser(String uuid);
+  Future<Client> getCurrClient();
+  Future<bool> saveCurrClient(Client client);
 }
 
 class ClientLocalStorageImpl implements ClientLocalStorage {
@@ -22,13 +24,13 @@ class ClientLocalStorageImpl implements ClientLocalStorage {
   @override
   Future<Client> getClient(int id) async {
     final client = await sharedPreferencesAsync.getString("CLIENT_$id");
-    return client != null ? Client.fromRawJson(client) : Client(client_user: User(user_role: Role()));
+    return client != null ? Client.fromRawJsonLocal(client) : Client(client_user: User(user_role: Role()));
   }
 
   @override
   Future<List<Client>> getClients() async {
     final clients = await sharedPreferencesAsync.getStringList("CLIENTS");
-    return clients != null ? clients.map((e) => Client.fromRawJson(e)).toList() : [];
+    return clients != null ? clients.map((e) => Client.fromRawJsonLocal(e)).toList() : [];
   }
 
   @override
@@ -48,7 +50,7 @@ class ClientLocalStorageImpl implements ClientLocalStorage {
   @override
   Future<Client> getClientByUser(String uuid) async {
     final client = await sharedPreferencesAsync.getString("CLIENT_USER_$uuid");
-    return client != null ? Client.fromRawJson(client) : Client(client_user: User(user_role: Role()));
+    return client != null ? Client.fromRawJsonLocal(client) : Client(client_user: User(user_role: Role()));
   }
 
   @override
@@ -56,6 +58,18 @@ class ClientLocalStorageImpl implements ClientLocalStorage {
     final key = client.client_user.user_id;
     final json = client.toRawJson();
     await sharedPreferencesAsync.setString("CLIENT_USER_$key", json);
+    return true;
+  }
+  
+  @override
+  Future<Client> getCurrClient() async {
+    final client = await sharedPreferencesAsync.getString("CURR_CLIENT");
+    return client != null ? Client.fromRawJsonLocal(client) : Client(client_user: User(user_role: Role()));
+  }
+  
+  @override
+  Future<bool> saveCurrClient(Client client) async {
+    await sharedPreferencesAsync.setString("CURR_CLIENT", client.toRawJson());
     return true;
   }
 }

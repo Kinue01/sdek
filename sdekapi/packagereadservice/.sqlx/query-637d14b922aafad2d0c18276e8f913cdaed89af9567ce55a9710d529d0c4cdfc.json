@@ -1,0 +1,46 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "select * from tb_fwarehouse_type where type_id = $1",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "type_id",
+        "type_info": "Int2"
+      },
+      {
+        "ordinal": 1,
+        "name": "type_name",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 2,
+        "name": "type_small_quantity",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 3,
+        "name": "type_med_quantity",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 4,
+        "name": "type_huge_quantity",
+        "type_info": "Int4"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int2"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "637d14b922aafad2d0c18276e8f913cdaed89af9567ce55a9710d529d0c4cdfc"
+}

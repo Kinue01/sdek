@@ -10,45 +10,30 @@ import java.util.concurrent.ExecutionException;
 
 @Service
 public class WarehouseService {
-    EventStoreDBClient client;
+    private final EventStoreDBClient client;
 
     public WarehouseService(EventStoreDBClient client) {
         this.client = client;
     }
 
     @Async
-    public CompletableFuture<Boolean> addWarehouse(Warehouse warehouse) {
-        EventData data = EventData.builderAsJson("warehouse_add", warehouse).build();
-        try {
-            client.appendToStream("warehouse", data).get();
-            return CompletableFuture.completedFuture(true);
-        } catch (ExecutionException | InterruptedException e) {
-            System.out.println("err");
-            return CompletableFuture.completedFuture(false);
-        }
+    public CompletableFuture<Warehouse> addWarehouse(Warehouse warehouse) {
+        final EventData data = EventData.builderAsJson("warehouse_add", warehouse).build();
+        client.appendToStream("warehouse", data).join();
+        return CompletableFuture.completedFuture(warehouse);
     }
 
     @Async
-    public CompletableFuture<Boolean> updateWarehouse(Warehouse warehouse) {
-        EventData data = EventData.builderAsJson("warehouse_update", warehouse).build();
-        try {
-            client.appendToStream("warehouse", data).get();
-            return CompletableFuture.completedFuture(true);
-        } catch (ExecutionException | InterruptedException e) {
-            System.out.println("err");
-            return CompletableFuture.completedFuture(false);
-        }
+    public CompletableFuture<Warehouse> updateWarehouse(Warehouse warehouse) {
+        final EventData data = EventData.builderAsJson("warehouse_update", warehouse).build();
+        client.appendToStream("warehouse", data).join();
+        return CompletableFuture.completedFuture(warehouse);
     }
 
     @Async
-    public CompletableFuture<Boolean> deleteWarehouse(Warehouse warehouse) {
-        EventData data = EventData.builderAsJson("warehouse_delete", warehouse).build();
-        try {
-            client.appendToStream("warehouse", data).get();
-            return CompletableFuture.completedFuture(true);
-        } catch (ExecutionException | InterruptedException e) {
-            System.out.println("err");
-            return CompletableFuture.completedFuture(false);
-        }
+    public CompletableFuture<Warehouse> deleteWarehouse(Warehouse warehouse) {
+        final EventData data = EventData.builderAsJson("warehouse_delete", warehouse).build();
+        client.appendToStream("warehouse", data).join();
+        return CompletableFuture.completedFuture(warehouse);
     }
 }

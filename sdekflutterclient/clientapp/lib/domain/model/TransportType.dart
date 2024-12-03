@@ -13,7 +13,6 @@ class TransportType with EquatableMixin {
   });
 
   @override
-  // TODO: implement props
   List<Object?> get props => [
     type_id,
     type_name,

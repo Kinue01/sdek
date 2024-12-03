@@ -32,18 +32,38 @@ class LoginViewState extends State<LoginComponent> with GetItStateMixin {
   }
 
   void onLogin() async {
-    //User res = await controller.logIn();
+    if (controller.login.value == '' || controller.password.value == '') {
+      showAdaptiveDialog(context: context, builder: (builder) => const AlertDialog(
+        title: Text('Ошибка'),
+        content: Text('Введите логин или пароль'),
+      ));
+      return;
+    }
+
+    User res = await controller.logIn();
+    if (res.user_id == null) {
+      showAdaptiveDialog(context: context, builder: (builder) => const AlertDialog(
+        title: Text('Ошибка'),
+        content: Text('Нет такого пользователя'),
+      ));
+      return;
+    }
+
+    await controller.saveUser(res);
+    await controller.saveClient();
     FluroApp.router.navigateTo(context, "/home");
   }
 
   @override
   Widget build(BuildContext context) {
-    String login = watchX((LoginPageController controller) => controller.login);
-    String pass = watchX((LoginPageController controller) => controller.password);
-
     return Scaffold(
-      body: Row(
+      appBar: AppBar(
+        title: const Text('Вход'),
+      ),
+      body: Center(
+        child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               Image.asset("assets/images/logo.png", width: 400, height: 400,),
               Column(
@@ -57,7 +77,7 @@ class LoginViewState extends State<LoginComponent> with GetItStateMixin {
                           labelText: 'Логин'
                       ),
                       onChanged: (text) {
-                        login = text;
+                        controller.login.value = text;
                       },
                     ),
                   ),
@@ -69,8 +89,9 @@ class LoginViewState extends State<LoginComponent> with GetItStateMixin {
                           border: UnderlineInputBorder(),
                           labelText: 'Пароль'
                       ),
+                      obscureText: true,
                       onChanged: (text) {
-                        pass = text;
+                        controller.password.value = text;
                       },
                     ),
                   ),
@@ -82,7 +103,8 @@ class LoginViewState extends State<LoginComponent> with GetItStateMixin {
                 ],
               ),
             ],
-          )
+          ),
+      )
     );
   }
 }

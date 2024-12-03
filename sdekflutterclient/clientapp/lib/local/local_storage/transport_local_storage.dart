@@ -11,8 +11,8 @@ abstract class TransportLocalStorage {
   Future<bool> saveTransports(List<Transport> transport);
   Future<Transport> getTransport(int id);
   Future<List<Transport>> getTransports();
-  Future<Transport> getTransportByDriver(String uuid);
-  Future<bool> saveTransportByDriver(Transport transport);
+  Future<Transport> getTransportByDriver(int driver);
+  Future<bool> saveTransportByDriver(Transport transport, int driver);
 }
 
 class TransportLocalStorageImpl implements TransportLocalStorage {
@@ -25,7 +25,7 @@ class TransportLocalStorageImpl implements TransportLocalStorage {
   @override
   Future<Transport> getTransport(int id) async {
     final trans = await sharedPreferencesAsync.getString("TRANS_$id");
-    return trans != null ? Transport.fromRawJson(trans) : Transport(transport_type: TransportType(), transport_driver: Employee(employee_position: Position(), employee_user: User(user_role: Role())));
+    return trans != null ? Transport.fromRawJson(trans) : Transport(transport_type: TransportType());
   }
 
   @override
@@ -49,16 +49,15 @@ class TransportLocalStorageImpl implements TransportLocalStorage {
   }
 
   @override
-  Future<Transport> getTransportByDriver(String uuid) async {
-    final trans = await sharedPreferencesAsync.getString("TRANS_DRIVER_$uuid");
-    return trans != null ? Transport.fromRawJson(trans) : Transport(transport_type: TransportType(), transport_driver: Employee(employee_position: Position(), employee_user: User(user_role: Role())));
+  Future<Transport> getTransportByDriver(int driver) async {
+    final trans = await sharedPreferencesAsync.getString("TRANS_DRIVER_$driver");
+    return trans != null ? Transport.fromRawJson(trans) : Transport(transport_type: TransportType());
   }
 
   @override
-  Future<bool> saveTransportByDriver(Transport transport) async {
-    final key = transport.transport_driver.employee_id;
+  Future<bool> saveTransportByDriver(Transport transport, int driver) async {
     final json = transport.toRawJson();
-    await sharedPreferencesAsync.setString("TRANS_DRIVER_$key", json);
+    await sharedPreferencesAsync.setString("TRANS_DRIVER_$driver", json);
     return true;
   }
 }

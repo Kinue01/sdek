@@ -15,7 +15,6 @@ class Position with EquatableMixin {
   });
 
   @override
-  // TODO: implement props
   List<Object?> get props => [
     position_id,
     position_name,

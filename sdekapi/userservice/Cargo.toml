@@ -4,24 +4,22 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-axum = { version = "0.7.5", features = ["macros", "json"] }
-axum_session = "0.14.2"
+axum = { version = "0.7.7", features = ["macros", "json"] }
 derive_more = { version = "1.0.0", features = ["full"] }
 dotenvy = "0.15.7"
-oauth2 = "4.4.2"
-serde = { version = "1.0.208", features = ["derive"] }
-serde_json = "1.0.125"
-tokio = { version = "1.39.3", features = ["macros", "rt-multi-thread"] }
-tower = "0.5.0"
-tower-http = { version = "0.5.2", features = ["trace", "cors"] }
+serde = { version = "1.0.214", features = ["derive"] }
+serde_json = "1.0.132"
+tokio = { version = "1.41.0", features = ["macros", "rt-multi-thread"] }
+tower = "0.5.1"
+tower-http = { version = "0.6.1", features = ["trace", "cors"] }
 tracing = "0.1.40"
 tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
-utoipa = { version = "4.2.3", features = ["axum_extras", "uuid"] }
-utoipa-swagger-ui = { version = "7.1.0", features = ["axum"] }
+utoipa = { version = "5.2.0", features = ["axum_extras", "uuid"] }
+utoipa-swagger-ui = { version = "8.0.3", features = ["axum"] }
 eventstore = "3.0.0"
 
 [dependencies.uuid]
-version = "1.10.0"
+version = "1.11.0"
 features = [
     "v7", # Lets you generate random UUIDs
     "serde", # Use _a faster (but still sufficiently random) RNG

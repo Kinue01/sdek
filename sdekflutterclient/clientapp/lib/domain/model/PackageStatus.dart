@@ -12,7 +12,6 @@ class PackageStatus with EquatableMixin {
   });
 
   @override
-  // TODO: implement props
   List<Object?> get props => [
     status_id,
     status_name

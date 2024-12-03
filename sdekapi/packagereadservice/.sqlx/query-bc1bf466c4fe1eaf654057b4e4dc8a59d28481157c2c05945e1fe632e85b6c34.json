@@ -1,0 +1,20 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "select package_uuid from tb_package offset ((select count(*) from tb_package) - 1)",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "package_uuid",
+        "type_info": "Uuid"
+      }
+    ],
+    "parameters": {
+      "Left": []
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "bc1bf466c4fe1eaf654057b4e4dc8a59d28481157c2c05945e1fe632e85b6c34"
+}

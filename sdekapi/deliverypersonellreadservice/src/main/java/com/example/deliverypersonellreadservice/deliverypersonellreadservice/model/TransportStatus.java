@@ -1,27 +1,19 @@
 package com.example.deliverypersonellreadservice.deliverypersonellreadservice.model;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Entity
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Table(name = "tb_ftransport_status")
 public class TransportStatus {
-    int status_id;
+    @Id
+    short status_id;
     String status_name;
-
-    public TransportStatus(int status_id, String status_name) {
-        this.status_id = status_id;
-        this.status_name = status_name;
-    }
-
-    public int getType_id() {
-        return status_id;
-    }
-
-    public void setType_id(int status_id) {
-        this.status_id = status_id;
-    }
-
-    public String getType_name() {
-        return status_name;
-    }
-
-    public void setType_name(String status_name) {
-        this.status_name = status_name;
-    }
 }

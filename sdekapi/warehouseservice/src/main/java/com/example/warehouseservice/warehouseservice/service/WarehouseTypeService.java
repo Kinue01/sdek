@@ -10,45 +10,30 @@ import java.util.concurrent.ExecutionException;
 
 @Service
 public class WarehouseTypeService {
-    EventStoreDBClient client;
+    private final EventStoreDBClient client;
 
     public WarehouseTypeService(EventStoreDBClient client) {
         this.client = client;
     }
 
     @Async
-    public CompletableFuture<Boolean> addType(WarehouseType type) {
-        EventData data = EventData.builderAsJson("warehouse_type_add", type).build();
-        try {
-            client.appendToStream("warehouse_type", data).get();
-            return CompletableFuture.completedFuture(true);
-        } catch (ExecutionException | InterruptedException e) {
-            System.out.println("err");
-            return CompletableFuture.completedFuture(false);
-        }
+    public CompletableFuture<WarehouseType> addType(WarehouseType type) {
+        final EventData data = EventData.builderAsJson("warehouse_type_add", type).build();
+        client.appendToStream("warehouse_type", data).join();
+        return CompletableFuture.completedFuture(type);
     }
 
     @Async
-    public CompletableFuture<Boolean> updateType(WarehouseType type) {
-        EventData data = EventData.builderAsJson("warehouse_type_update", type).build();
-        try {
-            client.appendToStream("warehouse_type", data).get();
-            return CompletableFuture.completedFuture(true);
-        } catch (ExecutionException | InterruptedException e) {
-            System.out.println("err");
-            return CompletableFuture.completedFuture(false);
-        }
+    public CompletableFuture<WarehouseType> updateType(WarehouseType type) {
+        final EventData data = EventData.builderAsJson("warehouse_type_update", type).build();
+        client.appendToStream("warehouse_type", data).join();
+        return CompletableFuture.completedFuture(type);
     }
 
     @Async
-    public CompletableFuture<Boolean> deleteType(WarehouseType type) {
-        EventData data = EventData.builderAsJson("warehouse_type_delete", type).build();
-        try {
-            client.appendToStream("warehouse_type", data).get();
-            return CompletableFuture.completedFuture(true);
-        } catch (ExecutionException | InterruptedException e) {
-            System.out.println("err");
-            return CompletableFuture.completedFuture(false);
-        }
+    public CompletableFuture<WarehouseType> deleteType(WarehouseType type) {
+        final EventData data = EventData.builderAsJson("warehouse_type_delete", type).build();
+        client.appendToStream("warehouse_type", data).join();
+        return CompletableFuture.completedFuture(type);
     }
 }

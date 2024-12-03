@@ -25,8 +25,8 @@ class TransportDataRepositoryImpl implements TransportDataRepository {
   }
 
   @override
-  Future<Transport> getTransportByDriverId(String uuid) async {
-    return await transportApi.getTransportByDriverId(uuid);
+  Future<Transport> getTransportByDriverId(int driver) async {
+    return await transportApi.getTransportByDriverId(driver);
   }
 
   @override

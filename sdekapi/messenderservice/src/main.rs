@@ -27,11 +27,11 @@ async fn main() {
         .on_response(trace::DefaultOnResponse::new().level(tracing::Level::INFO));
 
     let app = Router::new()
-        .route("/ws", get(handler))
+        .route("/messageservice/ws", get(handler))
         .layer(cors)
         .layer(tracing);
 
-    let listener = tokio::net::TcpListener::bind("localhost:8004")
+    let listener = tokio::net::TcpListener::bind("messenderservice:8004")
         .await
         .unwrap();
     tracing::info!("listening on {}", listener.local_addr().unwrap());

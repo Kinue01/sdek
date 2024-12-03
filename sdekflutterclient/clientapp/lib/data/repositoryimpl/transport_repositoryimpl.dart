@@ -31,7 +31,7 @@ class TransportRepositoryImpl implements TransportRepository {
   @override
   Future<bool> deleteTransport(Transport transport) async {
     if (await repository.deleteTransport(transport)) {
-      await transportLocalStorage.saveTransport(Transport(transport_type: TransportType(), transport_driver: Employee(employee_position: Position(), employee_user: User(user_role: Role()))));
+      await transportLocalStorage.saveTransport(Transport(transport_type: TransportType()));
       return true;
     }
     else {
@@ -55,15 +55,15 @@ class TransportRepositoryImpl implements TransportRepository {
   }
 
   @override
-  Future<Transport> getTransportByDriverId(String uuid) async {
-    final trans = await transportLocalStorage.getTransportByDriver(uuid);
+  Future<Transport> getTransportByDriverId(int driver) async {
+    final trans = await transportLocalStorage.getTransportByDriver(driver);
     if (trans.transport_id != 0) {
       return trans;
     }
     else {
-      final res = await repository.getTransportByDriverId(uuid);
+      final res = await repository.getTransportByDriverId(driver);
       if (res.transport_id != 0) {
-        await transportLocalStorage.saveTransportByDriver(res);
+        await transportLocalStorage.saveTransportByDriver(res, driver);
       }
       return res;
     }

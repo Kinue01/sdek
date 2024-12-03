@@ -43,14 +43,14 @@ async fn main() {
 
     let app = Router::new()
         .route(
-            "/api/client",
+            "/customerservice/api/client",
             post(add_client).patch(update_client).delete(delete_client),
         )
-        .merge(SwaggerUi::new("/swagger").url("/api-doc/openapi.json", ApiDoc::openapi()))
+        .merge(SwaggerUi::new("/customerservice/swagger").url("/customerservice/api-doc/openapi.json", ApiDoc::openapi()))
         .with_state(event_client)
         .layer(ServiceBuilder::new().layer(tracing).layer(cors));
 
-    let listener = tokio::net::TcpListener::bind("localhost:8001")
+    let listener = tokio::net::TcpListener::bind("consumerservice:8001")
         .await
         .unwrap();
     tracing::info!("listening on {}", listener.local_addr().unwrap());

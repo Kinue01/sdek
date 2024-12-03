@@ -1,5 +1,3 @@
-create database clients;
-
 create extension postgres_fdw;
 
 create table if not exists tb_client
@@ -21,10 +19,22 @@ create foreign table tb_fuser
     user_login character varying(30) COLLATE pg_catalog."default" NOT NULL,
     user_password text COLLATE pg_catalog."default" NOT NULL,
     user_email character varying(320) COLLATE pg_catalog."default",
-    user_phone character varying(11) COLLATE pg_catalog."default" NOT NULL,
+    user_phone character varying(12) COLLATE pg_catalog."default" NOT NULL,
     user_access_token text COLLATE pg_catalog."default",
     user_role_id smallint NOT NULL
 ) server fuser options (table_name 'tb_user');
+
+create foreign table tb_fuser_role
+(
+	role_id smallint NOT NULL,
+    role_name character varying(30) COLLATE pg_catalog."default" NOT NULL
+) server fuser options (table_name 'tb_role');
+
+insert into tb_client (client_lastname, client_firstname, client_middlename, client_user_id)
+values 
+('Кондрашова', 'Маргарита', 'Сергеевна', 'e49b998b-30f5-45a9-a985-40ed48fee708'),
+('Соловьева', 'Алиса', 'Артёмовна', '9318474d-5f15-4f55-98b4-5e9188d3593b'),
+('Волкова', 'Ксения', 'Михайловна', '21e480b9-7eb3-4e7f-9084-052d6c19df92');
 
 create or replace function fkey_user_func() returns trigger
 as $$

@@ -10,7 +10,7 @@ use crate::model::*;
 #[utoipa::path(
     post,
     path = "/api/employee",
-    request_body(content = Json<Employee>, description = "Employee"),
+    request_body(content = Employee, description = "Employee"),
     responses(
         (status = 201, description = "Employee created"),
         (status = 500, description = "Can`t create employee")
@@ -40,7 +40,7 @@ pub async fn add_employee(
 #[utoipa::path(
     patch,
     path = "/api/employee",
-    request_body(content = Json<Employee>, description = "Employee"),
+    request_body(content = Employee, description = "Employee"),
     responses(
         (status = 200, description = "Employee updated"),
         (status = 500, description = "Can`t update employee")
@@ -70,7 +70,7 @@ pub async fn update_employee(
 #[utoipa::path(
     delete,
     path = "/api/employee",
-    request_body(content = Json<Employee>, description = "Employee"),
+    request_body(content = Employee, description = "Employee"),
     responses(
         (status = 200, description = "Employee deleted"),
         (status = 500, description = "Can`t delete employee")
@@ -100,7 +100,7 @@ pub async fn delete_employee(
 #[utoipa::path(
     post,
     path = "/api/position",
-    request_body(content = Json<PositionResponse>, description = "Position"),
+    request_body(content = PositionResponse, description = "Position"),
     responses(
         (status = 201, description = "Position created"),
         (status = 500, description = "Can`t create position")
@@ -123,7 +123,7 @@ pub async fn add_position(
 #[utoipa::path(
     patch,
     path = "/api/position",
-    request_body(content = Json<PositionResponse>, description = "Position"),
+    request_body(content = PositionResponse, description = "Position"),
     responses(
         (status = 200, description = "Position updated"),
         (status = 500, description = "Can`t update position")
@@ -146,7 +146,7 @@ pub async fn update_position(
 #[utoipa::path(
     delete,
     path = "/api/position",
-    request_body(content = Json<i32>, description = "Position id"),
+    request_body(content = i32, description = "Position id"),
     responses(
         (status = 200, description = "Position deleted"),
         (status = 500, description = "Can`t delete position")

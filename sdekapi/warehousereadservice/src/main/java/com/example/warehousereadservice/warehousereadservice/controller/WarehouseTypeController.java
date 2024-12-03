@@ -4,39 +4,25 @@ import com.example.warehousereadservice.warehousereadservice.model.WarehouseType
 import com.example.warehousereadservice.warehousereadservice.service.UpdateWarehouseTypeDbService;
 import com.example.warehousereadservice.warehousereadservice.service.WarehouseTypeService;
 import org.springframework.web.bind.annotation.*;
-import java.util.concurrent.ExecutionException;
+
+import java.util.List;
 
 @RestController
-@RequestMapping(value = "/api/warehouse_types", produces = "application/json")
+@RequestMapping(value = "/warehousereadservice/api", produces = "application/json")
 public class WarehouseTypeController {
     final WarehouseTypeService service;
-    final UpdateWarehouseTypeDbService updateWarehouseTypeDbService;
 
-    public WarehouseTypeController(WarehouseTypeService service, UpdateWarehouseTypeDbService updateWarehouseTypeDbService) {
+    public WarehouseTypeController(WarehouseTypeService service) {
         this.service = service;
-        this.updateWarehouseTypeDbService = updateWarehouseTypeDbService;
-        this.updateWarehouseTypeDbService.init();
     }
 
-    @GetMapping
-    public WarehouseType getTypeById(@RequestParam int id) {
-        var res = service.getType(id);
-        try {
-            return res.get();
-        } catch (InterruptedException | ExecutionException e) {
-            System.out.println("err");
-            return null;
-        }
+    @GetMapping("/warehouse_type")
+    public WarehouseType getTypeById(@RequestParam short id) {
+        return service.getType(id).join();
     }
 
-    @GetMapping
-    public Iterable<WarehouseType> getTypes() {
-        var res = service.getTypes();
-        try {
-            return res.get();
-        } catch (InterruptedException | ExecutionException e) {
-            System.out.println("err");
-            return null;
-        }
+    @GetMapping("/warehouse_types")
+    public List<WarehouseType> getTypes() {
+        return service.getTypes().join();
     }
 }

@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:equatable/equatable.dart';
 
 class Role with EquatableMixin {
-
   final int? role_id;
   final String? role_name;
 
@@ -13,7 +12,6 @@ class Role with EquatableMixin {
   });
 
   @override
-  // TODO: implement props
   List<Object?> get props => [
     role_id,
     role_name
@@ -36,4 +34,18 @@ class Role with EquatableMixin {
     'role_id': role_id,
     'role_name': role_name,
   };
+
+  static Role fromRole(Role role) {
+    return Role(
+      role_id: role.role_id,
+      role_name: role.role_name,
+    );
+  }
+
+  Role toLocation() {
+    return Role(
+      role_id: role_id,
+      role_name: role_name,
+    );
+  }
 }

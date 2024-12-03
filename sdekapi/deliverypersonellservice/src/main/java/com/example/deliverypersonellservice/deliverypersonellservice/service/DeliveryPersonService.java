@@ -10,7 +10,7 @@ import com.example.deliverypersonellservice.deliverypersonellservice.model.Deliv
 
 @Service
 public class DeliveryPersonService {
-    EventStoreDBClient client;
+    private final EventStoreDBClient client;
 
     public DeliveryPersonService(EventStoreDBClient client) {
         this.client = client;
@@ -18,37 +18,22 @@ public class DeliveryPersonService {
 
     @Async
     public CompletableFuture<DeliveryPerson> addPerson(DeliveryPerson person) {
-        EventData data = EventData.builderAsJson("delivery_person_add", person).build();
-        try {
-            client.appendToStream("delivery_person", data).get();
-            return CompletableFuture.completedFuture(person);
-        } catch (ExecutionException | InterruptedException e) {
-            System.out.println("err");
-            return CompletableFuture.completedFuture(null);
-        }
+        final EventData data = EventData.builderAsJson("delivery_person_add", person).build();
+        client.appendToStream("delivery_person", data).join();
+        return CompletableFuture.completedFuture(person);
     } 
 
     @Async
     public CompletableFuture<DeliveryPerson> updatePerson(DeliveryPerson person) {
-        EventData data = EventData.builderAsJson("delivery_person_update", person).build();
-        try {
-            client.appendToStream("delivery_person", data).get();
-            return CompletableFuture.completedFuture(person);
-        } catch (ExecutionException | InterruptedException e) {
-            System.out.println("err");
-            return CompletableFuture.completedFuture(null);
-        }
+        final EventData data = EventData.builderAsJson("delivery_person_update", person).build();
+        client.appendToStream("delivery_person", data).join();
+        return CompletableFuture.completedFuture(person);
     }
 
     @Async
     public CompletableFuture<DeliveryPerson> deletePerson(DeliveryPerson person) {
-        EventData data = EventData.builderAsJson("delivery_person_delete", person).build();
-        try {
-            client.appendToStream("delivery_person", data).get();
-            return CompletableFuture.completedFuture(person);
-        } catch (ExecutionException | InterruptedException e) {
-            System.out.println("err");
-            return CompletableFuture.completedFuture(null);
-        }
+        final EventData data = EventData.builderAsJson("delivery_person_delete", person).build();
+        client.appendToStream("delivery_person", data).join();
+        return CompletableFuture.completedFuture(person);
     }
 }

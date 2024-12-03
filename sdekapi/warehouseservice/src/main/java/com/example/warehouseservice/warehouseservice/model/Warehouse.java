@@ -1,13 +1,23 @@
 package com.example.warehouseservice.warehouseservice.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.springframework.data.geo.Point;
+import lombok.NoArgsConstructor;
+
+import jakarta.validation.constraints.NotBlank;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class Warehouse {
-    public int warehouse_id;
-    public String warehouse_name;
-    public String warehouse_address;
-    public Point warehouse_point;
-    public WarehouseType warehouse_type;
+    int warehouse_id;
+
+    @NotBlank
+    String warehouse_name;
+
+    @NotBlank
+    String warehouse_address;
+
+    @NotBlank
+    WarehouseType warehouse_type;
 }

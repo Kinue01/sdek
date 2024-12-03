@@ -17,7 +17,6 @@ class AuthorisationApiImpl implements AuthorisationApi {
     required this.client
   });
 
-  // todo: add to nginx conf
   String get url => "http://localhost/authservice";
 
   @override
@@ -55,12 +54,17 @@ class AuthorisationApiImpl implements AuthorisationApi {
 
   @override
   Future<User> getUserByLoginPass(User user) async {
-    Response<Map<String, dynamic>> response = await client.post("$url/api/user", data: user.toRawJson());
-    switch (response.statusCode) {
-      case 200:
-        return User.fromMap(response.data!);
-      default:
-        return User(user_role: Role());
+    try {
+      Response<Map<String, dynamic>> response = await client.post("$url/api/user", data: user.toRawJson());
+      switch (response.statusCode) {
+        case 200:
+          return User.fromMap(response.data!);
+        default:
+          return User(user_role: Role());
+      }
+    }
+    on Exception catch (_) {
+      return User(user_role: Role());
     }
   }
 }

@@ -1,0 +1,25 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "update tb_package set package_send_date = $1, package_receive_date = $2, package_weight = $3, package_deliveryperson_id = $4, package_type_id = $5, package_status_id = $6, package_sender_id = $7, package_receiver_id = $8, package_warehouse_id = $9, package_paytype_id = $10, package_payer_id = $11 where package_uuid = $12",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Date",
+        "Date",
+        "Numeric",
+        "Int4",
+        "Int2",
+        "Int2",
+        "Int4",
+        "Int4",
+        "Int4",
+        "Int2",
+        "Int4",
+        "Uuid"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "a0bfac7e02431e6329deb541be09cd167191d570c0bf3e098451e9b04c2152de"
+}

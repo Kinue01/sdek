@@ -22,6 +22,8 @@ class PackageApiImpl implements PackageApi {
 
   @override
   Future<bool> addPackage(Package package) async {
+    var temp = package.toRawJson();
+    var temp2 = package.toMap();
     Response response = await client.post("$url/api/package", data: package.toRawJson());
     switch (response.statusCode) {
       case 201:
@@ -66,7 +68,7 @@ class PackageApiImpl implements PackageApi {
 
   @override
   Future<List<Package>> getPackagesByClientId(int id) async {
-    Response<List<Map<String, dynamic>>> response = await client.get("$readUrl/api/client_packages", options: Options(extra: {'id': id}));
+    Response<List<dynamic>> response = await client.get("$readUrl/api/client_packages?id=$id");
     switch (response.statusCode) {
       case 200:
         return response.data!.map((e) => Package.fromMap(e)).toList();

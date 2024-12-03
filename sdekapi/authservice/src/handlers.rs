@@ -7,7 +7,7 @@ use oauth2::{
 };
 use oauth2::basic::{BasicTokenResponse, BasicTokenType};
 use oauth2::reqwest::async_http_client;
-use redis::AsyncCommands;
+use redis::{AsyncCommands, JsonAsyncCommands};
 use serde::Deserialize;
 use utoipa::IntoParams;
 use uuid::Uuid;
@@ -47,9 +47,9 @@ pub async fn google_oauth2_req(
 #[utoipa::path(
     post,
     path = "/api/google_get_token",
-    request_body(content = Json<CodeResponse>, description = "Code"),
+    request_body(content = CodeResponse, description = "Code"),
     responses(
-        (status = 200, description = "Token requested", body = Json<BasicTokenResponse>),
+        (status = 200, description = "Token requested", body = String),
         (status = 500, description = "Failed request token")
     )
 )]
@@ -91,7 +91,7 @@ struct TokenQuery {
 #[utoipa::path(
     post,
     path = "/api/google_revoke_token",
-    request_body(content = Json<String>, description = "Secret"),
+    request_body(content = String, description = "Secret"),
     responses(
         (status = 200, description = "Token revoked"),
         (status = 500, description = "Failed revoke token")
@@ -134,11 +134,11 @@ pub async fn revoke_google_token(
 )]
 pub async fn get_user_by_login_pass(
     State(mut state): State<AppState>,
-    Json(user): Json<User>,
+    Json(usr): Json<UserRequest>,
 ) -> Result<Json<User>, MyError> {
     let user_redis: User = state
         .redis
-        .get("user".to_owned() + &*user.user_login.to_string())
+        .json_get("user".to_owned() + &*usr.user_login.to_string(), "$")
         .await
         .unwrap_or_default();
 
@@ -147,11 +147,11 @@ pub async fn get_user_by_login_pass(
             let user = sqlx::query_as!(
                 UserResponse,
                 "select * from tb_user where user_login = $1",
-                &user.user_login
+                &usr.user_login
             )
                 .fetch_one(&state.postgres)
                 .await
-                .map_err(MyError::DBError)?;
+                .unwrap();
 
             let res = User {
                 user_id: user.user_id,
@@ -167,12 +167,12 @@ pub async fn get_user_by_login_pass(
                 )
                     .fetch_one(&state.postgres)
                     .await
-                    .map_err(MyError::DBError)?,
+                    .unwrap(),
             };
 
             let _: () = state
                 .redis
-                .set("user".to_owned() + &*res.user_login.to_string(), &res)
+                .json_set("user".to_owned() + &*res.user_login.to_string(), "$", &res)
                 .await
                 .unwrap();
 

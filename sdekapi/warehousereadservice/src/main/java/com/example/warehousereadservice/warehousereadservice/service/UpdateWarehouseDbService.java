@@ -1,33 +1,32 @@
 package com.example.warehousereadservice.warehousereadservice.service;
 
 import com.eventstore.dbclient.*;
-import com.example.warehousereadservice.warehousereadservice.model.Warehouse;
+import com.example.warehousereadservice.warehousereadservice.model.WarehouseResponse;
 import com.example.warehousereadservice.warehousereadservice.repository.WarehouseRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.annotation.PostConstruct;
+import org.apache.commons.lang3.SerializationUtils;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UpdateWarehouseDbService {
-    EventStoreDBClient client;
-    final WarehouseRepository repository;
+    private final EventStoreDBClient client;
+    private final WarehouseRepository repository;
 
     public UpdateWarehouseDbService(EventStoreDBClient client, WarehouseRepository repository) {
         this.client = client;
         this.repository = repository;
     }
 
+    @PostConstruct
     public void init() {
-        SubscriptionListener listener = new SubscriptionListener() {
+        final SubscriptionListener listener = new SubscriptionListener() {
             @Override
             public void onEvent(Subscription subscription, ResolvedEvent event) {
-                RecordedEvent ev = event.getOriginalEvent();
+                final RecordedEvent ev = event.getOriginalEvent();
                 switch (ev.getEventType()) {
-                    case "warehouse_add", "warehouse_update" -> {
-                        repository.save(new ObjectMapper().convertValue(ev.getEventData(), Warehouse.class));
-                    }
-                    case "warehouse_delete" -> {
-                        repository.delete(new ObjectMapper().convertValue(ev.getEventData(), Warehouse.class));
-                    }
+                    case "warehouse_add", "warehouse_update" -> repository.save(SerializationUtils.deserialize(ev.getEventData()));
+                    case "warehouse_delete" -> repository.delete(SerializationUtils.deserialize(ev.getEventData()));
                 }
             }
 
@@ -39,6 +38,7 @@ public class UpdateWarehouseDbService {
 
             }
         };
+
         client.subscribeToStream("warehouse", listener);
     }
 }

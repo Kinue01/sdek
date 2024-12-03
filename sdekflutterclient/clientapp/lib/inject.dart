@@ -1,38 +1,54 @@
 import 'package:clientapp/data/repository/authorisation_data_repository.dart';
 import 'package:clientapp/data/repository/client_data_repository.dart';
+import 'package:clientapp/data/repository/delivery_person_data_repository.dart';
 import 'package:clientapp/data/repository/employee_data_repository.dart';
 import 'package:clientapp/data/repository/message_data_repository.dart';
 import 'package:clientapp/data/repository/package_data_repository.dart';
+import 'package:clientapp/data/repository/package_paytype_data_repository.dart';
 import 'package:clientapp/data/repository/package_status_data_repository.dart';
 import 'package:clientapp/data/repository/package_type_data_repository.dart';
 import 'package:clientapp/data/repository/position_data_repository.dart';
+import 'package:clientapp/data/repository/service_data_repository.dart';
 import 'package:clientapp/data/repository/transport_data_repository.dart';
 import 'package:clientapp/data/repository/transport_type_data_repository.dart';
 import 'package:clientapp/data/repository/user_data_repository.dart';
+import 'package:clientapp/data/repository/warehouse_data_repository.dart';
 import 'package:clientapp/data/repositoryimpl/authorisation_repositoryimpl.dart';
 import 'package:clientapp/data/repositoryimpl/client_repositoryimpl.dart';
+import 'package:clientapp/data/repositoryimpl/current_client_repositoryimpl.dart';
+import 'package:clientapp/data/repositoryimpl/current_user_repositoryimpl.dart';
+import 'package:clientapp/data/repositoryimpl/delivery_person_repository_impl.dart';
 import 'package:clientapp/data/repositoryimpl/employee_repositoryimpl.dart';
 import 'package:clientapp/data/repositoryimpl/message_repository_impl.dart';
+import 'package:clientapp/data/repositoryimpl/package_paytype_repository_impl.dart';
 import 'package:clientapp/data/repositoryimpl/package_repositoryimpl.dart';
 import 'package:clientapp/data/repositoryimpl/package_status_repositoryimpl.dart';
 import 'package:clientapp/data/repositoryimpl/package_type_repositoryimpl.dart';
 import 'package:clientapp/data/repositoryimpl/position_repositoryimpl.dart';
 import 'package:clientapp/data/repositoryimpl/role_repositoryimpl.dart';
+import 'package:clientapp/data/repositoryimpl/service_repository_impl.dart';
 import 'package:clientapp/data/repositoryimpl/transport_repositoryimpl.dart';
 import 'package:clientapp/data/repositoryimpl/transport_type_repositoryimpl.dart';
 import 'package:clientapp/data/repositoryimpl/user_repositoryimpl.dart';
+import 'package:clientapp/data/repositoryimpl/warehouse_repository_impl.dart';
 import 'package:clientapp/domain/repository/authorisation_repository.dart';
 import 'package:clientapp/domain/repository/client_repository.dart';
+import 'package:clientapp/domain/repository/current_client_repository.dart';
+import 'package:clientapp/domain/repository/current_user_repository.dart';
+import 'package:clientapp/domain/repository/delivery_person_repository.dart';
 import 'package:clientapp/domain/repository/employee_repository.dart';
 import 'package:clientapp/domain/repository/message_repository.dart';
+import 'package:clientapp/domain/repository/package_paytype_repository.dart';
 import 'package:clientapp/domain/repository/package_repository.dart';
 import 'package:clientapp/domain/repository/package_status_repository.dart';
 import 'package:clientapp/domain/repository/package_type_repository.dart';
 import 'package:clientapp/domain/repository/position_repository.dart';
 import 'package:clientapp/domain/repository/role_repository.dart';
+import 'package:clientapp/domain/repository/service_repository.dart';
 import 'package:clientapp/domain/repository/transport_repository.dart';
 import 'package:clientapp/domain/repository/transport_type_repository.dart';
 import 'package:clientapp/domain/repository/user_repository.dart';
+import 'package:clientapp/domain/repository/warehouse_repository.dart';
 import 'package:clientapp/domain/usecase/auth/GetGoogleUrlUseCase.dart';
 import 'package:clientapp/domain/usecase/auth/GetUserByLoginPassUseCase.dart';
 import 'package:clientapp/domain/usecase/auth/RevokeTokenBySecretUseCase.dart';
@@ -42,7 +58,10 @@ import 'package:clientapp/domain/usecase/client/DeleteClientUseCase.dart';
 import 'package:clientapp/domain/usecase/client/GetClientByIdUseCase.dart';
 import 'package:clientapp/domain/usecase/client/GetClientByUserIdUseCase.dart';
 import 'package:clientapp/domain/usecase/client/GetClientsUseCase.dart';
+import 'package:clientapp/domain/usecase/client/GetCurrentClientUseCase.dart';
+import 'package:clientapp/domain/usecase/client/SaveCurrentClientUseCase.dart';
 import 'package:clientapp/domain/usecase/client/UpdateClientUseCase.dart';
+import 'package:clientapp/domain/usecase/delivery_person/get_delivery_personal_use_case.dart';
 import 'package:clientapp/domain/usecase/employee/AddEmployeeUseCase.dart';
 import 'package:clientapp/domain/usecase/employee/DeleteEmployeeUseCase.dart';
 import 'package:clientapp/domain/usecase/employee/GetEmployeeByIdUseCase.dart';
@@ -56,6 +75,7 @@ import 'package:clientapp/domain/usecase/pack/GetPackageByIdUseCase.dart';
 import 'package:clientapp/domain/usecase/pack/GetPackagesByClientIdUseCase.dart';
 import 'package:clientapp/domain/usecase/pack/GetPackagesUseCase.dart';
 import 'package:clientapp/domain/usecase/pack/UpdatePackageUseCase.dart';
+import 'package:clientapp/domain/usecase/package_paytype/get_package_paytype_use_case.dart';
 import 'package:clientapp/domain/usecase/package_status/AddPackageStatusUseCase.dart';
 import 'package:clientapp/domain/usecase/package_status/DeletePackageStatusUseCase.dart';
 import 'package:clientapp/domain/usecase/package_status/GetPackageStatusByIdUseCase.dart';
@@ -73,6 +93,8 @@ import 'package:clientapp/domain/usecase/position/GetPositionsUseCase.dart';
 import 'package:clientapp/domain/usecase/position/UpdatePositionUseCase.dart';
 import 'package:clientapp/domain/usecase/role/GetRoleByIdUseCase.dart';
 import 'package:clientapp/domain/usecase/role/GetRolesUseCase.dart';
+import 'package:clientapp/domain/usecase/service/AddPackageServicesUseCase.dart';
+import 'package:clientapp/domain/usecase/service/GetAllServicesUseCase.dart';
 import 'package:clientapp/domain/usecase/transport/AddTransportUseCase.dart';
 import 'package:clientapp/domain/usecase/transport/DeleteTransportUseCase.dart';
 import 'package:clientapp/domain/usecase/transport/GetTransportByDriverIdUseCase.dart';
@@ -86,9 +108,12 @@ import 'package:clientapp/domain/usecase/transport_type/GetTransportTypesUseCase
 import 'package:clientapp/domain/usecase/transport_type/UpdateTransportTypeUseCase.dart';
 import 'package:clientapp/domain/usecase/user/AddUserUseCase.dart';
 import 'package:clientapp/domain/usecase/user/DeleteUserUseCase.dart';
+import 'package:clientapp/domain/usecase/user/GetCurrentUserUseCase.dart';
 import 'package:clientapp/domain/usecase/user/GetUserByIdUseCase.dart';
 import 'package:clientapp/domain/usecase/user/GetUsersUseCase.dart';
+import 'package:clientapp/domain/usecase/user/SaveCurrentUserUseCase.dart';
 import 'package:clientapp/domain/usecase/user/UpdateUserUseCase.dart';
+import 'package:clientapp/domain/usecase/warehouse/get_warehouses_use_case.dart';
 import 'package:clientapp/local/local_storage/client_local_storage.dart';
 import 'package:clientapp/local/local_storage/employee_local_storage.dart';
 import 'package:clientapp/local/local_storage/package_local_storage.dart';
@@ -100,10 +125,13 @@ import 'package:clientapp/local/local_storage/transport_local_storage.dart';
 import 'package:clientapp/local/local_storage/transport_type_local_storage.dart';
 import 'package:clientapp/local/local_storage/user_local_storage.dart';
 import 'package:clientapp/remote/api/MessageApi.dart';
+import 'package:clientapp/remote/api/ServiceApi.dart';
 import 'package:clientapp/remote/api/authorisation_api.dart';
 import 'package:clientapp/remote/api/client_api.dart';
+import 'package:clientapp/remote/api/delivery_person_api.dart';
 import 'package:clientapp/remote/api/employee_api.dart';
 import 'package:clientapp/remote/api/package_api.dart';
+import 'package:clientapp/remote/api/package_paytype_api.dart';
 import 'package:clientapp/remote/api/package_status_api.dart';
 import 'package:clientapp/remote/api/package_type_api.dart';
 import 'package:clientapp/remote/api/position_api.dart';
@@ -111,18 +139,26 @@ import 'package:clientapp/remote/api/role_api.dart';
 import 'package:clientapp/remote/api/transport_api.dart';
 import 'package:clientapp/remote/api/transport_type_api.dart';
 import 'package:clientapp/remote/api/user_api.dart';
+import 'package:clientapp/remote/api/warehouse_api.dart';
 import 'package:clientapp/remote/repositoryimpl/authorisation_data_repository_impl.dart';
 import 'package:clientapp/remote/repositoryimpl/client_data_repository_impl.dart';
+import 'package:clientapp/remote/repositoryimpl/delivery_person_data_repository_impl.dart';
 import 'package:clientapp/remote/repositoryimpl/employee_data_repository_impl.dart';
 import 'package:clientapp/remote/repositoryimpl/message_data_repository_impl.dart';
 import 'package:clientapp/remote/repositoryimpl/package_data_repository_impl.dart';
+import 'package:clientapp/remote/repositoryimpl/package_paytype_data_repository_impl.dart';
 import 'package:clientapp/remote/repositoryimpl/package_status_data_repository_impl.dart';
 import 'package:clientapp/remote/repositoryimpl/package_type_data_repository_impl.dart';
 import 'package:clientapp/remote/repositoryimpl/position_data_repository_impl.dart';
 import 'package:clientapp/remote/repositoryimpl/role_data_repository_impl.dart';
+import 'package:clientapp/remote/repositoryimpl/service_data_repository_impl.dart';
 import 'package:clientapp/remote/repositoryimpl/transport_data_repository_impl.dart';
 import 'package:clientapp/remote/repositoryimpl/transport_type_data_repository_impl.dart';
 import 'package:clientapp/remote/repositoryimpl/user_data_repository_impl.dart';
+import 'package:clientapp/remote/repositoryimpl/warehouse_data_repository_impl.dart';
+import 'package:clientapp/view/account_page/account_controller.dart';
+import 'package:clientapp/view/client_package_details/client_package_details_controller.dart';
+import 'package:clientapp/view/client_packages_page/client_packages_page_controller.dart';
 import 'package:clientapp/view/home_page/controller/home_controller.dart';
 import 'package:clientapp/view/login_page/controller/login_page_controller.dart';
 import 'package:dio/dio.dart';
@@ -140,7 +176,7 @@ void initGetIt() {
   // ----------------------------------------
   // REMOTE
   // ----------------------------------------
-  getIt.registerLazySingleton(() => Dio());
+  getIt.registerLazySingleton(() => Dio(BaseOptions(connectTimeout: const Duration(seconds: 120), receiveTimeout: const Duration(seconds: 120))));
 
   getIt.registerLazySingleton<RoleApi>(() => RoleApiImpl(client: getIt()));
   getIt.registerLazySingleton<PositionApi>(() => PositionApiImpl(client: getIt()));
@@ -154,12 +190,16 @@ void initGetIt() {
   getIt.registerLazySingleton<ClientApi>(() => ClientApiImpl(dio_client: getIt()));
   getIt.registerLazySingleton<AuthorisationApi>(() => AuthorisationApiImpl(client: getIt()));
   getIt.registerLazySingleton<MessageApi>(() => MessageApiImpl());
+  getIt.registerLazySingleton<ServiceApi>(() => ServiceApiImpl(client: getIt()));
+  getIt.registerLazySingleton<PackagePaytypeApi>(() => PackagePaytypeApiImpl(client: getIt()));
+  getIt.registerLazySingleton<DeliveryPersonApi>(() => DeliveryPersonApiImpl(client: getIt()));
+  getIt.registerLazySingleton<WarehouseApi>(() => WarehouseApiImpl(client: getIt()));
   
   
   // ---------------------------------------------
   // LOCAL
   // ---------------------------------------------
-  getIt.registerLazySingleton(() => SharedPreferences.getInstance());
+  getIt.registerLazySingleton(() => SharedPreferencesAsync());
 
   getIt.registerFactory<RoleLocalStorage>(() => RoleLocalStorageImpl(sharedPreferencesAsync: getIt()));
   getIt.registerFactory<PositionLocalStorage>(() => PositionLocalStorageImpl(sharedPreferencesAsync: getIt()));
@@ -188,6 +228,10 @@ void initGetIt() {
   getIt.registerFactory<ClientDataRepository>(() => ClientDataRepositoryImpl(clientApi: getIt()));
   getIt.registerFactory<AuthorisationOauthDataRepository>(() => AuthorisationDataRepositoryImpl(authorisationApi: getIt()));
   getIt.registerFactory<MessageDataRepository>(() => MessageDataRepositoryImpl(messageApi: getIt()));
+  getIt.registerFactory<ServiceDataRepository>(() => ServiceDataRepositoryImpl(api: getIt()));
+  getIt.registerFactory<PackagePaytypeDataRepository>(() => PackagePaytypeDataRepositoryImpl(api: getIt()));
+  getIt.registerFactory<DeliveryPersonDataRepository>(() => DeliveryPersonDataRepositoryImpl(api: getIt()));
+  getIt.registerFactory<WarehouseDataRepository>(() => WarehouseDataRepositoryImpl(api: getIt()));
 
 
   // ------------------------------------------
@@ -205,6 +249,12 @@ void initGetIt() {
   getIt.registerFactory<ClientRepository>(() => ClientRepositoryImpl(repository: getIt(), clientLocalStorage: getIt()));
   getIt.registerFactory<AuthorisationOauthRepository>(() => AuthorisationOauthRepositoryImpl(repository: getIt()));
   getIt.registerFactory<MessageRepository>(() => MessageRepositoryImpl(repository: getIt()));
+  getIt.registerFactory<CurrentUserRepository>(() => CurrentUserRepositoryImpl(storage: getIt()));
+  getIt.registerFactory<CurrentClientRepository>(() => CurrentClientRepositoryimpl(localStorage: getIt()));
+  getIt.registerFactory<ServiceRepository>(() => ServiceRepositoryImpl(repository: getIt()));
+  getIt.registerFactory<PackagePaytypeRepository>(() => PackagePaytypeRepositoryImpl(repository: getIt()));
+  getIt.registerFactory<DeliveryPersonRepository>(() => DeliveryPersonRepositoryImpl(repository: getIt()));
+  getIt.registerFactory<WarehouseRepository>(() => WarehouseRepositoryImpl(repository: getIt()));
 
 
   getIt.registerFactory(() => GetRolesUseCase(repository: getIt()));
@@ -276,12 +326,30 @@ void initGetIt() {
   getIt.registerFactory(() => SendMessageUseCase(repository: getIt()));
   getIt.registerFactory(() => ReceiveMessageUseCase(repository: getIt()));
 
+  getIt.registerFactory(() => GetCurrentUserUseCase(repository: getIt()));
+  getIt.registerFactory(() => SaveCurrentUserUseCase(repository: getIt()));
+
+  getIt.registerFactory(() => GetCurrentClientUseCase(repository: getIt()));
+  getIt.registerFactory(() => SaveCurrentClientUseCase(repository: getIt()));
+
+  getIt.registerFactory(() => GetAllServicesUseCase(repository: getIt()));
+  getIt.registerFactory(() => AddPackageServicesUseCase(repository: getIt()));
+
+  getIt.registerFactory(() => GetPackagePaytypesUseCase(repository: getIt()));
+
+  getIt.registerFactory(() => GetDeliveryPersonalUseCase(repository: getIt()));
+
+  getIt.registerFactory(() => GetWarehousesUseCase(repository: getIt()));
+
 
   // ----------------------------------------
   // VIEW
   // ----------------------------------------
   getIt.registerLazySingleton(() => HomeController());
-  getIt.registerLazySingleton(() => SendPackageController());
+  getIt.registerLazySingleton(() => SendPackageController(getPackageTypesUseCase: getIt(), addPackageUseCase: getIt(), getCurrentClientUseCase: getIt(), getClientsUseCase: getIt(), getAllServicesUseCase: getIt(), getCurrentUserUseCase: getIt(), getPackagePaytypesUseCase: getIt(), getDeliveryPersonalUseCase: getIt(), getWarehousesUseCase: getIt(), addPackageServicesUseCase: getIt()));
   getIt.registerLazySingleton(() => TrackPackageController());
-  getIt.registerLazySingleton(() => LoginPageController(getUserByLoginPassUseCase: getIt())); // не зареган ???
+  getIt.registerLazySingleton(() => LoginPageController(getUserByLoginPassUseCase: getIt(), getCurrentUserUseCase: getIt(), saveCurrentUserUseCase: getIt(), getClientByUserIdUseCase: getIt(), saveCurrentClientUseCase: getIt()));
+  getIt.registerLazySingleton(() => ClientPackagesPageController(getPackagesByClientIdUseCase: getIt(), getCurrentClientUseCase: getIt()));
+  getIt.registerLazySingleton(() => ClientPackageDetailsController());
+  getIt.registerLazySingleton(() => AccountController(getCurrentClientUseCase: getIt()));
 }

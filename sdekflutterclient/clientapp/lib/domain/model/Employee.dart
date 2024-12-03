@@ -21,7 +21,6 @@ class Employee with EquatableMixin {
   });
 
   @override
-  // TODO: implement props
   List<Object?> get props => [
     employee_id,
     employee_lastname,
@@ -44,8 +43,8 @@ class Employee with EquatableMixin {
     employee_lastname: json['employee_lastname'],
     employee_firstname: json['employee_firstname'],
     employee_middlename: json['employee_middlename'],
-    employee_position: Position.fromRawJson(json['employee_position']),
-    employee_user: User.fromRawJson(json['employee_user']),
+    employee_position: Position.fromMap(json['employee_position']),
+    employee_user: User.fromMap(json['employee_user']),
   );
 
   Map<String, dynamic> toMap() => {
@@ -53,7 +52,7 @@ class Employee with EquatableMixin {
     'employee_lastname': employee_lastname,
     'employee_firstname': employee_firstname,
     'employee_middlename': employee_middlename,
-    'employee_position': employee_position.toRawJson(),
-    'employee_user': employee_user.toRawJson(),
+    'employee_position': employee_position.toMap(),
+    'employee_user': employee_user.toMap(),
   };
 }

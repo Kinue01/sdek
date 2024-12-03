@@ -1,0 +1,46 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "select * from tb_fclient where client_id = $1",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "client_id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 1,
+        "name": "client_lastname",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 2,
+        "name": "client_firstname",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 3,
+        "name": "client_middlename",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 4,
+        "name": "client_user_id",
+        "type_info": "Uuid"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int4"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "2fe6913a3ee945f050537c8d30b9a313e79ae9f815a275c9d4e2426cfd7a6d3d"
+}

@@ -9,7 +9,7 @@ import '../../domain/model/Transport.dart';
 abstract class TransportApi {
   Future<List<Transport>> getTransport();
   Future<Transport> getTransportById(int id);
-  Future<Transport> getTransportByDriverId(String uuid);
+  Future<Transport> getTransportByDriverId(int driver);
   Future<bool> addTransport(Transport transport);
   Future<bool> updateTransport(Transport transport);
   Future<bool> deleteTransport(Transport transport);
@@ -59,13 +59,13 @@ class TransportApiImpl implements TransportApi {
   }
 
   @override
-  Future<Transport> getTransportByDriverId(String uuid) async {
-    Response<Map<String, dynamic>> response = await client.get("$readUrl/api/transport_driver", options: Options(extra: {'uuid': uuid}));
+  Future<Transport> getTransportByDriverId(int driver) async {
+    Response<Map<String, dynamic>> response = await client.get("$readUrl/api/transport_driver", options: Options(extra: {'id': driver}));
     switch (response.statusCode) {
       case 200:
         return Transport.fromMap(response.data!);
       default:
-        return Transport(transport_type: TransportType(), transport_driver: Employee(employee_position: Position(), employee_user: User(user_role: Role())));
+        return Transport(transport_type: TransportType());
     }
   }
 
@@ -76,7 +76,7 @@ class TransportApiImpl implements TransportApi {
       case 200:
         return Transport.fromMap(response.data!);
       default:
-        return Transport(transport_type: TransportType(), transport_driver: Employee(employee_position: Position(), employee_user: User(user_role: Role())));
+        return Transport(transport_type: TransportType());
     }
   }
 

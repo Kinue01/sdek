@@ -8,7 +8,6 @@ class PackageType with EquatableMixin {
   final int? type_length;
   final int? type_width;
   final int? type_height;
-  final int? type_weight;
 
   PackageType({
     this.type_id,
@@ -16,18 +15,15 @@ class PackageType with EquatableMixin {
     this.type_length,
     this.type_width,
     this.type_height,
-    this.type_weight
   });
 
   @override
-  // TODO: implement props
   List<Object?> get props => [
     type_id,
     type_name,
     type_length,
     type_width,
     type_height,
-    type_weight
   ];
 
   factory PackageType.fromRawJson(String str) =>
@@ -44,7 +40,6 @@ class PackageType with EquatableMixin {
     type_length: json['type_length'],
     type_width: json['type_width'],
     type_height: json['type_height'],
-    type_weight: json['type_weight'],
   );
 
   Map<String, dynamic> toMap() => {
@@ -53,6 +48,5 @@ class PackageType with EquatableMixin {
     'type_length': type_length,
     'type_width': type_width,
     'type_height': type_height,
-    'type_weight': type_weight,
   };
 }

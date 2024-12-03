@@ -17,7 +17,6 @@ class Message with EquatableMixin {
   });
 
   @override
-  // TODO: implement props
   List<Object?> get props => [
     user,
     msgType,
@@ -34,7 +33,7 @@ class Message with EquatableMixin {
   // Maps
   // ---------------------------------------------------------------------------
   factory Message.fromMap(Map<String, dynamic> json) => Message(
-    user: User.fromRawJson(json['user']),
+    user: User.fromMap(json['user']),
     msgType: json['msg_type'],
     title: json['title'],
     body: json['body'],

@@ -23,7 +23,7 @@ class TrackPackageViewState extends State<TrackPackageView> with GetItStateMixin
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Track Package')),
+      appBar: AppBar(title: const Text('Отследить посылку')),
       body: const Center(child: Text('Track Package Form Here')),
     );
   }

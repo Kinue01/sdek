@@ -19,7 +19,6 @@ class Client with EquatableMixin {
   });
 
   @override
-  // TODO: implement props
   List<Object?> get props => [
     client_id,
     client_lastname,
@@ -31,6 +30,9 @@ class Client with EquatableMixin {
   factory Client.fromRawJson(String str) =>
       Client.fromMap(json.decode(str));
 
+  factory Client.fromRawJsonLocal(String str) =>
+      Client.fromMapLocal(json.decode(str));
+
   String toRawJson() => json.encode(toMap());
 
   // ---------------------------------------------------------------------------
@@ -41,7 +43,15 @@ class Client with EquatableMixin {
     client_lastname: json['client_lastname'],
     client_firstname: json['client_firstname'],
     client_middlename: json['client_middlename'],
-    client_user: User.fromRawJson(json['client_user']),
+    client_user: User.fromMap(json['client_user']),
+  );
+
+  factory Client.fromMapLocal(Map<String, dynamic> json) => Client(
+    client_id: json['client_id'],
+    client_lastname: json['client_lastname'],
+    client_firstname: json['client_firstname'],
+    client_middlename: json['client_middlename'],
+    client_user: User.fromMap(json['client_user']),
   );
 
   Map<String, dynamic> toMap() => {
@@ -49,6 +59,6 @@ class Client with EquatableMixin {
     'client_lastname': client_lastname,
     'client_firstname': client_firstname,
     'client_middlename': client_middlename,
-    'client_user': client_user.toRawJson()
+    'client_user': client_user.toMap()
   };
 }

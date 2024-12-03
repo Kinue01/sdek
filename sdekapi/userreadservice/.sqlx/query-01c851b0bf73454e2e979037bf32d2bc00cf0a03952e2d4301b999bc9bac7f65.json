@@ -1,0 +1,20 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "update tb_user set user_login = $1, user_password = $2, user_email = $3, user_phone = $4, user_access_token = $5, user_role_id = $6 where user_id = $7",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Varchar",
+        "Text",
+        "Varchar",
+        "Varchar",
+        "Text",
+        "Int2",
+        "Uuid"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "01c851b0bf73454e2e979037bf32d2bc00cf0a03952e2d4301b999bc9bac7f65"
+}

@@ -3,8 +3,7 @@ use axum::Json;
 use futures::StreamExt;
 use mongodb::bson::{doc, Document};
 use mongodb::Collection;
-use redis::AsyncCommands;
-use uuid::Uuid;
+use redis::{AsyncCommands, JsonAsyncCommands};
 
 use crate::AppState;
 use crate::error::MyError;
@@ -14,7 +13,7 @@ pub async fn get_transport_types(
     State(mut state): State<AppState>,
 ) -> Result<Json<Vec<TransportTypeResponse>>, MyError> {
     let types_redis: Vec<TransportTypeResponse> =
-        state.redis.get("trans_types").await.unwrap_or_default();
+        state.redis.json_get("trans_types", "$").await.unwrap_or_default();
 
     match types_redis.is_empty() {
         true => {
@@ -23,7 +22,7 @@ pub async fn get_transport_types(
                 .await
                 .map_err(MyError::DBError)?;
 
-            let _: () = state.redis.set("trans_types", &res).await.unwrap();
+            let _: () = state.redis.json_set("trans_types", "$", &res).await.unwrap();
 
             Ok(Json(res))
         }
@@ -37,7 +36,7 @@ pub async fn get_transport_type_by_id(
 ) -> Result<Json<TransportTypeResponse>, MyError> {
     let type_redis: TransportTypeResponse = state
         .redis
-        .get("trans_type".to_string() + &*id.0.to_string())
+        .json_get("trans_type".to_string() + &*id.0.to_string(), "$")
         .await
         .unwrap_or_default();
 
@@ -54,7 +53,7 @@ pub async fn get_transport_type_by_id(
 
             let _: () = state
                 .redis
-                .set("trans_type".to_string() + &*id.0.to_string(), &res)
+                .json_set("trans_type".to_string() + &*id.0.to_string(), "$", &res)
                 .await
                 .unwrap();
 
@@ -67,7 +66,7 @@ pub async fn get_transport_type_by_id(
 pub async fn get_transport(
     State(mut state): State<AppState>,
 ) -> Result<Json<Vec<Transport>>, MyError> {
-    let trans_redis: Vec<Transport> = state.redis.get("trans").await.unwrap_or_default();
+    let trans_redis: Vec<Transport> = state.redis.json_get("trans", "$").await.unwrap_or_default();
 
     match trans_redis.is_empty() {
         true => {
@@ -79,12 +78,12 @@ pub async fn get_transport(
             let stream = futures::stream::iter(trans)
                 .map(|x| async {
                     let postgres = state.postgres.clone();
-                    let http = state.http_client.clone();
 
                     tokio::spawn(async move {
                         Transport {
                             transport_id: x.transport_id,
                             transport_name: x.clone().transport_name,
+                            transport_reg_number: x.transport_reg_number,
                             transport_type: sqlx::query_as!(
                                 TransportTypeResponse,
                                 "select * from tb_transport_type where type_id = $1",
@@ -93,20 +92,10 @@ pub async fn get_transport(
                             .fetch_one(&postgres)
                             .await
                             .unwrap_or_default(),
-                            transport_driver: serde_json::from_str(
-                                http.get(format!(
-                                    "http://localhost:8012/employee?uuid={}",
-                                    &x.transport_driver_id
-                                ))
-                                .send()
+                            transport_status: sqlx::query_as!(TransportStatusResponse, "select * from tb_transport_status where status_id = $1", &x.transport_status_id)
+                                .fetch_one(&postgres)
                                 .await
-                                .unwrap()
-                                .text()
-                                .await
-                                .unwrap()
-                                .as_str(),
-                            )
-                            .unwrap(),
+                                .map_err(MyError::DBError).unwrap(),
                         }
                     })
                     .await
@@ -116,7 +105,7 @@ pub async fn get_transport(
                 .collect::<Vec<_>>()
                 .await;
 
-            let _: () = state.redis.set("trans", &stream).await.unwrap_or_default();
+            let _: () = state.redis.json_set("trans", "$", &stream).await.unwrap();
 
             Ok(Json(stream))
         }
@@ -130,7 +119,7 @@ pub async fn get_transport_by_id(
 ) -> Result<Json<Transport>, MyError> {
     let trans_redis: Transport = state
         .redis
-        .get("trans".to_owned() + &*id.0.to_string())
+        .json_get("trans".to_owned() + &*id.0.to_string(), "$")
         .await
         .unwrap_or_default();
 
@@ -148,6 +137,7 @@ pub async fn get_transport_by_id(
             let res = Transport {
                 transport_id: trans.transport_id,
                 transport_name: trans.transport_name,
+                transport_reg_number: trans.transport_reg_number,
                 transport_type: sqlx::query_as!(
                     TransportTypeResponse,
                     "select * from tb_transport_type where type_id = $1",
@@ -156,27 +146,15 @@ pub async fn get_transport_by_id(
                 .fetch_one(&state.postgres)
                 .await
                 .map_err(MyError::DBError)?,
-                transport_driver: serde_json::from_str(
-                    state
-                        .http_client
-                        .get(format!(
-                            "http://localhost:8012/employee?uuid={}",
-                            trans.transport_driver_id
-                        ))
-                        .send()
-                        .await
-                        .unwrap()
-                        .text()
-                        .await
-                        .unwrap()
-                        .as_str(),
-                )
-                .unwrap(),
+                transport_status: sqlx::query_as!(TransportStatusResponse, "select * from tb_transport_status where status_id = $1", &trans.transport_status_id)
+                    .fetch_one(&state.postgres)
+                    .await
+                    .map_err(MyError::DBError)?,
             };
 
             let _: () = state
                 .redis
-                .set("trans".to_owned() + &*id.0.to_string(), &res)
+                .json_set("trans".to_owned() + &*id.0.to_string(), "$", &res)
                 .await
                 .unwrap();
 
@@ -188,21 +166,19 @@ pub async fn get_transport_by_id(
 
 pub async fn get_transport_by_driver_id(
     State(state): State<AppState>,
-    uuid: Query<Uuid>,
+    id: Query<i32>,
 ) -> Result<Json<Transport>, MyError> {
-    let trans = sqlx::query_as!(
-        TransportResponse,
-        "select * from tb_transport where transport_driver_id = $1",
-        uuid.0
+    let trans = sqlx::query!(
+        "select person_transport_id from tb_fdelivery_person where person_id = $1",
+        id.0
     )
     .fetch_one(&state.postgres)
     .await
     .map_err(MyError::DBError)?;
 
-    let res = get_transport_by_id(State(state), Query(trans.transport_id))
+    let res = get_transport_by_id(State(state), Query(trans.person_transport_id))
         .await
-        .unwrap_or_default()
-        .0;
+        .unwrap_or_default().0;
 
     Ok(Json(res))
 }
@@ -210,25 +186,23 @@ pub async fn get_transport_by_driver_id(
 pub async fn update_db_types(State(mut state): State<AppState>) {
     let mut stream = state
         .event_client
-        .read_stream("transport_type", &Default::default())
-        .await
-        .unwrap();
+        .subscribe_to_stream("transport_type", &Default::default())
+        .await;
 
-    while let Some(event) = stream.next().await.unwrap() {
+    loop {
+        let event = stream.next().await.unwrap();
         let ev = event
             .get_original_event()
             .as_json::<TransportTypeResponse>()
             .unwrap();
+        let _: () = state.redis.json_del("trans_types", "$").await.unwrap();
         match event.event.unwrap().event_type.as_str() {
             "transport_type_add" => {
                 let _ = sqlx::query!(
-                    "insert into tb_transport_type (type_id, type_name) values (1, 2)"
-                )
-                .bind(&ev.type_id)
-                .bind(&ev.type_name)
-                .execute(&state.postgres)
-                .await
-                .map_err(MyError::DBError);
+                    "insert into tb_transport_type (type_name) values ($1)", &ev.type_name)
+                    .execute(&state.postgres)
+                    .await
+                    .map_err(MyError::DBError).unwrap();
             }
             "transport_type_update" => {
                 let _ = sqlx::query!(
@@ -236,23 +210,13 @@ pub async fn update_db_types(State(mut state): State<AppState>) {
                     &ev.type_name,
                     &ev.type_id
                 )
-                .execute(&state.postgres)
-                .await
-                .map_err(MyError::DBError);
-
-                let t = sqlx::query_as!(
-                    TransportTypeResponse,
-                    "select * from tb_transport_type where type_id = $1",
-                    ev.type_id
-                )
-                .fetch_one(&state.postgres)
-                .await
-                .map_err(MyError::DBError)
-                .unwrap();
+                    .execute(&state.postgres)
+                    .await
+                    .map_err(MyError::DBError).unwrap();
 
                 let _: () = state
                     .redis
-                    .set("trans_type".to_string() + &*ev.type_id.to_string(), t)
+                    .json_del("trans_type".to_string() + &*ev.type_id.to_string(), "$")
                     .await
                     .unwrap();
             }
@@ -261,13 +225,13 @@ pub async fn update_db_types(State(mut state): State<AppState>) {
                     "delete from tb_transport_type where type_id = $1",
                     &ev.type_id
                 )
-                .execute(&state.postgres)
-                .await
-                .map_err(MyError::DBError);
+                    .execute(&state.postgres)
+                    .await
+                    .map_err(MyError::DBError).unwrap();
 
                 let _: () = state
                     .redis
-                    .del("trans_type".to_string() + &*ev.type_id.to_string())
+                    .json_del("trans_type".to_string() + &*ev.type_id.to_string(), "$")
                     .await
                     .unwrap();
             }
@@ -279,27 +243,29 @@ pub async fn update_db_types(State(mut state): State<AppState>) {
 pub async fn update_db_main(State(mut state): State<AppState>) {
     let mut stream = state
         .event_client
-        .read_stream("transport", &Default::default())
-        .await
-        .unwrap();
-
-    while let Some(event) = stream.next().await.unwrap() {
+        .subscribe_to_stream("transport", &Default::default())
+        .await;
+    
+    loop {
+        let event = stream.next().await.unwrap();
         let ev = event.get_original_event().as_json::<Transport>().unwrap();
+        let _: () = state.redis.json_del("trans", "$").await.map_err(MyError::RDbError).unwrap();
         match event.event.unwrap().event_type.as_str() {
             "transport_add" => {
-                let _ = sqlx::query!("insert into tb_transport (transport_name, transport_type_id, transport_driver_id) values ($1, $2, $3)", &ev.transport_name, &ev.transport_type.type_id, &ev.transport_driver.employee_id)
+                let _ = sqlx::query!("insert into tb_transport (transport_name, transport_reg_number, transport_type_id, transport_status_id) values ($1, $2, $3, $4)", &ev.transport_name, &ev.transport_reg_number, &ev.transport_type.type_id, &ev.transport_status.status_id)
                     .execute(&state.postgres)
                     .await
-                    .map_err(MyError::DBError);
+                    .map_err(MyError::DBError).unwrap();
             }
             "transport_update" => {
-                let _ = sqlx::query!("update tb_transport set transport_name = $1, transport_type_id = $2, transport_driver_id = $3 where transport_id = $4", &ev.transport_name, &ev.transport_type.type_id, &ev.transport_driver.employee_id, &ev.transport_id)
+                let _ = sqlx::query!("update tb_transport set transport_name = $1, transport_reg_number = $2, transport_type_id = $3, transport_status_id = $4 where transport_id = $5", &ev.transport_name, &ev.transport_reg_number, &ev.transport_type.type_id, &ev.transport_status.status_id, &ev.transport_id)
                     .execute(&state.postgres)
-                    .await.map_err(MyError::DBError);
+                    .await
+                    .map_err(MyError::DBError).unwrap();
 
                 let _: () = state
                     .redis
-                    .del("user".to_string() + &*ev.transport_id.to_string())
+                    .json_del("user".to_string() + &*ev.transport_id.to_string(), "$")
                     .await
                     .unwrap();
             }
@@ -308,13 +274,13 @@ pub async fn update_db_main(State(mut state): State<AppState>) {
                     "delete from tb_transport where transport_id = $1",
                     &ev.transport_id
                 )
-                .execute(&state.postgres)
-                .await
-                .map_err(MyError::DBError);
+                    .execute(&state.postgres)
+                    .await
+                    .map_err(MyError::DBError).unwrap();
 
                 let _: () = state
                     .redis
-                    .del("user".to_string() + &*ev.transport_id.to_string())
+                    .json_del("user".to_string() + &*ev.transport_id.to_string(), "$")
                     .await
                     .unwrap();
             }
@@ -326,16 +292,16 @@ pub async fn update_db_main(State(mut state): State<AppState>) {
 pub async fn update_mongo(State(state): State<AppState>) {
     let mut stream = state
         .event_client
-        .read_stream("transport_geo", &Default::default())
-        .await
-        .unwrap();
-
-    while let Some(event) = stream.next().await.unwrap() {
+        .subscribe_to_stream("transport_geo", &Default::default())
+        .await;
+    
+    loop {
+        let event = stream.next().await.unwrap();
         let db = state.mongo.database("transport");
         let coll: Collection<Document> = db.collection("transport_geo");
-        let data = event.event.unwrap().data;
+        let data = &event.get_original_event().data;
         let body: (TransportMongo, _) =
-            bincode::decode_from_slice(data.as_ref(), bincode::config::standard()).unwrap();
+            bincode::decode_from_slice(data, bincode::config::standard()).unwrap();
         let doc = doc! {
             "$set": doc! {
                 "lat": body.0.lat,
@@ -343,7 +309,7 @@ pub async fn update_mongo(State(state): State<AppState>) {
             },
         };
         let _ = coll
-            .update_one(doc! {"driver_id": body.0.driver_id}, doc)
+            .update_one(doc! {"transport_id": body.0.transport_id}, doc)
             .await
             .unwrap();
     }
