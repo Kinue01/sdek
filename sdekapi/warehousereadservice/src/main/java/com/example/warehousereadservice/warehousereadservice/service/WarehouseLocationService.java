@@ -17,15 +17,13 @@ public class WarehouseLocationService {
         this.warehouseLocationRepository = warehouseLocationRepository;
     }
 
-    @Async
     @Cacheable("warehouseLocations")
-    public CompletableFuture<Iterable<WarehouseLocation>> getAllWarehouseLocations() {
-        return CompletableFuture.completedFuture(warehouseLocationRepository.findAll());
+    public Iterable<WarehouseLocation> getAllWarehouseLocations() {
+        return warehouseLocationRepository.findAll();
     }
 
-    @Async
     @Cacheable("warehouseLoc")
-    public CompletableFuture<WarehouseLocation> getWarehouseLocationById(String id) {
-        return CompletableFuture.completedFuture(warehouseLocationRepository.findById(id).orElse(null));
+    public WarehouseLocation getWarehouseLocationById(String id) {
+        return warehouseLocationRepository.findById(id).orElse(null);
     }
 }

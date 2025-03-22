@@ -21,11 +21,11 @@ public class WarehouseLocationController {
 
     @GetMapping("/warehouseLocations")
     public Iterable<WarehouseLocation> getWarehouseLocations() {
-        return warehouseLocationService.getAllWarehouseLocations().join();
+        return warehouseLocationService.getAllWarehouseLocations();
     }
 
     @GetMapping("/warehouseLocation")
     public WarehouseLocation getWarehouseLocationById(@RequestParam("id") String id) {
-        return warehouseLocationService.getWarehouseLocationById(id).join();
+        return warehouseLocationService.getWarehouseLocationById(id);
     }
 }

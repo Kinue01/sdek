@@ -1,4 +1,6 @@
-use axum::extract::{Query, State};
+use axum::extract::ws::{Message, WebSocket};
+use axum::extract::{Query, State, WebSocketUpgrade};
+use axum::response::Response;
 use axum::Json;
 use futures::StreamExt;
 use mongodb::bson::{doc, Document};
@@ -297,7 +299,7 @@ pub async fn update_mongo(State(state): State<AppState>) {
     
     loop {
         let event = stream.next().await.unwrap();
-        let db = state.mongo.database("transport");
+        let db = state.mongo.database("sdek");
         let coll: Collection<Document> = db.collection("transport_geo");
         let data = &event.get_original_event().data;
         let body: (TransportMongo, _) =
@@ -312,5 +314,29 @@ pub async fn update_mongo(State(state): State<AppState>) {
             .update_one(doc! {"transport_id": body.0.transport_id}, doc)
             .await
             .unwrap();
+    }
+}
+
+pub async fn get_trans_pos(State(state): State<AppState>, ws: WebSocketUpgrade) -> Response {
+    ws.on_upgrade(|socket| websocket_handler(socket, state))
+}
+
+async fn websocket_handler(mut socket: WebSocket, state: AppState) {
+    loop {
+        let msg = socket.recv().await.unwrap().unwrap();
+
+        let transport_id: (String, _) = bincode::decode_from_slice(msg.into_data().as_slice(), bincode::config::standard()).unwrap();
+        let id_bytes = transport_id.0.as_str();
+
+        let db = state.mongo.database("sdek");
+        let coll: Collection<Document> = db.collection("transport_geo");
+        let filter = doc! { "transport_id": id_bytes };
+        let res = coll.find_one(filter).await.unwrap().unwrap();
+
+        let data = bincode::encode_to_vec(res.to_string(), bincode::config::standard()).unwrap();
+
+        if socket.send(Message::Binary(data)).await.is_err() {
+            return;
+        }
     }
 }

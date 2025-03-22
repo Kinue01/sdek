@@ -23,10 +23,12 @@ services:
   nginx:
     image: nginx
     ports:
-      - "80:80"
+      - "8080:80"
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
       - ./default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - authservice
   redis:
     image: redis/redis-stack:6.2.6-v17
     container_name: redis
@@ -56,21 +58,37 @@ services:
       interval: 1s
       timeout: 5s
       retries: 10
-  arango:
-    image: arangodb
-    container_name: arangodb
-    ports:
-      - "8529:8529"
+    depends_on:
+      - eventstore
+      - mongo
+      - redis
+  mongo:
+    image: mongo
+    restart: always
     environment:
-      ARANGO_ROOT_PASSWORD: 123
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: 12345
+      MONGO_INITDB_DATABASE: sdek
     volumes:
-      - arangodb_data:/var/lib/arangodb3
-      - arangodb_apps_data:/var/lib/arangodb3-apps
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/init-mongo-db-with-collections.js:ro
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+    - 8081:8081
+    environment:
+      ME_CONFIG_MONGODB_SERVER: mongo
+      ME_CONFIG_MONGODB_PORT: 27017
+      ME_CONFIG_MONGODB_ENABLE_ADMIN: false
+      ME_CONFIG_MONGODB_AUTH_DATABASE: admin
+      ME_CONFIG_MONGODB_AUTH_USERNAME: admin
+      ME_CONFIG_MONGODB_AUTH_PASSWORD: 12345
+      ME_CONFIG_BASICAUTH_USERNAME: root
+      ME_CONFIG_BASICAUTH_PASSWORD: root
+    depends_on:
+      - mongo
     
-
 volumes:
   eventstore-volume-data:
   eventstore-volume-logs:
   postgres_data:
-  arangodb_data:
-  arangodb_apps_data:

@@ -5,6 +5,7 @@ use axum::http::Method;
 use axum::Router;
 use axum::routing::get;
 use dotenvy::dotenv;
+use handlers::get_trans_pos;
 use mongodb::Client;
 use redis::aio::MultiplexedConnection;
 use sqlx::{Pool, Postgres};
@@ -90,6 +91,7 @@ async fn main() {
         .route("/transportreadservice/api/transport_types", get(get_transport_types))
         .route("/transportreadservice/api/transport_type", get(get_transport_type_by_id))
         .route("/transportreadservice/api/transport_driver", get(get_transport_by_driver_id))
+        .route("/transportreadservice/api/transport_pos", get(get_trans_pos))
         .merge(SwaggerUi::new("/transportreadservice/swagger").url("/transportreadservice/api-doc/openapi.json", ApiDoc::openapi()))
         .with_state(state.clone())
         .layer(ServiceBuilder::new().layer(tracing).layer(cors));

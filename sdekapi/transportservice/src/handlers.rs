@@ -90,7 +90,7 @@ pub async fn ws_transport_update(State(state): State<Client>, ws: WebSocketUpgra
     ws.on_upgrade(|socket| handle_socket(socket, state))
 }
 
-async fn handle_socket(mut socket: WebSocket, mut state: Client) {
+async fn handle_socket(mut socket: WebSocket, state: Client) {
     loop {
         let msg = socket.recv().await.unwrap().unwrap();
         let event = EventData::binary("transport_geo_changed", msg.into_data().into());

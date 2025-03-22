@@ -1,0 +1,681 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: sdekapi
+
+---
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: eventstore-volume-data
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: /data/eventstore
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: eventstore-volume-data
+  namespace: sdekapi
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+
+---
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: eventstore-volume-logs
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: /data/eventstore-logs
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: eventstore-volume-logs
+  namespace: sdekapi
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: eventstore
+  namespace: sdekapi
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: eventstore
+  template:
+    metadata:
+      labels:
+        app: eventstore
+    spec:
+      containers:
+        - name: eventstore
+          image: eventstore/eventstore
+          ports:
+            - containerPort: 2113
+            - containerPort: 1112
+            - containerPort: 1113
+          env:
+            - name: EVENTSTORE_CLUSTER_SIZE
+              value: "1"
+            - name: EVENTSTORE_RUN_PROJECTIONS
+              value: "All"
+            - name: EVENTSTORE_START_STANDARD_PROJECTIONS
+              value: "true"
+            - name: EVENTSTORE_HTTP_PORT
+              value: "2113"
+            - name: EVENTSTORE_INSECURE
+              value: "true"
+            - name: EVENTSTORE_ENABLE_ATOM_PUB_OVER_HTTP
+              value: "true"
+          volumeMounts:
+            - name: eventstore-data
+              mountPath: /var/lib/eventstore
+            - name: eventstore-logs
+              mountPath: /var/log/eventstore
+      volumes:
+        - name: eventstore-data
+          persistentVolumeClaim:
+            claimName: eventstore-volume-data
+        - name: eventstore-logs
+          persistentVolumeClaim:
+            claimName: eventstore-volume-logs
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: eventstore
+  namespace: sdekapi
+spec:
+  type: NodePort
+  ports:
+    - port: 2113
+      targetPort: 2113
+    - port: 1112
+      targetPort: 1112
+    - port: 1113
+      targetPort: 1113
+  selector:
+    app: eventstore
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+  namespace: sdekapi
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+        - name: nginx
+          image: nginx
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: nginx-config
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
+            - name: default-conf
+              mountPath: /etc/nginx/conf.d/default.conf
+              subPath: default.conf
+      volumes:
+        - name: nginx-config
+          configMap:
+            name: nginx-config
+        - name: default-conf
+          configMap:
+            name: default-conf
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-config
+  namespace: sdekapi
+data:
+  nginx.conf: |
+    user  nginx;
+    worker_processes  auto;
+
+    error_log  /var/log/nginx/error.log notice;
+    pid        /var/run/nginx.pid;
+
+
+    events {
+        worker_connections  1024;
+    }
+
+
+    http {
+        include       /etc/nginx/mime.types;
+        default_type  application/octet-stream;
+
+        log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                        '$status $body_bytes_sent "$http_referer" '
+                        '"$http_user_agent" "$http_x_forwarded_for"';
+
+        access_log  /var/log/nginx/access.log  main;
+
+        upstream userservice {
+            server userservice:8000;
+            keepalive 32;  # Number of idle keepalive connections
+        }
+
+        upstream customerservice {
+            server consumerservice:8001;
+            keepalive 32;  # Number of idle keepalive connections
+        }
+
+        upstream employeeservice {
+            server employeeservice:8002;
+            keepalive 32;  # Number of idle keepalive connections
+        }
+
+        upstream packageservice {
+            server packageservice:8003;
+            keepalive 32;  # Number of idle keepalive connections
+        }
+
+        upstream messageservice {
+            server messenderservice:8004;
+            keepalive 32;  # Number of idle keepalive connections
+        }
+
+        upstream transportservice {
+            server transportservice:8005;
+            keepalive 32;  # Number of idle keepalive connections
+        }
+
+        upstream warehouseservice {
+            server warehouseservice:8006;
+            keepalive 32;
+        }
+
+        upstream deliverypersonellservice {
+            server deliverypersonellservice:8007;
+            keepalive 32;
+        }
+
+        upstream servicesservice {
+            server localhost:8008;
+            keepalive 32;
+        }
+
+        upstream authservice {
+            server authservice:8020;
+            keepalive 32;
+        }
+
+        upstream userreadservice {
+            server userreadservice:8010;
+            keepalive 32;  # Number of idle keepalive connections
+        }
+
+        upstream customerreadservice {
+            server consumerreadservice:8011;
+            keepalive 32;  # Number of idle keepalive connections
+        }
+
+        upstream employeereadservice {
+            server employereadeservice:8012;
+            keepalive 32;  # Number of idle keepalive connections
+        }
+
+        upstream packagereadservice {
+            server packagereadservice:8013;
+            keepalive 32;  # Number of idle keepalive connections
+        }
+
+        upstream transportreadservice {
+            server transportreadservice:8015;
+            keepalive 32;  # Number of idle keepalive connections
+        }
+
+        upstream warehousereadservice {
+            server warehousereadservice:8016;
+            keepalive 32;
+        }
+
+        upstream deliverypersonellreadservice {
+            server deliverypersonellreadservice:8017;
+            keepalive 32;
+        }
+
+        upstream servicesreadservice {
+            server servicesreadservice:8018;
+            keepalive 32;
+        }
+
+        include /etc/nginx/conf.d/*.conf;
+    }
+
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: default-conf
+  namespace: sdekapi
+data:
+  default.conf: |
+    server {
+        listen 80;
+        server_name localhost; # Change this to your domain
+
+        location /userservice {
+            proxy_pass http://userservice/;  # Directs to upstream service1
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+        }
+
+        location /customerservice {
+            proxy_pass http://customerservice;  # Directs to upstream service2
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+        }
+
+        location /employeeservice {
+            proxy_pass http://employeeservice;  # Directs to upstream service2
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+        }
+
+        location /packageservice {
+            proxy_pass http://packageservice;  # Directs to upstream service2
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+        }
+
+        location /messageservice {
+            proxy_pass http://messageservice;  # Directs to upstream service2
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+        }
+
+        location /transportservice {
+            proxy_pass http://transportservice;  # Directs to upstream service2
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+        }
+
+        location /warehouseservice {
+            proxy_pass http://warehouseservice;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+        }
+
+        location /deliverypersonellservice {
+            proxy_pass http://deliverypersonellservice;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+        }
+
+        location /servicesservice {
+            proxy_pass http://servicesservice;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+        }
+
+        location /authservice {
+            proxy_pass http://authservice;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+        }
+
+        location /transportreadservice {
+            proxy_pass http://transportreadservice;  # Directs to upstream service2
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+        }
+
+        location /userreadservice {
+            proxy_pass http://userreadservice;  # Directs to upstream service1
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+        }
+
+        location /customerreadservice {
+            proxy_pass http://customerreadservice;  # Directs to upstream service2
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+        }
+
+        location /employeereadservice {
+            proxy_pass http://employeereadservice;  # Directs to upstream service2
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+        }
+
+        location /packagereadservice {
+            proxy_pass http://packagereadservice;  # Directs to upstream service2
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+        }
+
+        location /warehousereadservice {
+            proxy_pass http://warehousereadservice;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+        }
+
+        location /deliverypersonellreadservice {
+            proxy_pass http://deliverypersonellreadservice;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+        }
+
+        location /servicesreadservice {
+            proxy_pass http://servicesreadservice;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+        }
+
+        error_page   500 502 503 504  /50x.html;
+        location = /50x.html {
+            root   /usr/share/nginx/html;
+        }
+    }
+
+
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+  namespace: sdekapi
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+        - name: redis
+          image: redis/redis-stack:6.2.6-v17
+          ports:
+            - containerPort: 6379
+            - containerPort: 9000
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+  namespace: sdekapi
+spec:
+  ports:
+    - port: 6379
+      targetPort: 6379
+    - port: 9000
+      targetPort: 9000
+  selector:
+    app: redis
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pgdb
+  namespace: sdekapi
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pgdb
+  template:
+    metadata:
+      labels:
+        app: pgdb
+    spec:
+      containers:
+        - name: postgres
+          image: postgis/postgis:17-3.5-alpine
+          command: ["postgres", "-c", "log_statement=all"]
+          env:
+            - name: POSTGRES_USER
+              value: "postgres"
+            - name: POSTGRES_PASSWORD
+              value: "1"
+            - name: POSTGRES_DB
+              value: "postgres"
+            - name: PGUSER
+              value: "postgres"
+            - name: POSTGRES_MULTIPLE_DATABASES
+              value: "users,warehouses,transport,clients,delivery_personell,employees,packages,items,services"
+          ports:
+            - containerPort: 5432
+          volumeMounts:
+            - name: postgres-data
+              mountPath: /var/lib/postgresql/data/
+      volumes:
+        - name: postgres-data
+          persistentVolumeClaim:
+            claimName: postgres_data
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: pgdb
+  namespace: sdekapi
+spec:
+  type: NodePort
+  ports:
+    - port: 6000
+      targetPort: 5432
+  selector:
+    app: pgdb
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongo
+  namespace: sdekapi
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongo
+  template:
+    metadata:
+      labels:
+        app: mongo
+    spec:
+      containers:
+        - name: mongo
+          image: mongo
+          env:
+            - name: MONGO_INITDB_ROOT_USERNAME
+              value: "admin"
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              value: "my_password"
+          ports:
+            - containerPort: 27017
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo
+  namespace: sdekapi
+spec:
+  ports:
+    - port: 27017
+      targetPort: 27017
+  selector:
+    app: mongo
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongo-express
+  namespace: sdekapi
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongo-express
+  template:
+    metadata:
+      labels:
+        app: mongo-express
+    spec:
+      containers:
+        - name: mongo-express
+          image: mongo-express
+          ports:
+            - containerPort: 8081
+          env:
+            - name: ME_CONFIG_MONGODB_ADMINUSERNAME
+              value: "admin"
+            - name: ME_CONFIG_MONGODB_ADMINPASSWORD
+              value: "my_password"
+            - name: ME_CONFIG_MONGODB_URL
+              value: "mongodb://admin:my_password@mongo:27017/"
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo-express
+  namespace: sdekapi
+spec:
+  ports:
+    - port: 8081
+      targetPort: 8081
+  selector:
+    app: mongo-express
+
+---
+
+# Deployments for other microservices based on your Docker Compose `compose.yml`.
+# Example for user service:
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: userservice
+  namespace: sdekapi
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: userservice
+  template:
+    metadata:
+      labels:
+        app: userservice
+    spec:
+      containers:
+        - name: userservice
+          image: <your-image-for-userservice> # Specify your image path
+          ports:
+            - containerPort: 8000
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: userservice
+  namespace: sdekapi
+spec:
+  ports:
+    - port: 8000
+      targetPort: 8000
+  selector:
+    app: userservice
+
+# Repeat the above Deployment and Service configuration for the other services (consumerservice, employeeservice, etc.)
+
+---
