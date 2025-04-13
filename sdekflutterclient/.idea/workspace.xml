@@ -5,106 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8150d90f-2e70-4c11-baaa-2d9bf53faa8e" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/lib/domain/model/TransportPosition.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../../compose.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../default.conf" beforeDir="false" afterPath="$PROJECT_DIR$/../../default.conf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../infrastructure.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../../infrastructure.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../init-mongo-db-with-collections.js" beforeDir="false" afterPath="$PROJECT_DIR$/../../init-mongo-db-with-collections.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../kubernetes.yml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../nginx.conf" beforeDir="false" afterPath="$PROJECT_DIR$/../../nginx.conf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/authservice/Cargo.lock" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/authservice/Cargo.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/authservice/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/authservice/Cargo.toml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/authservice/src/handlers.rs" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/authservice/src/handlers.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/authservice/src/main.rs" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/authservice/src/main.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/consumerreadservice/Cargo.lock" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/consumerreadservice/Cargo.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/consumerreadservice/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/consumerreadservice/Cargo.toml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/consumerreadservice/src/main.rs" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/consumerreadservice/src/main.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/consumerservice/Cargo.lock" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/consumerservice/Cargo.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/consumerservice/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/consumerservice/Cargo.toml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/consumerservice/src/handlers.rs" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/consumerservice/src/handlers.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/deliverypersonellreadservice/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/deliverypersonellreadservice/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/deliverypersonellreadservice/src/main/java/com/example/deliverypersonellreadservice/deliverypersonellreadservice/AppConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/deliverypersonellreadservice/src/main/java/com/example/deliverypersonellreadservice/deliverypersonellreadservice/AppConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/deliverypersonellreadservice/src/main/java/com/example/deliverypersonellreadservice/deliverypersonellreadservice/controller/DeliveryPersonController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/deliverypersonellreadservice/src/main/java/com/example/deliverypersonellreadservice/deliverypersonellreadservice/controller/DeliveryPersonController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/deliverypersonellreadservice/src/main/java/com/example/deliverypersonellreadservice/deliverypersonellreadservice/mapper/DeliveryPersonToDeliveryPersonResponseMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/deliverypersonellreadservice/src/main/java/com/example/deliverypersonellreadservice/deliverypersonellreadservice/mapper/DeliveryPersonToDeliveryPersonResponseMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/deliverypersonellreadservice/src/main/java/com/example/deliverypersonellreadservice/deliverypersonellreadservice/service/DeliveryPersonService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/deliverypersonellreadservice/src/main/java/com/example/deliverypersonellreadservice/deliverypersonellreadservice/service/DeliveryPersonService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/deliverypersonellreadservice/src/main/java/com/example/deliverypersonellreadservice/deliverypersonellreadservice/service/UpdateDeliveryPersonellDbService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/deliverypersonellreadservice/src/main/java/com/example/deliverypersonellreadservice/deliverypersonellreadservice/service/UpdateDeliveryPersonellDbService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/deliverypersonellreadservice/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/deliverypersonellreadservice/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/deliverypersonellservice/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/deliverypersonellservice/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/deliverypersonellservice/src/main/java/com/example/deliverypersonellservice/deliverypersonellservice/AppConf.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/deliverypersonellservice/src/main/java/com/example/deliverypersonellservice/deliverypersonellservice/AppConf.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/deliverypersonellservice/src/main/java/com/example/deliverypersonellservice/deliverypersonellservice/controller/DeliveryPersonController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/deliverypersonellservice/src/main/java/com/example/deliverypersonellservice/deliverypersonellservice/controller/DeliveryPersonController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/deliverypersonellservice/src/main/java/com/example/deliverypersonellservice/deliverypersonellservice/service/DeliveryPersonService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/deliverypersonellservice/src/main/java/com/example/deliverypersonellservice/deliverypersonellservice/service/DeliveryPersonService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/deliverypersonellservice/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/deliverypersonellservice/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/employeeservice/Cargo.lock" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/employeeservice/Cargo.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/employeeservice/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/employeeservice/Cargo.toml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/employeeservice/src/handlers.rs" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/employeeservice/src/handlers.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/employereadeservice/Cargo.lock" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/employereadeservice/Cargo.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/employereadeservice/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/employereadeservice/Cargo.toml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/messenderservice/Cargo.lock" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/messenderservice/Cargo.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/messenderservice/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/messenderservice/Cargo.toml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/messenderservice/src/handlers.rs" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/messenderservice/src/handlers.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/messenderservice/src/model.rs" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/messenderservice/src/model.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/packagereadservice/Cargo.lock" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/packagereadservice/Cargo.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/packagereadservice/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/packagereadservice/Cargo.toml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/packagereadservice/src/handlers.rs" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/packagereadservice/src/handlers.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/packagereadservice/src/main.rs" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/packagereadservice/src/main.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/packageservice/Cargo.lock" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/packageservice/Cargo.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/packageservice/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/packageservice/Cargo.toml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/packageservice/src/handlers.rs" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/packageservice/src/handlers.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/servicesreadservice/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/servicesreadservice/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/servicesreadservice/src/main/java/com/example/servicesreadservice/AppConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/servicesreadservice/src/main/java/com/example/servicesreadservice/AppConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/servicesreadservice/src/main/java/com/example/servicesreadservice/controller/ServiceController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/servicesreadservice/src/main/java/com/example/servicesreadservice/controller/ServiceController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/servicesreadservice/src/main/java/com/example/servicesreadservice/mapper/PackageServicesToResponseMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/servicesreadservice/src/main/java/com/example/servicesreadservice/mapper/PackageServicesToResponseMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/servicesreadservice/src/main/java/com/example/servicesreadservice/service/DbServiceService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/servicesreadservice/src/main/java/com/example/servicesreadservice/service/DbServiceService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/servicesreadservice/src/main/java/com/example/servicesreadservice/service/PackageServicesService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/servicesreadservice/src/main/java/com/example/servicesreadservice/service/PackageServicesService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/servicesreadservice/src/main/java/com/example/servicesreadservice/service/UpdateDbServicesService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/servicesreadservice/src/main/java/com/example/servicesreadservice/service/UpdateDbServicesService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/servicesreadservice/src/main/java/com/example/servicesreadservice/service/UpdatePackageServicesService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/servicesreadservice/src/main/java/com/example/servicesreadservice/service/UpdatePackageServicesService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/servicesreadservice/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/servicesreadservice/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/servicesservice/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/servicesservice/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/servicesservice/src/main/java/com/example/servicesservice/controller/ServiceController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/servicesservice/src/main/java/com/example/servicesservice/controller/ServiceController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/servicesservice/src/main/java/com/example/servicesservice/model/Warehouse.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/servicesservice/src/main/java/com/example/servicesservice/model/Warehouse.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/servicesservice/src/main/java/com/example/servicesservice/service/DbServiceService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/servicesservice/src/main/java/com/example/servicesservice/service/DbServiceService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/servicesservice/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/servicesservice/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/transportreadservice/.env" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/transportreadservice/.env" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/transportreadservice/Cargo.lock" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/transportreadservice/Cargo.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/transportreadservice/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/transportreadservice/Cargo.toml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/transportreadservice/src/handlers.rs" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/transportreadservice/src/handlers.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/transportreadservice/src/main.rs" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/transportreadservice/src/main.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/transportreadservice/src/model.rs" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/transportreadservice/src/model.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/transportservice/Cargo.lock" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/transportservice/Cargo.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/transportservice/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/transportservice/Cargo.toml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/transportservice/src/handlers.rs" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/transportservice/src/handlers.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/userreadservice/Cargo.lock" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/userreadservice/Cargo.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/userreadservice/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/userreadservice/Cargo.toml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/userservice/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/userservice/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/userservice/Cargo.lock" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/userservice/Cargo.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/userservice/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/userservice/Cargo.toml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/userservice/src/handlers.rs" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/userservice/src/handlers.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/warehousereadservice/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/warehousereadservice/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/warehousereadservice/src/main/java/com/example/warehousereadservice/warehousereadservice/AppConf.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/warehousereadservice/src/main/java/com/example/warehousereadservice/warehousereadservice/AppConf.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/warehousereadservice/src/main/java/com/example/warehousereadservice/warehousereadservice/controller/WarehouseController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/warehousereadservice/src/main/java/com/example/warehousereadservice/warehousereadservice/controller/WarehouseController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/warehousereadservice/src/main/java/com/example/warehousereadservice/warehousereadservice/controller/WarehouseLocationController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/warehousereadservice/src/main/java/com/example/warehousereadservice/warehousereadservice/controller/WarehouseLocationController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/warehousereadservice/src/main/java/com/example/warehousereadservice/warehousereadservice/controller/WarehouseTypeController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/warehousereadservice/src/main/java/com/example/warehousereadservice/warehousereadservice/controller/WarehouseTypeController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/warehousereadservice/src/main/java/com/example/warehousereadservice/warehousereadservice/service/UpdateWarehouseDbService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/warehousereadservice/src/main/java/com/example/warehousereadservice/warehousereadservice/service/UpdateWarehouseDbService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/warehousereadservice/src/main/java/com/example/warehousereadservice/warehousereadservice/service/UpdateWarehouseLocationsService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/warehousereadservice/src/main/java/com/example/warehousereadservice/warehousereadservice/service/UpdateWarehouseLocationsService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/warehousereadservice/src/main/java/com/example/warehousereadservice/warehousereadservice/service/UpdateWarehouseTypeDbService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/warehousereadservice/src/main/java/com/example/warehousereadservice/warehousereadservice/service/UpdateWarehouseTypeDbService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/warehousereadservice/src/main/java/com/example/warehousereadservice/warehousereadservice/service/WarehouseService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/warehousereadservice/src/main/java/com/example/warehousereadservice/warehousereadservice/service/WarehouseService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/warehousereadservice/src/main/java/com/example/warehousereadservice/warehousereadservice/service/WarehouseTypeService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/warehousereadservice/src/main/java/com/example/warehousereadservice/warehousereadservice/service/WarehouseTypeService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/warehousereadservice/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/warehousereadservice/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/warehousereadservice/src/main/resources/logback.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/warehouseservice/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/warehouseservice/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/warehouseservice/src/main/java/com/example/warehouseservice/warehouseservice/AppConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/warehouseservice/src/main/java/com/example/warehouseservice/warehouseservice/AppConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/warehouseservice/src/main/java/com/example/warehouseservice/warehouseservice/controller/WarehouseController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/warehouseservice/src/main/java/com/example/warehouseservice/warehouseservice/controller/WarehouseController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/warehouseservice/src/main/java/com/example/warehouseservice/warehouseservice/controller/WarehouseLocationController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/warehouseservice/src/main/java/com/example/warehouseservice/warehouseservice/controller/WarehouseLocationController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/warehouseservice/src/main/java/com/example/warehouseservice/warehouseservice/controller/WarehouseTypeController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/warehouseservice/src/main/java/com/example/warehouseservice/warehouseservice/controller/WarehouseTypeController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/warehouseservice/src/main/java/com/example/warehouseservice/warehouseservice/service/WarehouseLocationService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/warehouseservice/src/main/java/com/example/warehouseservice/warehouseservice/service/WarehouseLocationService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/warehouseservice/src/main/java/com/example/warehouseservice/warehouseservice/service/WarehouseService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/warehouseservice/src/main/java/com/example/warehouseservice/warehouseservice/service/WarehouseService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/warehouseservice/src/main/java/com/example/warehouseservice/warehouseservice/service/WarehouseTypeService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/warehouseservice/src/main/java/com/example/warehouseservice/warehouseservice/service/WarehouseTypeService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekapi/warehouseservice/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekapi/warehouseservice/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/domain/model/Warehouse.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/domain/model/Warehouse.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sdekdeliveryclient/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../sdekdeliveryclient/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/view/track_package_page/controller/track_package_controller.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/view/track_package_page/controller/track_package_controller.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/view/track_package_page/page/track_package_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/view/track_package_page/page/track_package_page.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -119,7 +23,7 @@
     </option>
   </component>
   <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
   &quot;lastFilter&quot;: {
@@ -137,31 +41,32 @@
   &quot;associatedIndex&quot;: 4
 }</component>
   <component name="ProjectId" id="2nwnYpoHfJVSP8i2FbnFvvh9YZc" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Flutter.main.dart.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
-    &quot;flutter.view.tool.window.visible&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;io.flutter.reload.alreadyRun&quot;: &quot;true&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/flutter/bin&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;dart.settings&quot;,
-    &quot;show.migrate.to.gradle.popup&quot;: &quot;false&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Flutter.main.dart.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "dart.analysis.tool.window.visible": "false",
+    "flutter.view.tool.window.visible": "true",
+    "git-widget-placeholder": "master",
+    "io.flutter.reload.alreadyRun": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "D:/flutter/bin",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "project.propVCSSupport.DirectoryMappings",
+    "show.migrate.to.gradle.popup": "false",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RunManager">
     <configuration name="main.dart" type="FlutterRunConfigurationType" factoryName="Flutter">
       <option name="filePath" value="$PROJECT_DIR$/lib/main.dart" />
@@ -210,11 +115,17 @@
       <workItem from="1744537812360" duration="104000" />
       <workItem from="1744538113638" duration="1286000" />
       <workItem from="1744539478702" duration="5660000" />
+      <workItem from="1744562372033" duration="1307000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <ignored-roots>
+      <path value="$PROJECT_DIR$/../.." />
+    </ignored-roots>
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

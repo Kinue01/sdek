@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:clientapp/domain/model/Package.dart';
 import 'package:clientapp/domain/model/TransportPosition.dart';
 import 'package:clientapp/view/track_package_page/controller/track_package_controller.dart';
 import 'package:flutter/material.dart';
@@ -34,16 +35,29 @@ class TrackPackageViewState extends State<TrackPackageView> with GetItStateMixin
   @override
   void initState() {
     controller = get<TrackPackageController>();
+    Future.delayed(Duration.zero, () async => {
+      await get<TrackPackageController>().getClientPackages()
+    });
     _mapController = MapController();
     controller.channel.stream.listen((ev) {
-      var pos = TransportPosition.fromRawJson(ev);
+      final res = ev as List<dynamic>;
+      final poses = res.map((e) => TransportPosition.fromMap(e)).toList();
+      var posesToShow = List<TransportPosition>.empty();
 
-      if (pos.transport_id == "1") { // todo need to choose package to track, and then get transport id of delivery person
-        setState(() {
-          _mapPoints.clear();
+      poses.forEach((p) {
+        controller.packages.value.forEach((pack) {
+          if (pack.package_deliveryperson?.person_transport?.transport_id.toString() == p.transport_id) {
+            posesToShow.add(p);
+          };
+        });
+      });
+
+      setState(() {
+        _mapPoints.clear();
+        posesToShow.forEach((pos) {
           _mapPoints.add(LatLng(pos.lat, pos.lon));
         });
-      }
+      });
     });
     super.initState();
   }
