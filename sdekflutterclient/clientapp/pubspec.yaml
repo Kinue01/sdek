@@ -43,10 +43,9 @@ dependencies:
   get_it_mixin: ^4.2.2
   shared_preferences: ^2.3.2
   supabase_flutter: ^2.5.9
-  google_maps_flutter: ^2.7.0
-  geolocator: ^13.0.2
   duration: ^4.0.3
   intl: ^0.20.2
+  flutter_map: ^8.1.1
 
 dev_dependencies:
   flutter_test:

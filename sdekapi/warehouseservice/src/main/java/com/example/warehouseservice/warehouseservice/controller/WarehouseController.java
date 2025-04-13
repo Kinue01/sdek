@@ -42,7 +42,7 @@ public class WarehouseController {
         examples = @ExampleObject(
             value = "{\"warehouse_id\": 0, \"warehouse_name\": \"Warehouse 1\", \"warehouse_address\": \"Some address\", \"warehouse_point\": {\"x\": 150.00, \"y\": 240.00}, \"warehouse_type\", null}" //todo write warehouse type example
         ))) @RequestBody Warehouse warehouse) {
-       return service.addWarehouse(warehouse).join();
+       return service.addWarehouse(warehouse);
     }
 
     @Operation(summary = "Update warehouse")
@@ -62,7 +62,7 @@ public class WarehouseController {
         examples = @ExampleObject(
             value = "{\"warehouse_id\": 0, \"warehouse_name\": \"Warehouse 1\", \"warehouse_address\": \"Some address\", \"warehouse_point\": {\"x\": 150.00, \"y\": 240.00}, \"warehouse_type\", null}" //todo write warehouse type example
         )))  @RequestBody Warehouse warehouse) {
-        return service.updateWarehouse(warehouse).join();
+        return service.updateWarehouse(warehouse);
     }
 
     @Operation(summary = "Delete warehouse")
@@ -82,6 +82,6 @@ public class WarehouseController {
         examples = @ExampleObject(
             value = "{\"warehouse_id\": 100, \"warehouse_name\": \"Warehouse 1\", \"warehouse_address\": \"Some address\", \"warehouse_point\": {\"x\": 150.00, \"y\": 240.00}, \"warehouse_type\", null}" //todo write warehouse type example
         )))  @RequestBody Warehouse warehouse) {
-        return service.deleteWarehouse(warehouse).join();
+        return service.deleteWarehouse(warehouse);
     }
 }

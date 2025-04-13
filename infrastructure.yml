@@ -60,9 +60,9 @@ services:
       retries: 10
     depends_on:
       - eventstore
-      - mongo
+      - mongodb
       - redis
-  mongo:
+  mongodb:
     image: mongo
     restart: always
     environment:
@@ -70,14 +70,14 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: 12345
       MONGO_INITDB_DATABASE: sdek
     volumes:
-      - ./mongo-init.js:/docker-entrypoint-initdb.d/init-mongo-db-with-collections.js:ro
+      - ./init-mongo-db-with-collections.js:/docker-entrypoint-initdb.d/init-mongo-db-with-collections.js:ro
   mongo-express:
     image: mongo-express
     restart: always
     ports:
     - 8081:8081
     environment:
-      ME_CONFIG_MONGODB_SERVER: mongo
+      ME_CONFIG_MONGODB_SERVER: mongodb
       ME_CONFIG_MONGODB_PORT: 27017
       ME_CONFIG_MONGODB_ENABLE_ADMIN: false
       ME_CONFIG_MONGODB_AUTH_DATABASE: admin
@@ -86,7 +86,7 @@ services:
       ME_CONFIG_BASICAUTH_USERNAME: root
       ME_CONFIG_BASICAUTH_PASSWORD: root
     depends_on:
-      - mongo
+      - mongodb
     
 volumes:
   eventstore-volume-data:

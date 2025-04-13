@@ -20,7 +20,7 @@ pub async fn add_client(
     Json(client): Json<Client>,
 ) -> Result<StatusCode, MyError> {
     let client_event = EventData::json("client_add", &client).unwrap();
-    let user_event = EventData::json("user_add", client.client_user).unwrap();
+    let user_event = EventData::json("user_add", &client.client_user).unwrap();
 
     let _ = state
         .append_to_stream("user", &Default::default(), user_event)
@@ -48,7 +48,7 @@ pub async fn update_client(
     Json(client): Json<Client>,
 ) -> Result<StatusCode, MyError> {
     let client_event = EventData::json("client_update", &client).unwrap();
-    let user_event = EventData::json("user_update", client.client_user).unwrap();
+    let user_event = EventData::json("user_update", &client.client_user).unwrap();
 
     let _ = state
         .append_to_stream("user", &Default::default(), user_event)
@@ -76,7 +76,7 @@ pub async fn delete_client(
     Json(client): Json<Client>,
 ) -> Result<StatusCode, MyError> {
     let client_event = EventData::json("client_delete", &client).unwrap();
-    let user_event = EventData::json("user_delete", client.client_user).unwrap();
+    let user_event = EventData::json("user_delete", &client.client_user).unwrap();
 
     let _ = state
         .append_to_stream("client", &Default::default(), client_event)

@@ -2,8 +2,7 @@ use axum::extract::WebSocketUpgrade;
 use axum::extract::ws::WebSocket;
 use axum::response::Response;
 use eventstore::{Client, Subscription};
-
-use crate::model::Message;
+use crate::model;
 
 pub async fn handler(ws: WebSocketUpgrade) -> Response {
     let client = Client::new("esdb://admin:@eventstore:2113?tls=false".parse().unwrap_or_default()).unwrap();
@@ -20,13 +19,11 @@ async fn handle_socket(mut socket: WebSocket, mut state: Subscription) {
 
         let event = ev
             .get_original_event()
-            .as_json::<Message>()
+            .as_json::<model::Message>()
             .unwrap_or_default();
 
-        let res = bincode::serialize(&event).unwrap();
-
         if socket
-            .send(axum::extract::ws::Message::from(res))
+            .send(axum::extract::ws::Message::text(serde_json::to_string(&event).unwrap()))
             .await
             .is_err()
         {

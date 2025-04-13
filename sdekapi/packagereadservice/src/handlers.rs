@@ -250,7 +250,7 @@ pub async fn get_package_by_id(
         .await
         .unwrap();
 
-    match package_redis.package_uuid == Default::default() {
+    match package_redis.package_uuid.to_string() == Uuid::default().to_string() {
         true => {
             let package = sqlx::query_as!(
                 PackageResponse,
@@ -448,14 +448,15 @@ pub async fn get_package_by_id(
     }
 }
 
+#[derive(Deserialize, Display)]
+pub struct IdShortParam {
+    id: i16
+}
+
 pub async fn get_package_types(
     State(mut state): State<AppState>,
 ) -> Result<Json<Vec<PackageType>>, MyError> {
-    let types_redis: Vec<PackageType> = state.redis.get("packageTypes").await.map_err(MyError::RDbError)?;
-
-    match types_redis.is_empty() {
-        true => {
-            let types = sqlx::query_as!(PackageType, "select * from tb_package_type")
+    let types = sqlx::query_as!(PackageType, "select * from tb_package_type")
                 .fetch_all(&state.postgres)
                 .await
                 .map_err(MyError::DBError)?;
@@ -463,87 +464,55 @@ pub async fn get_package_types(
             //let _: () = state.redis.set("packageTypes", &types).await.map_err(MyError::RDbError)?;
 
             Ok(Json(types))
-        }
-        false => Ok(Json(types_redis)),
-    }
 }
 
 pub async fn get_package_type_by_id(
     State(mut state): State<AppState>,
-    id: Query<i16>,
+    id: Query<IdShortParam>,
 ) -> Result<Json<PackageType>, MyError> {
-    let type_redis: PackageType = state
-        .redis
-        .json_get("packageType".to_owned() + &*id.0.to_string(), "$")
-        .await
-        .unwrap();
+    let p_type = sqlx::query_as!(
+        PackageType,
+        "select * from tb_package_type where type_id = $1",
+        &id.0.id
+    )
+    .fetch_one(&state.postgres)
+    .await
+    .map_err(MyError::DBError)?;
 
-    match type_redis.type_id == 0 {
-        true => {
-            let p_type = sqlx::query_as!(
-                PackageType,
-                "select * from tb_package_type where type_id = $1",
-                &id.0
-            )
-            .fetch_one(&state.postgres)
-            .await
-            .map_err(MyError::DBError)?;
+    // let _: () = state.redis.json_set("packageTypes", "$", &p_type).await.unwrap();
 
-            let _: () = state.redis.json_set("packageTypes", "$", &p_type).await.unwrap();
-
-            Ok(Json(p_type))
-        }
-        false => Ok(Json(type_redis)),
-    }
+    Ok(Json(p_type))
 }
 
 pub async fn get_package_statuses(
     State(mut state): State<AppState>,
 ) -> Result<Json<Vec<PackageStatus>>, MyError> {
-    let statuses_redis: Vec<PackageStatus> = state.redis.get("packageStatuses").await.unwrap();
-
-    match statuses_redis.is_empty() {
-        true => {
-            let statuses = sqlx::query_as!(PackageStatus, "select * from tb_package_status")
+    let statuses = sqlx::query_as!(PackageStatus, "select * from tb_package_status")
                 .fetch_all(&state.postgres)
                 .await
                 .map_err(MyError::DBError)?;
             
-            let _: () = state.redis.set("packageStatuses", statuses.clone()).await.unwrap();
+            // let _: () = state.redis.set("packageStatuses", statuses.clone()).await.unwrap();
 
             Ok(Json(statuses))
-        }
-        false => Ok(Json(statuses_redis)),
-    }
 }
 
 pub async fn get_package_status_by_id(
     State(mut state): State<AppState>,
-    id: Query<i16>,
+    id: Query<IdShortParam>,
 ) -> Result<Json<PackageStatus>, MyError> {
-    let status_redis: PackageStatus = state
-        .redis
-        .get("packageStatus".to_owned() + &*id.0.to_string())
-        .await
-        .unwrap();
+    let status = sqlx::query_as!(
+        PackageStatus,
+        "select * from tb_package_status where status_id = $1",
+        &id.0.id
+    )
+    .fetch_one(&state.postgres)
+    .await
+    .map_err(MyError::DBError)?;
+    
+    // let _: () = state.redis.json_set("packageStatus".to_owned() + &*id.0.id.to_string(), "$", &status).await.unwrap();
 
-    match status_redis.status_id == 0 {
-        true => {
-            let status = sqlx::query_as!(
-                PackageStatus,
-                "select * from tb_package_status where status_id = $1",
-                &id.0
-            )
-            .fetch_one(&state.postgres)
-            .await
-            .map_err(MyError::DBError)?;
-            
-            let _: () = state.redis.set("packageStatus".to_owned() + &*id.0.to_string(), &status).await.unwrap();
-
-            Ok(Json(status))
-        }
-        false => Ok(Json(status_redis)),
-    }
+    Ok(Json(status))
 }
 
 pub async fn get_packages_paytypes(State(state): State<AppState>) -> Result<Json<Vec<PackagePaytype>>, MyError> {

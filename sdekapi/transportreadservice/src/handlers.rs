@@ -1,12 +1,13 @@
-use axum::extract::ws::{Message, WebSocket};
+use axum::extract::ws::{Message, Utf8Bytes, WebSocket};
 use axum::extract::{Query, State, WebSocketUpgrade};
 use axum::response::Response;
 use axum::Json;
-use futures::StreamExt;
+use futures::{StreamExt, TryFutureExt};
 use mongodb::bson::{doc, Document};
-use mongodb::Collection;
+use mongodb::{Collection, Cursor};
 use redis::{AsyncCommands, JsonAsyncCommands};
-
+use std::time::Duration;
+use serde_json::Value;
 use crate::AppState;
 use crate::error::MyError;
 use crate::model::*;
@@ -292,28 +293,29 @@ pub async fn update_db_main(State(mut state): State<AppState>) {
 }
 
 pub async fn update_mongo(State(state): State<AppState>) {
-    let mut stream = state
-        .event_client
-        .subscribe_to_stream("transport_geo", &Default::default())
-        .await;
+    let mut stream = state.event_client.subscribe_to_stream("transport_geo", &Default::default()).await;
+
+    let db = state.mongo.database("sdek");
+    let coll = db.collection("transport_geo");
     
     loop {
         let event = stream.next().await.unwrap();
-        let db = state.mongo.database("sdek");
-        let coll: Collection<Document> = db.collection("transport_geo");
-        let data = &event.get_original_event().data;
-        let body: (TransportMongo, _) =
-            bincode::decode_from_slice(data, bincode::config::standard()).unwrap();
+        let body = event.get_original_event().as_json::<TransportMongo>().unwrap();
+        
+        let uuid = body.transport_id;
+        
         let doc = doc! {
-            "$set": doc! {
-                "lat": body.0.lat,
-                "lon": body.0.lon
-            },
+            "lat": body.lat,
+            "lon": body.lon
         };
-        let _ = coll
-            .update_one(doc! {"transport_id": body.0.transport_id}, doc)
-            .await
-            .unwrap();
+
+        let d = coll.find_one(doc! { "transport_id": uuid.clone() }).await.unwrap();
+
+        if d.is_none() {
+            let _ =  coll.insert_one(doc! { "transport_id": uuid, "lat": body.lat, "lon": body.lon }).await.unwrap();
+        } else {
+            let _ = coll.find_one_and_update(doc! { "transport_id": uuid }, doc).await.unwrap();
+        }
     }
 }
 
@@ -322,21 +324,31 @@ pub async fn get_trans_pos(State(state): State<AppState>, ws: WebSocketUpgrade) 
 }
 
 async fn websocket_handler(mut socket: WebSocket, state: AppState) {
+    let db = state.mongo.database("sdek");
+    let coll: Collection<Document> = db.collection("transport_geo");
+    
+    let mut interval = tokio::time::interval(Duration::from_secs(5));
     loop {
-        let msg = socket.recv().await.unwrap().unwrap();
+        interval.tick().await;
+        
+        let mut docs: Cursor<Document> = coll.find(doc! {}).await.unwrap();
+        let mut d: Vec<Document> = Vec::new();
 
-        let transport_id: (String, _) = bincode::decode_from_slice(msg.into_data().as_slice(), bincode::config::standard()).unwrap();
-        let id_bytes = transport_id.0.as_str();
-
-        let db = state.mongo.database("sdek");
-        let coll: Collection<Document> = db.collection("transport_geo");
-        let filter = doc! { "transport_id": id_bytes };
-        let res = coll.find_one(filter).await.unwrap().unwrap();
-
-        let data = bincode::encode_to_vec(res.to_string(), bincode::config::standard()).unwrap();
-
-        if socket.send(Message::Binary(data)).await.is_err() {
-            return;
+        while let Some(doc) = docs.next().await {
+            d.push(doc.unwrap());
         }
+
+        socket.send(Message::Text(Utf8Bytes::from(serde_json::to_string(&d).unwrap()))).await.unwrap();
     }
+
+    // loop {
+    //     let msg = socket.recv().await.unwrap().unwrap();
+    //     let transport_id = msg.into_text().unwrap().to_string();
+    // 
+    //     let res = coll.find_one(doc! { "transport_id": transport_id }).await.unwrap().unwrap();
+    // 
+    //     if socket.send(Message::Text(Utf8Bytes::from(res.to_string()))).await.is_err() {
+    //         return;
+    //     }
+    // }
 }

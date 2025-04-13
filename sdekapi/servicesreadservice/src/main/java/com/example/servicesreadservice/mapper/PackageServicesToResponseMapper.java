@@ -6,13 +6,11 @@ import com.example.servicesreadservice.repository.PackageServiceRepository;
 import com.example.servicesreadservice.repository.ServiceRepository;
 import jakarta.annotation.PostConstruct;
 import org.modelmapper.ModelMapper;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 @Component
-@Scope("singleton")
 public class PackageServicesToResponseMapper {
-    public static final ModelMapper modelMapper = new ModelMapper();
+    private final ModelMapper modelMapper = new ModelMapper();
     private final PackageServiceRepository packageServiceRepository;
     private final ServiceRepository serviceRepository;
 
@@ -29,7 +27,11 @@ public class PackageServicesToResponseMapper {
                 .addMapping(PackageServiceResponse::getService_count, PackageServices::setService_count);
     }
 
-    public PackageServiceResponse map(PackageServices src) {
+    public PackageServices mapTo(PackageServiceResponse src) {
+        return modelMapper.map(src, PackageServices.class);
+    }
+
+    public PackageServiceResponse mapFrom(PackageServices src) {
         final PackageServiceResponse res = new PackageServiceResponse();
         final DbPackage dbPackage = packageServiceRepository.getPackageById(src.getPackage_id()).orElse(null);
         final DbDeliveryPerson deliveryPerson = packageServiceRepository.getDeliveryPersonById(src.getService_id()).orElse(null);

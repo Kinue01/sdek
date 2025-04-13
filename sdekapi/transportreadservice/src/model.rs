@@ -34,9 +34,9 @@ pub struct Transport {
     pub transport_status: TransportStatusResponse,
 }
 
-#[derive(Clone, Debug, ToSchema, Default, Deserialize, Encode, Decode, PartialEq)]
+#[derive(Clone, Debug, ToSchema, Default, Deserialize, Serialize, PartialEq)]
 pub struct TransportMongo {
-    pub transport_id: i32,
-    pub lat: f32,
-    pub lon: f32,
+    pub transport_id: String,
+    pub lat: f64,
+    pub lon: f64,
 }

@@ -21,7 +21,7 @@ pub async fn add_employee(
     Json(emp): Json<Employee>,
 ) -> Result<StatusCode, MyError> {
     let user_event = EventData::json("user_add", &emp.employee_user).unwrap();
-    let emp_event = EventData::json("employee_add", emp).unwrap();
+    let emp_event = EventData::json("employee_add", &emp).unwrap();
 
     let _ = state
         .event_client
@@ -51,7 +51,7 @@ pub async fn update_employee(
     Json(emp): Json<Employee>,
 ) -> Result<StatusCode, MyError> {
     let user_event = EventData::json("user_update", &emp.employee_user).unwrap();
-    let emp_event = EventData::json("employee_update", emp).unwrap();
+    let emp_event = EventData::json("employee_update", &emp).unwrap();
 
     let _ = state
         .event_client
@@ -81,7 +81,7 @@ pub async fn delete_employee(
     Json(emp): Json<Employee>,
 ) -> Result<StatusCode, MyError> {
     let user_event = EventData::json("user_delete", &emp.employee_user).unwrap();
-    let emp_event = EventData::json("employee_delete", emp).unwrap();
+    let emp_event = EventData::json("employee_delete", &emp).unwrap();
 
     let _ = state
         .event_client
@@ -110,7 +110,7 @@ pub async fn add_position(
     State(state): State<AppState>,
     Json(pos): Json<PositionResponse>,
 ) -> Result<StatusCode, MyError> {
-    let event = EventData::json("position_add", pos).unwrap();
+    let event = EventData::json("position_add", &pos).unwrap();
     let _ = state
         .event_client
         .append_to_stream("position", &Default::default(), event)
@@ -133,7 +133,7 @@ pub async fn update_position(
     State(state): State<AppState>,
     Json(pos): Json<PositionResponse>,
 ) -> Result<StatusCode, MyError> {
-    let event = EventData::json("position_update", pos).unwrap();
+    let event = EventData::json("position_update", &pos).unwrap();
     let _ = state
         .event_client
         .append_to_stream("position", &Default::default(), event)
@@ -156,7 +156,7 @@ pub async fn delete_position(
     State(state): State<AppState>,
     Json(pos): Json<PositionResponse>,
 ) -> Result<StatusCode, MyError> {
-    let event = EventData::json("position_delete", pos).unwrap();
+    let event = EventData::json("position_delete", &pos).unwrap();
     let _ = state
         .event_client
         .append_to_stream("position", &Default::default(), event)

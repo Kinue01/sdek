@@ -1,8 +1,7 @@
 package com.example.deliverypersonellservice.deliverypersonellservice.service;
 
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import org.springframework.scheduling.annotation.Async;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 import com.eventstore.dbclient.EventData;
 import com.eventstore.dbclient.EventStoreDBClient;
@@ -11,29 +10,31 @@ import com.example.deliverypersonellservice.deliverypersonellservice.model.Deliv
 @Service
 public class DeliveryPersonService {
     private final EventStoreDBClient client;
+    private final ObjectMapper mapper;
 
-    public DeliveryPersonService(EventStoreDBClient client) {
+    public DeliveryPersonService(EventStoreDBClient client, ObjectMapper mapper) {
         this.client = client;
+        this.mapper = mapper;
     }
 
-    @Async
-    public CompletableFuture<DeliveryPerson> addPerson(DeliveryPerson person) {
-        final EventData data = EventData.builderAsJson("delivery_person_add", person).build();
+    @SneakyThrows
+    public DeliveryPerson addPerson(DeliveryPerson person) {
+        final EventData data = EventData.builderAsBinary("delivery_person_add", mapper.writeValueAsBytes(person)).build();
         client.appendToStream("delivery_person", data).join();
-        return CompletableFuture.completedFuture(person);
-    } 
-
-    @Async
-    public CompletableFuture<DeliveryPerson> updatePerson(DeliveryPerson person) {
-        final EventData data = EventData.builderAsJson("delivery_person_update", person).build();
-        client.appendToStream("delivery_person", data).join();
-        return CompletableFuture.completedFuture(person);
+        return person;
     }
 
-    @Async
-    public CompletableFuture<DeliveryPerson> deletePerson(DeliveryPerson person) {
-        final EventData data = EventData.builderAsJson("delivery_person_delete", person).build();
+    @SneakyThrows
+    public DeliveryPerson updatePerson(DeliveryPerson person) {
+        final EventData data = EventData.builderAsBinary("delivery_person_update", mapper.writeValueAsBytes(person)).build();
         client.appendToStream("delivery_person", data).join();
-        return CompletableFuture.completedFuture(person);
+        return person;
+    }
+
+    @SneakyThrows
+    public DeliveryPerson deletePerson(DeliveryPerson person) {
+        final EventData data = EventData.builderAsBinary("delivery_person_delete", mapper.writeValueAsBytes(person)).build();
+        client.appendToStream("delivery_person", data).join();
+        return person;
     }
 }

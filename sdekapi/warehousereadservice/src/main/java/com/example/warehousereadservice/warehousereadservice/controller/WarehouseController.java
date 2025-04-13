@@ -16,13 +16,13 @@ public class WarehouseController {
         this.service = service;
     }
 
-    @GetMapping("/warehouse")
-    public WarehouseResponse getWarehouseById(@RequestParam int id) {
-        return service.getWarehouse(id).join();
+    @GetMapping("/warehouse/{id}")
+    public WarehouseResponse getWarehouseById(@PathVariable("id") int id) {
+        return service.getWarehouse(id);
     }
 
     @GetMapping("/warehouses")
     public List<WarehouseResponse> getWarehouses() {
-        return service.getWarehouses().join();
+        return service.getWarehouses();
     }
 }

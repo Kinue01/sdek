@@ -20,18 +20,18 @@ public class ServiceController {
         this.packageServicesService = packageServicesService;
     }
 
-    @GetMapping("/service")
-    public DbService getServiceById(@RequestParam short id) {
-        return dbServiceService.getServiceById(id).join();
+    @GetMapping("/service/{id}")
+    public DbService getServiceById(@PathVariable("id") short id) {
+        return dbServiceService.getServiceById(id);
     }
 
     @GetMapping("/services")
     public List<DbService> getAllServices() {
-        return dbServiceService.getAllServices().join();
+        return dbServiceService.getAllServices();
     }
 
-    @GetMapping("/package_services")
-    public List<DbService> getServicesByPackageId(@RequestParam UUID packageId) {
-        return packageServicesService.getPackageServiceById(packageId).join().parallelStream().map(item -> dbServiceService.getServiceById(item.getService().getService_id()).join()).toList();
+    @GetMapping("/package_services/{id}")
+    public List<DbService> getServicesByPackageId(@PathVariable("id") UUID packageId) {
+        return packageServicesService.getPackageServiceById(packageId).parallelStream().map(item -> dbServiceService.getServiceById(item.getService().getService_id())).toList();
     }
 }

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 @Service
 public class PackageServicesService {
@@ -22,14 +23,12 @@ public class PackageServicesService {
     }
 
     @Cacheable("package_services")
-    @Async
-    public CompletableFuture<List<PackageServiceResponse>> getPackageServiceById(UUID id) {
-        return CompletableFuture.completedFuture(repository.findAll().parallelStream().filter(item -> item.getPackage_id() == id).map(mapper::map).toList());
+    public List<PackageServiceResponse> getPackageServiceById(UUID id) {
+        return repository.findAll().parallelStream().filter(item -> item.getPackage_id() == id).map(mapper::mapFrom).collect(Collectors.toList());
     }
 
     @Cacheable("all_package_services")
-    @Async
-    public CompletableFuture<List<PackageServiceResponse>> getAllPackageService() {
-        return CompletableFuture.completedFuture(repository.findAll().parallelStream().map(mapper::map).toList());
+    public List<PackageServiceResponse> getAllPackageService() {
+        return repository.findAll().parallelStream().map(mapper::mapFrom).collect(Collectors.toList());
     }
 }

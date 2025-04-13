@@ -16,13 +16,13 @@ public class DeliveryPersonController {
         this.service = service;
     }
 
-    @GetMapping("/delivery_person")
-    public DeliveryPersonResponse getPerson(@RequestParam int id) {
-        return service.getPersonById(id).join();
+    @GetMapping("/delivery_person/{id}")
+    public DeliveryPersonResponse getPerson(@PathVariable("id") int id) {
+        return service.getPersonById(id);
     }
 
     @GetMapping("/delivery_personell")
     public List<DeliveryPersonResponse> getPersons() {
-        return service.getPersons().join();
+        return service.getPersons();
     }
 }

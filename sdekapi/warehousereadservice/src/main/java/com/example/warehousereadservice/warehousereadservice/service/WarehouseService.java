@@ -16,24 +16,17 @@ import java.util.concurrent.CompletableFuture;
 public class WarehouseService {
     private final WarehouseRepository repository;
 
-    private final Logger logger = LoggerFactory.getLogger(WarehouseService.class);
-
     public WarehouseService(WarehouseRepository repository) {
-        logger.debug("Get dependency");
         this.repository = repository;
     }
 
     @Cacheable("warehouse")
-    @Async
-    public CompletableFuture<WarehouseResponse> getWarehouse(int id) {
-        logger.info("Get warehouse");
-        return CompletableFuture.completedFuture(repository.findById(id).orElse(null));
+    public WarehouseResponse getWarehouse(int id) {
+        return repository.findById(id).orElse(null);
     }
 
     @Cacheable("warehouses")
-    @Async
-    public CompletableFuture<List<WarehouseResponse>> getWarehouses() {
-        logger.info("Get warehouses");
-        return CompletableFuture.completedFuture(repository.findAll());
+    public List<WarehouseResponse> getWarehouses() {
+        return repository.findAll();
     }
 }

@@ -17,16 +17,16 @@ public class WarehouseTypeController {
     @PostMapping
     @ResponseStatus(value = HttpStatus.CREATED)
     public WarehouseType addType(WarehouseType type) {
-        return service.addType(type).join();
+        return service.addType(type);
     }
 
     @PatchMapping
     public WarehouseType updateType(WarehouseType type) {
-        return service.updateType(type).join();
+        return service.updateType(type);
     }
 
     @DeleteMapping
     public WarehouseType deleteType(WarehouseType type) {
-        return service.deleteType(type).join();
+        return service.deleteType(type);
     }
 }

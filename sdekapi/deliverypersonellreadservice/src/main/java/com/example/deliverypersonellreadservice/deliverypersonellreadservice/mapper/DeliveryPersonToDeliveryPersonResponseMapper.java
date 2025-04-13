@@ -4,13 +4,11 @@ import com.example.deliverypersonellreadservice.deliverypersonellreadservice.mod
 import com.example.deliverypersonellreadservice.deliverypersonellreadservice.repository.DeliveryPersonRepository;
 import jakarta.annotation.PostConstruct;
 import org.modelmapper.ModelMapper;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 @Component
-@Scope("singleton")
 public class DeliveryPersonToDeliveryPersonResponseMapper {
-    public static final ModelMapper modelMapper = new ModelMapper();
+    private final ModelMapper modelMapper = new ModelMapper();
     private final DeliveryPersonRepository repository;
 
     public DeliveryPersonToDeliveryPersonResponseMapper(DeliveryPersonRepository repository) {
@@ -28,7 +26,11 @@ public class DeliveryPersonToDeliveryPersonResponseMapper {
                 .addMapping(src -> src.getPerson_transport().getTransport_id(), DeliveryPerson::setPerson_transport_id);
     }
 
-    public DeliveryPersonResponse map(DeliveryPerson deliveryPerson) {
+    public DeliveryPerson mapFrom(DeliveryPersonResponse deliveryPersonResponse) {
+        return modelMapper.map(deliveryPersonResponse, DeliveryPerson.class);
+    }
+
+    public DeliveryPersonResponse mapTo(DeliveryPerson deliveryPerson) {
         DeliveryPersonResponse deliveryPersonResponse = new DeliveryPersonResponse();
         UserDb userDb = repository.getUserById(deliveryPerson.getPerson_user_id());
         TransportDb transportDb = repository.getTransportById(deliveryPerson.getPerson_transport_id());

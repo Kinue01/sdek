@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping(value = "/warehousereadservice/api", produces = "application/json")
 public class WarehouseTypeController {
@@ -18,11 +19,11 @@ public class WarehouseTypeController {
 
     @GetMapping("/warehouse_type")
     public WarehouseType getTypeById(@RequestParam short id) {
-        return service.getType(id).join();
+        return service.getType(id);
     }
 
     @GetMapping("/warehouse_types")
     public List<WarehouseType> getTypes() {
-        return service.getTypes().join();
+        return service.getTypes();
     }
 }

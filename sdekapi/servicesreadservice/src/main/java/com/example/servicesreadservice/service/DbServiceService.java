@@ -19,14 +19,12 @@ public class DbServiceService {
     }
 
     @Cacheable("service")
-    @Async
-    public CompletableFuture<DbService> getServiceById(short id) {
-        return CompletableFuture.completedFuture(repository.findById(id).orElse(null));
+    public DbService getServiceById(short id) {
+        return repository.findById(id).orElse(null);
     }
 
     @Cacheable("services")
-    @Async
-    public CompletableFuture<List<DbService>> getAllServices() {
-        return CompletableFuture.completedFuture(repository.findAll());
+    public List<DbService> getAllServices() {
+        return repository.findAll();
     }
 }

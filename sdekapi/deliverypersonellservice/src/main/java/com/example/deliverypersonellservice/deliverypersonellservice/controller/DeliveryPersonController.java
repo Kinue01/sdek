@@ -26,16 +26,16 @@ public class DeliveryPersonController {
     @PostMapping
     @ResponseStatus(value = HttpStatus.CREATED)
     public DeliveryPerson addPerson(@RequestBody DeliveryPerson person) {
-        return service.addPerson(person).join();
+        return service.addPerson(person);
     }
     
     @PatchMapping
     public DeliveryPerson updatePerson(@RequestBody DeliveryPerson person) {
-        return service.updatePerson(person).join();
+        return service.updatePerson(person);
     }
 
     @DeleteMapping
     public DeliveryPerson deletePerson(@RequestBody DeliveryPerson person) {
-        return service.deletePerson(person).join();
+        return service.deletePerson(person);
     }
 }

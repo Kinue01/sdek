@@ -16,16 +16,16 @@ public class WarehouseLocationController {
 
     @PostMapping
     public WarehouseLocation add(WarehouseLocation warehouseLocation) {
-        return warehouseLocationService.addWarehouseLocation(warehouseLocation).join();
+        return warehouseLocationService.addWarehouseLocation(warehouseLocation);
     }
 
     @PatchMapping
     public WarehouseLocation update(WarehouseLocation warehouseLocation) {
-        return warehouseLocationService.updateWarehouseLocation(warehouseLocation).join();
+        return warehouseLocationService.updateWarehouseLocation(warehouseLocation);
     }
 
     @DeleteMapping
     public WarehouseLocation delete(WarehouseLocation warehouseLocation) {
-        return warehouseLocationService.deleteWarehouseLocation(warehouseLocation).join();
+        return warehouseLocationService.deleteWarehouseLocation(warehouseLocation);
     }
 }

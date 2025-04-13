@@ -18,7 +18,6 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import java.time.Duration;
 
 @Configuration
-@EnableAsync
 @EnableCaching
 public class AppConf {
     @Bean
@@ -27,17 +26,6 @@ public class AppConf {
 //        final EventStoreDBClientSettings settings = EventStoreDBConnectionString.parseOrThrow("esdb://admin:@localhost:2113?tls=false");
         return EventStoreDBClient.create(settings);
     }
-
-//    @Bean
-//    public ModelMapper modelMapper() {
-//        ModelMapper mapper = new ModelMapper();
-//        mapper.typeMap(WarehouseResponse.class, Warehouse.class)
-//                .addMapping(WarehouseResponse::getWarehouse_id, Warehouse::setWarehouse_id)
-//                .addMapping(WarehouseResponse::getWarehouse_name, Warehouse::setWarehouse_name)
-//                .addMapping(WarehouseResponse::getWarehouse_address, Warehouse::setWarehouse_address)
-//                .addMapping(src -> src.getWarehouse_type().getType_id(), Warehouse::setWarehouse_type_id);
-//        return mapper;
-//    }
 
     @Bean
     public RedisCacheConfiguration cacheConfiguration() {

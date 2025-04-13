@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:clientapp/domain/model/WarehouseType.dart';
 import 'package:equatable/equatable.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class Warehouse with EquatableMixin {
   final int? warehouse_id;

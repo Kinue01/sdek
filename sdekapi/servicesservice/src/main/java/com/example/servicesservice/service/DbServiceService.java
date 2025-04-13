@@ -3,6 +3,8 @@ package com.example.servicesservice.service;
 import com.eventstore.dbclient.EventData;
 import com.eventstore.dbclient.EventStoreDBClient;
 import com.example.servicesservice.model.DbService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.SneakyThrows;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -11,29 +13,31 @@ import java.util.concurrent.CompletableFuture;
 @Service
 public class DbServiceService {
     private final EventStoreDBClient client;
+    private final ObjectMapper objectMapper;
 
-    public DbServiceService(EventStoreDBClient client) {
+    public DbServiceService(EventStoreDBClient client, ObjectMapper objectMapper) {
         this.client = client;
+        this.objectMapper = objectMapper;
     }
 
-    @Async
-    public CompletableFuture<DbService> addService(DbService service) {
-        final EventData data = EventData.builderAsJson("service_add", service).build();
+    @SneakyThrows
+    public DbService addService(DbService service) {
+        final EventData data = EventData.builderAsBinary("service_add", objectMapper.writeValueAsBytes(service)).build();
         client.appendToStream("service", data).join();
-        return CompletableFuture.completedFuture(service);
+        return service;
     }
 
-    @Async
-    public CompletableFuture<DbService> updateService(DbService service) {
-        final EventData data = EventData.builderAsJson("service_update", service).build();
+    @SneakyThrows
+    public DbService updateService(DbService service) {
+        final EventData data = EventData.builderAsBinary("service_update", objectMapper.writeValueAsBytes(service)).build();
         client.appendToStream("service", data).join();
-        return CompletableFuture.completedFuture(service);
+        return service;
     }
 
-    @Async
-    public CompletableFuture<DbService> deleteService(DbService service) {
-        final EventData data = EventData.builderAsJson("service_delete", service).build();
+    @SneakyThrows
+    public DbService deleteService(DbService service) {
+        final EventData data = EventData.builderAsBinary("service_delete", objectMapper.writeValueAsBytes(service)).build();
         client.appendToStream("service", data).join();
-        return CompletableFuture.completedFuture(service);
+        return service;
     }
 }

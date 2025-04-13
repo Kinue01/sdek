@@ -31,6 +31,7 @@ struct AppState {
     redis: MultiplexedConnection,
     event_client: eventstore::Client,
 }
+
 #[tokio::main]
 async fn main() {
     tracing_subscriber::fmt()
@@ -56,7 +57,7 @@ async fn main() {
 
     let postgres = PgPoolOptions::new()
         .max_connections(1000000)
-        .acquire_timeout(Duration::from_secs(10))
+        .acquire_timeout(Duration::from_secs(60))
         .connect(&pg_url)
         .await
         .unwrap();

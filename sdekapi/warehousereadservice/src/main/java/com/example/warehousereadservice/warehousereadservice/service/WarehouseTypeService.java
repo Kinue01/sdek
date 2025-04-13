@@ -18,14 +18,12 @@ public class WarehouseTypeService {
     }
 
     @Cacheable("warehouse_type")
-    @Async
-    public CompletableFuture<WarehouseType> getType(short id) {
-        return CompletableFuture.completedFuture(repository.findById(id).orElse(null));
+    public WarehouseType getType(short id) {
+        return repository.findById(id).orElse(null);
     }
 
     @Cacheable("warehouse_types")
-    @Async
-    public CompletableFuture<List<WarehouseType>> getTypes() {
-        return CompletableFuture.completedFuture(repository.findAll());
+    public List<WarehouseType> getTypes() {
+        return repository.findAll();
     }
 }

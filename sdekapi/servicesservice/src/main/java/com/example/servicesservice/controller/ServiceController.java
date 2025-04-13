@@ -15,16 +15,16 @@ public class ServiceController {
 
     @PostMapping
     public DbService addService(@RequestBody DbService service) {
-        return dbServiceService.addService(service).join();
+        return dbServiceService.addService(service);
     }
 
     @PatchMapping
     public DbService updateService(@RequestBody DbService service) {
-        return dbServiceService.updateService(service).join();
+        return dbServiceService.updateService(service);
     }
 
     @DeleteMapping
     public DbService deleteService(@RequestBody DbService service) {
-        return dbServiceService.deleteService(service).join();
+        return dbServiceService.deleteService(service);
     }
 }

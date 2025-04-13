@@ -2,61 +2,70 @@ include:
   - infrastructure.yml
 services:
   userservice:
-    build: ./sdekapi/userservice/
+    build: 
+      context: ./sdekapi/userservice
     ports:
       - "8000:8000"
 
   consumerservice:
-    build: ./sdekapi/consumerservice/
+    build: 
+      context: ./sdekapi/consumerservice
     ports:
       - "8001:8001"
     depends_on:
       - userreadservice
 
   employeeservice:
-    build: ./sdekapi/employeeservice/
+    build: 
+      context: ./sdekapi/employeeservice
     ports:
       - "8002:8002"
     depends_on:
       - consumerreadservice
 
   packageservice:
-    build: ./sdekapi/packageservice/
+    build: 
+      context: ./sdekapi/packageservice
     ports:
       - "8003:8003"
     depends_on:
       - messenderservice
 
   messenderservice:
-    build: ./sdekapi/messenderservice/
+    build: 
+      context: ./sdekapi/messenderservice
     ports:
       - "8004:8004"
     depends_on:
       - servicesreadservice
 
   transportservice:
-    build: ./sdekapi/transportservice/
+    build: 
+      context: ./sdekapi/transportservice
     ports:
       - "8005:8005"
     depends_on:
       - warehousereadservice
 
   warehouseservice:
-    build: ./sdekapi/warehouseservice/
+    build: 
+      context: ./sdekapi/warehouseservice
     ports:
       - "8006:8006"
     depends_on:
       - employereadeservice
 
   deliverypersonellservice:
-    build: ./sdekapi/deliverypersonellservice/
+    build: 
+      context: ./sdekapi/deliverypersonellservice
     ports:
       - "8007:8007"
     depends_on:
       - transportreadservice
 
   servicesservice:
-    build: ./sdekapi/servicesservice/
+    build: 
+      context: ./sdekapi/servicesservice
     ports:
       - "8008:8008"
     depends_on:
@@ -64,7 +73,7 @@ services:
 
   userreadservice:
     build: 
-      context: ./sdekapi/userreadservice/
+      context: ./sdekapi/userreadservice
     ports:
       - "8010:8010"
     depends_on:
@@ -73,7 +82,7 @@ services:
 
   consumerreadservice:
     build: 
-      context: ./sdekapi/consumerreadservice/
+      context: ./sdekapi/consumerreadservice
     ports:
       - "8011:8011"
     depends_on:
@@ -82,7 +91,7 @@ services:
 
   employereadeservice:
     build: 
-      context: ./sdekapi/employereadeservice/
+      context: ./sdekapi/employereadeservice
     ports:
       - "8012:8012"
     depends_on:
@@ -91,7 +100,7 @@ services:
 
   packagereadservice:
     build: 
-      context: ./sdekapi/packagereadservice/
+      context: ./sdekapi/packagereadservice
     ports:
       - "8013:8013"
     depends_on:
@@ -100,7 +109,7 @@ services:
 
   transportreadservice:
     build:
-      context: ./sdekapi/transportreadservice/
+      context: ./sdekapi/transportreadservice
     ports:
       - "8015:8015"
     depends_on:
@@ -109,7 +118,7 @@ services:
 
   warehousereadservice:
     build: 
-      context: ./sdekapi/warehousereadservice/
+      context: ./sdekapi/warehousereadservice
     ports:
       - "8016:8016"
     depends_on:
@@ -118,7 +127,7 @@ services:
 
   deliverypersonellreadservice:
     build: 
-      context: ./sdekapi/deliverypersonellreadservice/
+      context: ./sdekapi/deliverypersonellreadservice
     ports:
       - "8017:8017"
     depends_on:
@@ -127,7 +136,7 @@ services:
 
   servicesreadservice:
     build: 
-      context: ./sdekapi/servicesreadservice/
+      context: ./sdekapi/servicesreadservice
     ports:
       - "8018:8018"
     depends_on:
@@ -136,7 +145,7 @@ services:
 
   authservice:
     build: 
-      context: ./sdekapi/authservice/
+      context: ./sdekapi/authservice
     ports:
       - "8020:8020"
     depends_on:

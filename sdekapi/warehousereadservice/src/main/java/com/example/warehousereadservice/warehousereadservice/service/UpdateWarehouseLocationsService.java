@@ -1,30 +1,35 @@
 package com.example.warehousereadservice.warehousereadservice.service;
 
 import com.eventstore.dbclient.*;
+import com.example.warehousereadservice.warehousereadservice.model.WarehouseLocation;
 import com.example.warehousereadservice.warehousereadservice.repository.WarehouseLocationRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
-import org.apache.commons.lang3.SerializationUtils;
+import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UpdateWarehouseLocationsService {
     private final WarehouseLocationRepository warehouseLocationRepository;
     private final EventStoreDBClient eventStoreDBClient;
+    private final ObjectMapper objectMapper;
 
-    public UpdateWarehouseLocationsService(WarehouseLocationRepository warehouseLocationRepository, EventStoreDBClient eventStoreDBClient) {
+    public UpdateWarehouseLocationsService(WarehouseLocationRepository warehouseLocationRepository, EventStoreDBClient eventStoreDBClient, ObjectMapper objectMapper) {
         this.warehouseLocationRepository = warehouseLocationRepository;
         this.eventStoreDBClient = eventStoreDBClient;
+        this.objectMapper = objectMapper;
     }
 
     @PostConstruct
     public void init() {
         final SubscriptionListener subscriptionListener = new SubscriptionListener() {
             @Override
+            @SneakyThrows
             public void onEvent(Subscription subscription, ResolvedEvent event) {
                 final RecordedEvent ev = event.getOriginalEvent();
                 switch (ev.getEventType()) {
-                    case "warehouseLocation_add", "warehouseLocation_update" -> warehouseLocationRepository.save(SerializationUtils.deserialize(ev.getEventData()));
-                    case "warehouseLocation_delete" -> warehouseLocationRepository.delete(SerializationUtils.deserialize(ev.getEventData()));
+                    case "warehouseLocation_add", "warehouseLocation_update" -> warehouseLocationRepository.save(objectMapper.readValue(ev.getEventData(), WarehouseLocation.class));
+                    case "warehouseLocation_delete" -> warehouseLocationRepository.delete(objectMapper.readValue(ev.getEventData(), WarehouseLocation.class));
                 }
                 super.onEvent(subscription, event);
             }
@@ -35,6 +40,6 @@ public class UpdateWarehouseLocationsService {
             }
         };
 
-        eventStoreDBClient.subscribeToStream("warehouseLocations", subscriptionListener);
+        eventStoreDBClient.subscribeToStream("warehouseLocation", subscriptionListener);
     }
 }
