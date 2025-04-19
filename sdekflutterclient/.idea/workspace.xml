@@ -5,10 +5,36 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8150d90f-2e70-4c11-baaa-2d9bf53faa8e" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../sdekdeliveryclient/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../sdekdeliveryclient/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../sdekdeliveryclient/.idea/AndroidProjectSystem.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sdekdeliveryclient/app/src/main/java/com/example/myapplication/HomeFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/../sdekdeliveryclient/app/src/main/java/com/example/myapplication/HomeFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sdekdeliveryclient/app/src/main/java/com/example/myapplication/LoginFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/../sdekdeliveryclient/app/src/main/java/com/example/myapplication/LoginFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sdekdeliveryclient/gradle/libs.versions.toml" beforeDir="false" afterPath="$PROJECT_DIR$/../sdekdeliveryclient/gradle/libs.versions.toml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sdekdeliveryclient/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" afterPath="$PROJECT_DIR$/../sdekdeliveryclient/gradle/wrapper/gradle-wrapper.properties" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/view/track_package_page/controller/track_package_controller.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/view/track_package_page/controller/track_package_controller.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/inject.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/inject.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/remote/api/MessageApi.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/remote/api/MessageApi.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/remote/api/ServiceApi.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/remote/api/ServiceApi.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/remote/api/authorisation_api.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/remote/api/authorisation_api.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/remote/api/client_api.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/remote/api/client_api.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/remote/api/delivery_person_api.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/remote/api/delivery_person_api.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/remote/api/employee_api.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/remote/api/employee_api.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/remote/api/package_api.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/remote/api/package_api.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/remote/api/package_paytype_api.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/remote/api/package_paytype_api.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/remote/api/package_status_api.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/remote/api/package_status_api.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/remote/api/package_type_api.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/remote/api/package_type_api.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/remote/api/position_api.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/remote/api/position_api.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/remote/api/role_api.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/remote/api/role_api.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/remote/api/transport_api.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/remote/api/transport_api.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/remote/api/transport_type_api.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/remote/api/transport_type_api.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/remote/api/user_api.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/remote/api/user_api.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/remote/api/warehouse_api.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/remote/api/warehouse_api.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/view/main_page/main_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/view/main_page/main_page.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/view/track_package_page/page/track_package_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/view/track_package_page/page/track_package_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/macos/Flutter/GeneratedPluginRegistrant.swift" beforeDir="false" afterPath="$PROJECT_DIR$/macos/Flutter/GeneratedPluginRegistrant.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/windows/flutter/generated_plugin_registrant.cc" beforeDir="false" afterPath="$PROJECT_DIR$/windows/flutter/generated_plugin_registrant.cc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/windows/flutter/generated_plugins.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/windows/flutter/generated_plugins.cmake" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -41,7 +67,6 @@
   &quot;associatedIndex&quot;: 4
 }</component>
   <component name="ProjectId" id="2nwnYpoHfJVSP8i2FbnFvvh9YZc" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -54,6 +79,7 @@
     "dart.analysis.tool.window.visible": "false",
     "flutter.view.tool.window.visible": "true",
     "git-widget-placeholder": "master",
+    "ignore.virus.scanning.warn.message": "true",
     "io.flutter.reload.alreadyRun": "true",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "D:/flutter/bin",
@@ -76,8 +102,8 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-9823dce3aa75-a94e463ab2e7-intellij.indexing.shared.core-IU-243.26053.27" />
-        <option value="bundled-js-predefined-d6986cc7102b-1632447f56bf-JavaScript-IU-243.26053.27" />
+        <option value="bundled-jdk-9823dce3aa75-fbdcb00ec9e3-intellij.indexing.shared.core-IU-251.23774.435" />
+        <option value="bundled-js-predefined-d6986cc7102b-f27c65a3e318-JavaScript-IU-251.23774.435" />
       </set>
     </attachedChunks>
   </component>
@@ -116,6 +142,9 @@
       <workItem from="1744538113638" duration="1286000" />
       <workItem from="1744539478702" duration="5660000" />
       <workItem from="1744562372033" duration="1307000" />
+      <workItem from="1745067855413" duration="971000" />
+      <workItem from="1745068963740" duration="1581000" />
+      <workItem from="1745071778422" duration="7843000" />
     </task>
     <servers />
   </component>

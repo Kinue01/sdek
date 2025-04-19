@@ -18,8 +18,8 @@ class UserApiImpl implements UserApi {
     required this.client
   });
 
-  String get url => "http://localhost/userservice";
-  String get readUrl => "http://localhost/userreadservice";
+  String get url => "http://localhost:8080/userservice";
+  String get readUrl => "http://localhost:8080/userreadservice";
 
   @override
   Future<bool> addUser(User user) async {

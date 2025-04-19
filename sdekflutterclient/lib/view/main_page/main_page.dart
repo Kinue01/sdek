@@ -30,7 +30,7 @@ class MainState extends State<MainComponent> {
   final List<Widget> _views = [
     const HomePage(),
     const SendPackagePage(),
-    // const TrackPackagePage(),
+    const TrackPackagePage(),
     const AccountPage()
   ];
   
@@ -54,10 +54,10 @@ class MainState extends State<MainComponent> {
             icon: Icon(Icons.send),
             label: 'Отправить'
           ),
-          // BottomNavigationBarItem(
-          //   icon: Icon(Icons.track_changes),
-          //   label: 'Отследить'
-          // ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.track_changes),
+            label: 'Отследить'
+          ),
           BottomNavigationBarItem(
               icon: Icon(Icons.account_circle),
               label: 'Аккаунт'

@@ -16,8 +16,8 @@ class ServiceApiImpl implements ServiceApi {
     required this.client
   });
 
-  String get url => "http://localhost/servicesservice";
-  String get readUrl => "http://localhost/servicesreadservice";
+  String get url => "http://localhost:8080/servicesservice";
+  String get readUrl => "http://localhost:8080/servicesreadservice";
   
   @override
   Future<Service> getServiceById(int id) async {

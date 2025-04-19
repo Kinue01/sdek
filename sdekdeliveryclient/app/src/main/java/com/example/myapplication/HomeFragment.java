@@ -71,13 +71,13 @@ public class HomeFragment extends Fragment {
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext());
 
         final Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://192.168.56.1:8080")
+                .baseUrl("http://192.168.0.242:8080")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
         sdekPackageApi = retrofit.create(SdekPackageApi.class);
 
-        final Request request = new Request.Builder().url("ws://192.168.56.1:8080/transportservice/api/track_transport").build();
+        final Request request = new Request.Builder().url("ws://192.168.0.242:8080/transportservice/api/track_transport").build();
         final WS listener = new WS();
 
         webSocket = httpClient.newWebSocket(request, listener);

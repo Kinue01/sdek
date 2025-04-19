@@ -305,8 +305,10 @@ pub async fn update_mongo(State(state): State<AppState>) {
         let uuid = body.transport_id;
         
         let doc = doc! {
-            "lat": body.lat,
-            "lon": body.lon
+            "$set": {
+                "lat": body.lat,
+                "lon": body.lon
+            },
         };
 
         let d = coll.find_one(doc! { "transport_id": uuid.clone() }).await.unwrap();
@@ -314,7 +316,7 @@ pub async fn update_mongo(State(state): State<AppState>) {
         if d.is_none() {
             let _ =  coll.insert_one(doc! { "transport_id": uuid, "lat": body.lat, "lon": body.lon }).await.unwrap();
         } else {
-            let _ = coll.find_one_and_update(doc! { "transport_id": uuid }, doc).await.unwrap();
+            let _ = coll.update_many(doc! { "transport_id": uuid }, doc).await.unwrap();
         }
     }
 }
@@ -340,15 +342,4 @@ async fn websocket_handler(mut socket: WebSocket, state: AppState) {
 
         socket.send(Message::Text(Utf8Bytes::from(serde_json::to_string(&d).unwrap()))).await.unwrap();
     }
-
-    // loop {
-    //     let msg = socket.recv().await.unwrap().unwrap();
-    //     let transport_id = msg.into_text().unwrap().to_string();
-    // 
-    //     let res = coll.find_one(doc! { "transport_id": transport_id }).await.unwrap().unwrap();
-    // 
-    //     if socket.send(Message::Text(Utf8Bytes::from(res.to_string()))).await.is_err() {
-    //         return;
-    //     }
-    // }
 }

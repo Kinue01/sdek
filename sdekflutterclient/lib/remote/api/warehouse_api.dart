@@ -13,7 +13,7 @@ class WarehouseApiImpl implements WarehouseApi {
     required this.client
   });
 
-  String get readUrl => "http://localhost/warehousereadservice";
+  String get readUrl => "http://localhost:8080/warehousereadservice";
 
   @override
   Future<Warehouse> getWarehouseById(int id) {

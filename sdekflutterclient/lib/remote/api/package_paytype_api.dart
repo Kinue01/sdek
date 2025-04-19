@@ -13,7 +13,7 @@ class PackagePaytypeApiImpl implements PackagePaytypeApi {
     required this.client
   });
 
-  String get readUrl => "http://localhost/packagereadservice";
+  String get readUrl => "http://localhost:8080/packagereadservice";
 
   @override
   Future<List<PackagePaytype>> getAllPaytypes() async {

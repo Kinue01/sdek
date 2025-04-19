@@ -22,8 +22,8 @@ class TransportApiImpl implements TransportApi {
     required this.client
   });
 
-  String get url => "http://localhost/transportservice";
-  String get readUrl => "http://localhost/transportreadservice";
+  String get url => "http://localhost:8080/transportservice";
+  String get readUrl => "http://localhost:8080/transportreadservice";
   
   @override
   Future<bool> addTransport(Transport transport) async {

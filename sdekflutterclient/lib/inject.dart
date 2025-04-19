@@ -347,7 +347,7 @@ void initGetIt() {
   // ----------------------------------------
   getIt.registerLazySingleton(() => HomeController());
   getIt.registerLazySingleton(() => SendPackageController(getPackageTypesUseCase: getIt(), addPackageUseCase: getIt(), getCurrentClientUseCase: getIt(), getClientsUseCase: getIt(), getAllServicesUseCase: getIt(), getCurrentUserUseCase: getIt(), getPackagePaytypesUseCase: getIt(), getDeliveryPersonalUseCase: getIt(), getWarehousesUseCase: getIt(), addPackageServicesUseCase: getIt()));
-  getIt.registerLazySingleton(() => TrackPackageController());
+  getIt.registerLazySingleton(() => TrackPackageController(getPackagesByClientIdUseCase: getIt(), getCurrentClientUseCase: getIt()));
   getIt.registerLazySingleton(() => LoginPageController(getUserByLoginPassUseCase: getIt(), getCurrentUserUseCase: getIt(), saveCurrentUserUseCase: getIt(), getClientByUserIdUseCase: getIt(), saveCurrentClientUseCase: getIt()));
   getIt.registerLazySingleton(() => ClientPackagesPageController(getPackagesByClientIdUseCase: getIt(), getCurrentClientUseCase: getIt()));
   getIt.registerLazySingleton(() => ClientPackageDetailsController());

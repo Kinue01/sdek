@@ -20,8 +20,8 @@ class EmployeeApiImpl implements EmployeeApi {
     required this.client
   });
   
-  String get url => "http://localhost/employeeservice";
-  String get readUrl => "http://localhost/employeereadservice";
+  String get url => "http://localhost:8080/employeeservice";
+  String get readUrl => "http://localhost:8080/employeereadservice";
   
   @override
   Future<bool> addEmployee(Employee emp) async {

@@ -1,6 +1,6 @@
+import 'dart:convert';
 import 'dart:math';
 
-import 'package:clientapp/domain/model/Package.dart';
 import 'package:clientapp/domain/model/TransportPosition.dart';
 import 'package:clientapp/view/track_package_page/controller/track_package_controller.dart';
 import 'package:flutter/material.dart';
@@ -30,7 +30,7 @@ class TrackPackageViewState extends State<TrackPackageView> with GetItStateMixin
   late TrackPackageController controller;
   late MapController _mapController;
 
-  List<LatLng> _mapPoints = [];
+  final List<LatLng> _mapPoints = [];
 
   @override
   void initState() {
@@ -40,25 +40,26 @@ class TrackPackageViewState extends State<TrackPackageView> with GetItStateMixin
     });
     _mapController = MapController();
     controller.channel.stream.listen((ev) {
-      final res = ev as List<dynamic>;
+      final res = json.decode(ev).cast<dynamic>().toList();
       final poses = res.map((e) => TransportPosition.fromMap(e)).toList();
-      var posesToShow = List<TransportPosition>.empty();
+      var posesToShow = List<TransportPosition>.empty(growable: true);
 
-      poses.forEach((p) {
-        controller.packages.value.forEach((pack) {
+      for (var p in poses) {
+        for (var pack in controller.packages.value) {
           if (pack.package_deliveryperson?.person_transport?.transport_id.toString() == p.transport_id) {
             posesToShow.add(p);
-          };
-        });
-      });
+          }
+        }
+      }
 
       setState(() {
         _mapPoints.clear();
-        posesToShow.forEach((pos) {
+        for (var pos in posesToShow) {
           _mapPoints.add(LatLng(pos.lat, pos.lon));
-        });
+        }
       });
     });
+
     super.initState();
   }
 

@@ -8,7 +8,7 @@ abstract class MessageApi {
 }
 
 class MessageApiImpl implements MessageApi {
-  WebSocketChannel ws = WebSocketChannel.connect(Uri.parse("ws://localhost/userservice"));
+  WebSocketChannel ws = WebSocketChannel.connect(Uri.parse("ws://localhost:8080/userservice"));
   
   @override
   Stream<Message> recvMsg() async* {

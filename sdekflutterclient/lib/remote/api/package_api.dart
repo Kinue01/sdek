@@ -17,8 +17,8 @@ class PackageApiImpl implements PackageApi {
     required this.client
   });
 
-  String get url => "http://localhost/packageservice";
-  String get readUrl => "http://localhost/packagereadservice";
+  String get url => "http://localhost:8080/packageservice";
+  String get readUrl => "http://localhost:8080/packagereadservice";
 
   @override
   Future<bool> addPackage(Package package) async {

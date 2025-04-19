@@ -13,7 +13,7 @@ class DeliveryPersonApiImpl implements DeliveryPersonApi {
     required this.client
   });
 
-  String get readUrl => "http://localhost/deliverypersonellreadservice";
+  String get readUrl => "http://localhost:8080/deliverypersonellreadservice";
 
   @override
   Future<DeliveryPerson> getPersonById(int id) {

@@ -35,13 +35,13 @@ public class LoginFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         final Retrofit authRetrofit = new Retrofit.Builder()
-                .baseUrl("http://192.168.56.1:8080/authservice/api/")
+                .baseUrl("http://192.168.0.242:8080/authservice/api/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         authApi = authRetrofit.create(SdekAuthApi.class);
 
         final Retrofit deliveryRetrofit = new Retrofit.Builder()
-                .baseUrl("http://192.168.56.1:8080/deliverypersonellreadservice/api/")
+                .baseUrl("http://192.168.0.242:8080/deliverypersonellreadservice/api/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         deliveryPersonApi = deliveryRetrofit.create(SdekDeliveryPersonApi.class);

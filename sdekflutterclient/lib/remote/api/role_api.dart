@@ -13,7 +13,7 @@ class RoleApiImpl implements RoleApi {
     required this.client
   });
 
-  String get readUrl => "http://localhost/userreadservice";
+  String get readUrl => "http://localhost:8080/userreadservice";
 
   @override
   Future<Role> getRoleById(int id) async {

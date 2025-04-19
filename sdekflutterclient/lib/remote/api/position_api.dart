@@ -17,8 +17,8 @@ class PositionApiImpl implements PositionApi {
     required this.client
   });
 
-  String get url => "http://localhost/employeeservice";
-  String get readUrl => "http://localhost/employeereadservice";
+  String get url => "http://localhost:8080/employeeservice";
+  String get readUrl => "http://localhost:8080/employeereadservice";
 
   @override
   Future<bool> addPosition(Position pos) async {

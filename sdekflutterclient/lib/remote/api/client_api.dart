@@ -19,8 +19,8 @@ class ClientApiImpl implements ClientApi {
     required this.dio_client
   });
 
-  String get url => "http://localhost/customerservice";
-  String get readUrl => "http://localhost/customerreadservice";
+  String get url => "http://localhost:8080/customerservice";
+  String get readUrl => "http://localhost:8080/customerreadservice";
 
   @override
   Future<bool> addClient(Client client) async {

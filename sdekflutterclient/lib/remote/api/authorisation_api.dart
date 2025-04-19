@@ -17,7 +17,7 @@ class AuthorisationApiImpl implements AuthorisationApi {
     required this.client
   });
 
-  String get url => "http://localhost/authservice";
+  String get url => "http://localhost:8080/authservice";
 
   @override
   Future<String> googleGetUrl() async {
