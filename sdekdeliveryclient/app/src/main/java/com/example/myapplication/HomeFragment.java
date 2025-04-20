@@ -18,6 +18,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
+import androidx.core.os.BuildCompat;
 import androidx.fragment.app.Fragment;
 import com.example.myapplication.databinding.FragmentHomeBinding;
 import com.example.myapplication.model.PackageResponse;
@@ -71,13 +72,13 @@ public class HomeFragment extends Fragment {
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext());
 
         final Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://192.168.0.242:8080")
+                .baseUrl(BuildConfig.PROD_API_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
         sdekPackageApi = retrofit.create(SdekPackageApi.class);
 
-        final Request request = new Request.Builder().url("ws://192.168.0.242:8080/transportservice/api/track_transport").build();
+        final Request request = new Request.Builder().url(BuildConfig.PROD_WS + "/transportservice/api/track_transport").build();
         final WS listener = new WS();
 
         webSocket = httpClient.newWebSocket(request, listener);
@@ -99,8 +100,10 @@ public class HomeFragment extends Fragment {
             @Override
             public void onResponse(Call<List<PackageResponse>> call, Response<List<PackageResponse>> response) {
                 response.body().forEach(pkg -> {
-                    packagesAdapter.add(pkg.package_uuid().toString());
-                    packages.add(pkg);
+                    if (pkg.package_status().status_id() == 1) {
+                        packagesAdapter.add(pkg.package_uuid().toString());
+                        packages.add(pkg);
+                    }
                 });
                 binding.items.setAdapter(packagesAdapter);
             }
@@ -251,7 +254,6 @@ public class HomeFragment extends Fragment {
         mLocationRequest.setFastestInterval(0);
         mLocationRequest.setNumUpdates(1);
 
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext());
         mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
     }
 
@@ -293,5 +295,6 @@ public class HomeFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+        webSocket.cancel();
     }
 }

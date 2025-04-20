@@ -1,8 +1,15 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.google.android.libraries.mapsplatform.secrets.gradle.plugin)
     alias(libs.plugins.androidx.navigation.safeargs.gradle.plugin)
 }
+
+var apiPropFile = rootProject.file("secret.properties")
+var secretProperties = Properties()
+secretProperties.load(FileInputStream(apiPropFile))
 
 android {
     namespace = "com.example.myapplication"
@@ -27,6 +34,13 @@ android {
         }
     }
 
+    defaultConfig {
+        buildConfigField("String", "PROD_API_URL", "${secretProperties["PROD_API_URL"]}")
+        buildConfigField("String", "DEV_API_URL", "${secretProperties["DEV_API_URL"]}")
+        buildConfigField("String", "PROD_WS", "${secretProperties["PROD_WS"]}")
+        buildConfigField("String", "DEV_WS", "${secretProperties["DEV_WS"]}")
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_21
         targetCompatibility = JavaVersion.VERSION_21
@@ -34,6 +48,7 @@ android {
 
     buildFeatures {
         viewBinding = true
+        buildConfig = true
     }
 }
 

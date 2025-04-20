@@ -1,3 +1,4 @@
+import 'package:clientapp/Env.dart';
 import 'package:clientapp/domain/model/Role.dart';
 import 'package:clientapp/domain/model/User.dart';
 import 'package:dio/dio.dart';
@@ -17,7 +18,7 @@ class AuthorisationApiImpl implements AuthorisationApi {
     required this.client
   });
 
-  String get url => "http://localhost:8080/authservice";
+  String get url => "${Env.prod_api_url}/authservice";
 
   @override
   Future<String> googleGetUrl() async {

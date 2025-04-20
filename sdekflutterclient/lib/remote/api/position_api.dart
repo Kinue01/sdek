@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 
+import '../../Env.dart';
 import '../../domain/model/Position.dart';
 
 abstract class PositionApi {
@@ -17,8 +18,8 @@ class PositionApiImpl implements PositionApi {
     required this.client
   });
 
-  String get url => "http://localhost:8080/employeeservice";
-  String get readUrl => "http://localhost:8080/employeereadservice";
+  String get url => "${Env.prod_api_url}/employeeservice";
+  String get readUrl => "${Env.prod_api_url}/employeereadservice";
 
   @override
   Future<bool> addPosition(Position pos) async {

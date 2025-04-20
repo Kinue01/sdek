@@ -1,6 +1,8 @@
 import 'package:clientapp/domain/model/DeliveryPerson.dart';
 import 'package:dio/dio.dart';
 
+import '../../Env.dart';
+
 abstract class DeliveryPersonApi {
   Future<List<DeliveryPerson>> getPersonal();
   Future<DeliveryPerson> getPersonById(int id);
@@ -13,7 +15,7 @@ class DeliveryPersonApiImpl implements DeliveryPersonApi {
     required this.client
   });
 
-  String get readUrl => "http://localhost:8080/deliverypersonellreadservice";
+  String get readUrl => "${Env.prod_api_url}/deliverypersonellreadservice";
 
   @override
   Future<DeliveryPerson> getPersonById(int id) {

@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 
+import '../../Env.dart';
 import '../../domain/model/PackageStatus.dart';
 
 abstract class PackageStatusApi {
@@ -17,8 +18,8 @@ class PackageStatusApiImpl implements PackageStatusApi {
     required this.client
   });
 
-  String get url => "http://localhost:8080/packageservice";
-  String get readUrl => "http://localhost:8080/packagereadservice";
+  String get url => "${Env.prod_api_url}/packageservice";
+  String get readUrl => "${Env.prod_api_url}/packagereadservice";
 
   @override
   Future<bool> addStatus(PackageStatus status) async {

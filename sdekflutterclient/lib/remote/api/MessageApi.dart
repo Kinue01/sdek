@@ -1,5 +1,6 @@
 import 'package:web_socket_channel/web_socket_channel.dart';
 
+import '../../Env.dart';
 import '../../domain/model/Message.dart';
 
 abstract class MessageApi {
@@ -8,7 +9,7 @@ abstract class MessageApi {
 }
 
 class MessageApiImpl implements MessageApi {
-  WebSocketChannel ws = WebSocketChannel.connect(Uri.parse("ws://localhost:8080/userservice"));
+  WebSocketChannel ws = WebSocketChannel.connect(Uri.parse("${Env.prod_ws}/userservice"));
   
   @override
   Stream<Message> recvMsg() async* {

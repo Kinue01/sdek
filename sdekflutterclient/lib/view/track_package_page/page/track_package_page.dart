@@ -1,5 +1,5 @@
+import 'dart:async';
 import 'dart:convert';
-import 'dart:math';
 
 import 'package:clientapp/domain/model/TransportPosition.dart';
 import 'package:clientapp/view/track_package_page/controller/track_package_controller.dart';
@@ -27,7 +27,7 @@ class TrackPackageView extends StatefulWidget with GetItStatefulWidgetMixin {
 }
 
 class TrackPackageViewState extends State<TrackPackageView> with GetItStateMixin {
-  late TrackPackageController controller;
+  late TrackPackageController? controller;
   late MapController _mapController;
 
   final List<LatLng> _mapPoints = [];
@@ -35,26 +35,16 @@ class TrackPackageViewState extends State<TrackPackageView> with GetItStateMixin
   @override
   void initState() {
     controller = get<TrackPackageController>();
+    controller?.init();
     Future.delayed(Duration.zero, () async => {
       await get<TrackPackageController>().getClientPackages()
     });
     _mapController = MapController();
-    controller.channel.stream.listen((ev) {
-      final res = json.decode(ev).cast<dynamic>().toList();
-      final poses = res.map((e) => TransportPosition.fromMap(e)).toList();
-      var posesToShow = List<TransportPosition>.empty(growable: true);
 
-      for (var p in poses) {
-        for (var pack in controller.packages.value) {
-          if (pack.package_deliveryperson?.person_transport?.transport_id.toString() == p.transport_id) {
-            posesToShow.add(p);
-          }
-        }
-      }
-
+    controller!.streamController.stream.listen((ev) {
       setState(() {
         _mapPoints.clear();
-        for (var pos in posesToShow) {
+        for (var pos in ev) {
           _mapPoints.add(LatLng(pos.lat, pos.lon));
         }
       });
@@ -78,6 +68,7 @@ class TrackPackageViewState extends State<TrackPackageView> with GetItStateMixin
 
   @override
   void dispose() {
+    controller = null;
     _mapController.dispose();
     super.dispose();
   }

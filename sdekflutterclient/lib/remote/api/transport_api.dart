@@ -4,6 +4,7 @@ import 'package:clientapp/domain/model/Role.dart';
 import 'package:clientapp/domain/model/TransportType.dart';
 import 'package:clientapp/domain/model/User.dart';
 import 'package:dio/dio.dart';
+import '../../Env.dart';
 import '../../domain/model/Transport.dart';
 
 abstract class TransportApi {
@@ -22,8 +23,8 @@ class TransportApiImpl implements TransportApi {
     required this.client
   });
 
-  String get url => "http://localhost:8080/transportservice";
-  String get readUrl => "http://localhost:8080/transportreadservice";
+  String get url => "${Env.prod_api_url}/transportservice";
+  String get readUrl => "${Env.prod_api_url}/transportreadservice";
   
   @override
   Future<bool> addTransport(Transport transport) async {

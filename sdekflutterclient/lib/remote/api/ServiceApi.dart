@@ -2,6 +2,8 @@ import 'package:clientapp/domain/model/PackageServices.dart';
 import 'package:clientapp/domain/model/Service.dart';
 import 'package:dio/dio.dart';
 
+import '../../Env.dart';
+
 abstract class ServiceApi {
   Future<Service> getServiceById(int id);
   Future<List<Service>> getServices();
@@ -16,8 +18,8 @@ class ServiceApiImpl implements ServiceApi {
     required this.client
   });
 
-  String get url => "http://localhost:8080/servicesservice";
-  String get readUrl => "http://localhost:8080/servicesreadservice";
+  String get url => "${Env.prod_api_url}/servicesservice";
+  String get readUrl => "${Env.prod_api_url}/servicesreadservice";
   
   @override
   Future<Service> getServiceById(int id) async {

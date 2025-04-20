@@ -1,6 +1,8 @@
 import 'package:clientapp/domain/model/PackagePaytype.dart';
 import 'package:dio/dio.dart';
 
+import '../../Env.dart';
+
 abstract class PackagePaytypeApi {
   Future<List<PackagePaytype>> getAllPaytypes();
   Future<PackagePaytype> getPaytypeById(int id);
@@ -13,7 +15,7 @@ class PackagePaytypeApiImpl implements PackagePaytypeApi {
     required this.client
   });
 
-  String get readUrl => "http://localhost:8080/packagereadservice";
+  String get readUrl => "${Env.prod_api_url}/packagereadservice";
 
   @override
   Future<List<PackagePaytype>> getAllPaytypes() async {

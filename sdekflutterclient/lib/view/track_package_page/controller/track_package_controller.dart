@@ -1,9 +1,14 @@
+import 'dart:async';
+import 'dart:convert';
+
+import 'package:clientapp/Env.dart';
 import 'package:clientapp/domain/model/Package.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 import '../../../domain/model/Client.dart';
 import '../../../domain/model/Role.dart';
+import '../../../domain/model/TransportPosition.dart';
 import '../../../domain/model/User.dart';
 import '../../../domain/usecase/client/GetCurrentClientUseCase.dart';
 import '../../../domain/usecase/pack/GetPackagesByClientIdUseCase.dart';
@@ -13,15 +18,41 @@ class TrackPackageController {
   final client = ValueNotifier(Client(client_user: User(user_role: Role())));
   final GetPackagesByClientIdUseCase getPackagesByClientIdUseCase;
   final GetCurrentClientUseCase getCurrentClientUseCase;
-  final channel = WebSocketChannel.connect(Uri.parse("ws://localhost:8080/transportreadservice/api/transport_pos"));
+  late final channel = WebSocketChannel.connect(Uri.parse("${Env.prod_ws}/transportreadservice/api/transport_pos"));
+
+  late StreamController streamController = StreamController.broadcast();
 
   TrackPackageController({
     required this.getPackagesByClientIdUseCase,
     required this.getCurrentClientUseCase
-  });
+  }) {
+    channel.stream.listen((ev) {
+      final res = json.decode(ev).cast<dynamic>().toList();
+      final poses = res.map((e) => TransportPosition.fromMap(e)).toList();
+      var posesToShow = List<TransportPosition>.empty(growable: true);
+
+      for (var p in poses) {
+        for (var pack in packages.value) {
+          if (pack.package_deliveryperson?.person_transport?.transport_id.toString() == p.transport_id) {
+            posesToShow.add(p);
+          }
+        }
+      }
+
+      streamController.add(posesToShow);
+    });
+  }
 
   Future<void> getClientPackages() async {
     client.value = await getCurrentClientUseCase.exec();
     packages.value = await getPackagesByClientIdUseCase.exec(client.value.client_id!);
+  }
+
+  void init() {
+    streamController = StreamController.broadcast();
+  }
+
+  void dispose() {
+    streamController.close();
   }
 }

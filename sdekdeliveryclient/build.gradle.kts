@@ -1,4 +1,3 @@
-import org.gradle.kotlin.dsl.internal.sharedruntime.support.classFilePathCandidatesFor
 import kotlin.script.experimental.jvm.util.classpathFromFQN
 
 // Top-level build file where you can add configuration options common to all sub-projects/modules.

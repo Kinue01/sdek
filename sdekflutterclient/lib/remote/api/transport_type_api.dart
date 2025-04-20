@@ -1,6 +1,8 @@
 import 'package:clientapp/domain/model/TransportType.dart';
 import 'package:dio/dio.dart';
 
+import '../../Env.dart';
+
 abstract class TransportTypeApi {
   Future<List<TransportType>> getTransportTypes();
   Future<TransportType> getTransportTypeById(int id);
@@ -16,8 +18,8 @@ class TransportTypeApiImpl implements TransportTypeApi {
     required this.client
   });
 
-  String get url => "http://localhost:8080/transportservice";
-  String get readUrl => "http://localhost:8080/transportreadservice";
+  String get url => "${Env.prod_api_url}/transportservice";
+  String get readUrl => "${Env.prod_api_url}/transportreadservice";
 
   @override
   Future<bool> addTransportType(TransportType type) async {

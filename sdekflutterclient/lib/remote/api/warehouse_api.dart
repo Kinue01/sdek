@@ -1,6 +1,8 @@
 import 'package:clientapp/domain/model/Warehouse.dart';
 import 'package:dio/dio.dart';
 
+import '../../Env.dart';
+
 abstract class WarehouseApi {
   Future<List<Warehouse>> getWarehouses();
   Future<Warehouse> getWarehouseById(int id);
@@ -13,7 +15,7 @@ class WarehouseApiImpl implements WarehouseApi {
     required this.client
   });
 
-  String get readUrl => "http://localhost:8080/warehousereadservice";
+  String get readUrl => "${Env.prod_api_url}/warehousereadservice";
 
   @override
   Future<Warehouse> getWarehouseById(int id) {

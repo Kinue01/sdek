@@ -1,6 +1,8 @@
 import 'package:clientapp/domain/model/Role.dart';
 import 'package:dio/dio.dart';
 
+import '../../Env.dart';
+
 abstract class RoleApi {
   Future<List<Role>> getRoles();
   Future<Role> getRoleById(int id);
@@ -13,7 +15,7 @@ class RoleApiImpl implements RoleApi {
     required this.client
   });
 
-  String get readUrl => "http://localhost:8080/userreadservice";
+  String get readUrl => "${Env.prod_api_url}/userreadservice";
 
   @override
   Future<Role> getRoleById(int id) async {

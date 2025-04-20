@@ -1,6 +1,8 @@
 import 'package:clientapp/domain/model/Package.dart';
 import 'package:dio/dio.dart';
 
+import '../../Env.dart';
+
 abstract class PackageApi {
   Future<List<Package>> getPackages();
   Future<Package> getPackageById(String uuid);
@@ -17,8 +19,8 @@ class PackageApiImpl implements PackageApi {
     required this.client
   });
 
-  String get url => "http://localhost:8080/packageservice";
-  String get readUrl => "http://localhost:8080/packagereadservice";
+  String get url => "${Env.prod_api_url}/packageservice";
+  String get readUrl => "${Env.prod_api_url}/packagereadservice";
 
   @override
   Future<bool> addPackage(Package package) async {

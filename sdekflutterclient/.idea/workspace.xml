@@ -5,13 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8150d90f-2e70-4c11-baaa-2d9bf53faa8e" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/../sdekdeliveryclient/.idea/AndroidProjectSystem.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.env" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lib/Env.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sdekdeliveryclient/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../sdekdeliveryclient/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sdekdeliveryclient/app/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/../sdekdeliveryclient/app/build.gradle.kts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../sdekdeliveryclient/app/src/main/java/com/example/myapplication/HomeFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/../sdekdeliveryclient/app/src/main/java/com/example/myapplication/HomeFragment.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../sdekdeliveryclient/app/src/main/java/com/example/myapplication/LoginFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/../sdekdeliveryclient/app/src/main/java/com/example/myapplication/LoginFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sdekdeliveryclient/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/../sdekdeliveryclient/build.gradle.kts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../sdekdeliveryclient/gradle/libs.versions.toml" beforeDir="false" afterPath="$PROJECT_DIR$/../sdekdeliveryclient/gradle/libs.versions.toml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../sdekdeliveryclient/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" afterPath="$PROJECT_DIR$/../sdekdeliveryclient/gradle/wrapper/gradle-wrapper.properties" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/inject.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/inject.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/remote/api/MessageApi.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/remote/api/MessageApi.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/remote/api/ServiceApi.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/remote/api/ServiceApi.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/remote/api/authorisation_api.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/remote/api/authorisation_api.dart" afterDir="false" />
@@ -28,13 +30,10 @@
       <change beforePath="$PROJECT_DIR$/lib/remote/api/transport_type_api.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/remote/api/transport_type_api.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/remote/api/user_api.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/remote/api/user_api.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/remote/api/warehouse_api.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/remote/api/warehouse_api.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/view/main_page/main_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/view/main_page/main_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/view/track_package_page/controller/track_package_controller.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/view/track_package_page/controller/track_package_controller.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/view/track_package_page/page/track_package_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/view/track_package_page/page/track_package_page.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/macos/Flutter/GeneratedPluginRegistrant.swift" beforeDir="false" afterPath="$PROJECT_DIR$/macos/Flutter/GeneratedPluginRegistrant.swift" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/windows/flutter/generated_plugin_registrant.cc" beforeDir="false" afterPath="$PROJECT_DIR$/windows/flutter/generated_plugin_registrant.cc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/windows/flutter/generated_plugins.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/windows/flutter/generated_plugins.cmake" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -71,28 +70,28 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Flutter.main.dart.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "dart.analysis.tool.window.visible": "false",
-    "flutter.view.tool.window.visible": "true",
-    "git-widget-placeholder": "master",
-    "ignore.virus.scanning.warn.message": "true",
-    "io.flutter.reload.alreadyRun": "true",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "D:/flutter/bin",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "project.propVCSSupport.DirectoryMappings",
-    "show.migrate.to.gradle.popup": "false",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Flutter.main.dart.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
+    &quot;flutter.view.tool.window.visible&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;io.flutter.reload.alreadyRun&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/flutter/bin&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;project.propVCSSupport.DirectoryMappings&quot;,
+    &quot;show.migrate.to.gradle.popup&quot;: &quot;false&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager">
     <configuration name="main.dart" type="FlutterRunConfigurationType" factoryName="Flutter">
       <option name="filePath" value="$PROJECT_DIR$/lib/main.dart" />
@@ -145,6 +144,8 @@
       <workItem from="1745067855413" duration="971000" />
       <workItem from="1745068963740" duration="1581000" />
       <workItem from="1745071778422" duration="7843000" />
+      <workItem from="1745081542683" duration="1870000" />
+      <workItem from="1745156780919" duration="5320000" />
     </task>
     <servers />
   </component>

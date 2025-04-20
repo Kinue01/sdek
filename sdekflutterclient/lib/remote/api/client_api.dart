@@ -1,6 +1,7 @@
 import 'package:clientapp/domain/model/Role.dart';
 import 'package:clientapp/domain/model/User.dart';
 import 'package:dio/dio.dart';
+import '../../Env.dart';
 import '../../domain/model/Client.dart';
 
 abstract class ClientApi {
@@ -19,8 +20,8 @@ class ClientApiImpl implements ClientApi {
     required this.dio_client
   });
 
-  String get url => "http://localhost:8080/customerservice";
-  String get readUrl => "http://localhost:8080/customerreadservice";
+  String get url => "${Env.prod_api_url}/customerservice";
+  String get readUrl => "${Env.prod_api_url}/customerreadservice";
 
   @override
   Future<bool> addClient(Client client) async {

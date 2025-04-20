@@ -2,6 +2,7 @@ import 'package:clientapp/domain/model/Position.dart';
 import 'package:clientapp/domain/model/Role.dart';
 import 'package:clientapp/domain/model/User.dart';
 import 'package:dio/dio.dart';
+import '../../Env.dart';
 import '../../domain/model/Employee.dart';
 
 abstract class EmployeeApi {
@@ -20,8 +21,8 @@ class EmployeeApiImpl implements EmployeeApi {
     required this.client
   });
   
-  String get url => "http://localhost:8080/employeeservice";
-  String get readUrl => "http://localhost:8080/employeereadservice";
+  String get url => "${Env.prod_api_url}/employeeservice";
+  String get readUrl => "${Env.prod_api_url}/employeereadservice";
   
   @override
   Future<bool> addEmployee(Employee emp) async {
