@@ -31,6 +31,7 @@ class TrackPackageViewState extends State<TrackPackageView> with GetItStateMixin
   late MapController _mapController;
 
   final List<LatLng> _mapPoints = [];
+  final List<String> _transPos = [];
 
   @override
   void initState() {
@@ -46,6 +47,7 @@ class TrackPackageViewState extends State<TrackPackageView> with GetItStateMixin
         _mapPoints.clear();
         for (var pos in ev) {
           _mapPoints.add(LatLng(pos.lat, pos.lon));
+          _transPos.add(pos.transport_id);
         }
       });
     });
@@ -58,7 +60,14 @@ class TrackPackageViewState extends State<TrackPackageView> with GetItStateMixin
       _mapPoints.length,
           (index) => Marker(
         point: _mapPoints[index],
-        child: Image.asset('assets/icons/map_point.png'),
+        child: Stack(
+          children: [
+            Image.asset('assets/icons/map_point.png'),
+            Text(
+                controller!.packages.value.firstWhere((pack) { return pack.package_deliveryperson?.person_transport?.transport_id.toString() == _transPos[index]; }).package_uuid.toString()
+            )
+          ],
+        ),
         width: 50,
         height: 50,
         alignment: Alignment.center,

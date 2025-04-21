@@ -5,35 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8150d90f-2e70-4c11-baaa-2d9bf53faa8e" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.env" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/Env.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../sdekdeliveryclient/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../sdekdeliveryclient/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../sdekdeliveryclient/app/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/../sdekdeliveryclient/app/build.gradle.kts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../sdekdeliveryclient/app/src/main/java/com/example/myapplication/HomeFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/../sdekdeliveryclient/app/src/main/java/com/example/myapplication/HomeFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../sdekdeliveryclient/app/src/main/java/com/example/myapplication/LoginFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/../sdekdeliveryclient/app/src/main/java/com/example/myapplication/LoginFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../sdekdeliveryclient/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/../sdekdeliveryclient/build.gradle.kts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../sdekdeliveryclient/gradle/libs.versions.toml" beforeDir="false" afterPath="$PROJECT_DIR$/../sdekdeliveryclient/gradle/libs.versions.toml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/remote/api/MessageApi.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/remote/api/MessageApi.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/remote/api/ServiceApi.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/remote/api/ServiceApi.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/remote/api/authorisation_api.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/remote/api/authorisation_api.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/remote/api/client_api.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/remote/api/client_api.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/remote/api/delivery_person_api.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/remote/api/delivery_person_api.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/remote/api/employee_api.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/remote/api/employee_api.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/remote/api/package_api.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/remote/api/package_api.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/remote/api/package_paytype_api.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/remote/api/package_paytype_api.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/remote/api/package_status_api.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/remote/api/package_status_api.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/remote/api/package_type_api.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/remote/api/package_type_api.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/remote/api/position_api.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/remote/api/position_api.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/remote/api/role_api.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/remote/api/role_api.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/remote/api/transport_api.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/remote/api/transport_api.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/remote/api/transport_type_api.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/remote/api/transport_type_api.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/remote/api/user_api.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/remote/api/user_api.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/remote/api/warehouse_api.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/remote/api/warehouse_api.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/view/track_package_page/controller/track_package_controller.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/view/track_package_page/controller/track_package_controller.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/view/track_package_page/page/track_package_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/view/track_package_page/page/track_package_page.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -146,6 +119,7 @@
       <workItem from="1745071778422" duration="7843000" />
       <workItem from="1745081542683" duration="1870000" />
       <workItem from="1745156780919" duration="5320000" />
+      <workItem from="1745259644447" duration="2775000" />
     </task>
     <servers />
   </component>
