@@ -11,14 +11,10 @@ import com.example.myapplication.databinding.FragmentLoginBinding;
 import com.example.myapplication.model.DeliveryPersonResponse;
 import com.example.myapplication.model.UserRequest;
 import com.example.myapplication.model.UserResponse;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import okhttp3.MediaType;
-import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import retrofit2.*;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 import java.util.List;

@@ -60,7 +60,7 @@ class TrackPackageViewState extends State<TrackPackageView> with GetItStateMixin
       _mapPoints.length,
           (index) => Marker(
         point: _mapPoints[index],
-        child: Stack(
+        child: Column(
           children: [
             Image.asset('assets/icons/map_point.png'),
             Text(

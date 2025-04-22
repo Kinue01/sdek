@@ -1,7 +1,5 @@
 package com.example.myapplication;
 
-import java.util.UUID;
-
 public final class TransportState {
     private String transport_id;
     private double lat;

@@ -7,7 +7,6 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.Navigation;
 import com.example.myapplication.databinding.FragmentProfileBinding;
 import org.jetbrains.annotations.NotNull;
 

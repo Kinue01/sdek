@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.Settings;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,38 +17,25 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
-import androidx.core.os.BuildCompat;
 import androidx.fragment.app.Fragment;
 import com.example.myapplication.databinding.FragmentHomeBinding;
 import com.example.myapplication.model.PackageResponse;
 import com.example.myapplication.model.PackageStatus;
-import com.example.myapplication.model.PackageType;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.android.gms.location.*;
 import com.google.gson.Gson;
-import okhttp3.*;
-import okhttp3.internal.connection.RealConnectionPool;
-import org.java_websocket.WebSocketImpl;
-import org.java_websocket.client.WebSocketClient;
-import org.java_websocket.drafts.Draft;
-import org.java_websocket.drafts.Draft_6455;
-import org.java_websocket.handshake.ServerHandshake;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.ResponseBody;
+import okhttp3.WebSocket;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 
 import static androidx.core.content.ContextCompat.getSystemService;
 
@@ -59,11 +45,13 @@ public class HomeFragment extends Fragment {
     private final Gson gson = new Gson();
     private static final int PERMISSION_ID = 44;
     private final Handler handler = new Handler(Looper.myLooper());
-    private Runnable task;
+    private Runnable task, mainTask;
     private final OkHttpClient httpClient = new OkHttpClient.Builder().build();
     private WebSocket webSocket;
     private SdekPackageApi sdekPackageApi;
     private final List<PackageResponse> packages = new ArrayList<>();
+    private final Handler mainHandler = new Handler(Looper.myLooper());
+    final ArrayAdapter<String> packagesAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_list_item_1);
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -94,25 +82,33 @@ public class HomeFragment extends Fragment {
     @Override
     public void onViewCreated(@NotNull View view, @Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        binding.items.setAdapter(packagesAdapter);
 
-        final ArrayAdapter<String> packagesAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_list_item_1);
-        sdekPackageApi.packages().enqueue(new Callback<>() {
-            @Override
-            public void onResponse(Call<List<PackageResponse>> call, Response<List<PackageResponse>> response) {
-                response.body().forEach(pkg -> {
-                    if (pkg.package_status().status_id() == 1) {
-                        packagesAdapter.add(pkg.package_uuid().toString());
-                        packages.add(pkg);
-                    }
-                });
-                binding.items.setAdapter(packagesAdapter);
-            }
+        mainTask = () -> {
+            packagesAdapter.clear();
+            packages.clear();
+            sdekPackageApi.packages().enqueue(new Callback<>() {
+                @Override
+                public void onResponse(Call<List<PackageResponse>> call, Response<List<PackageResponse>> response) {
+                    response.body().forEach(pkg -> {
+                        if (pkg.package_status().status_id() == 1) {
+                            packagesAdapter.add(pkg.package_uuid().toString());
+                            packages.add(pkg);
+                        }
+                    });
+                    handler.postDelayed(mainTask, 3000);
+                }
 
-            @Override
-            public void onFailure(Call<List<PackageResponse>> call, Throwable throwable) {
-                System.out.println(throwable);
-            }
-        });
+                @Override
+                public void onFailure(Call<List<PackageResponse>> call, Throwable throwable) {
+                    System.out.println(throwable);
+                    handler.postDelayed(mainTask, 3000);
+                }
+            });
+
+        };
+
+        mainHandler.post(mainTask);
 
         task = () -> {
             requestNewLocationData();

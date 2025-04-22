@@ -33,7 +33,7 @@ class TrackPackageController {
 
       for (var p in poses) {
         for (var pack in packages.value) {
-          if (pack.package_deliveryperson?.person_transport?.transport_id.toString() == p.transport_id) {
+          if (pack.package_deliveryperson?.person_transport?.transport_id.toString() == p.transport_id && pack.package_status?.status_id == 2) {
             posesToShow.add(p);
           }
         }
