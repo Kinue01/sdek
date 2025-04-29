@@ -51,12 +51,13 @@ public class HomeFragment extends Fragment {
     private SdekPackageApi sdekPackageApi;
     private final List<PackageResponse> packages = new ArrayList<>();
     private final Handler mainHandler = new Handler(Looper.myLooper());
-    final ArrayAdapter<String> packagesAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_list_item_1);
+    private ArrayAdapter<String> packagesAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        packagesAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_list_item_1);
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext());
 
         final Retrofit retrofit = new Retrofit.Builder()
@@ -83,10 +84,12 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(@NotNull View view, @Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         binding.items.setAdapter(packagesAdapter);
+        binding.btnOk.setVisibility(View.INVISIBLE);
 
         mainTask = () -> {
             packagesAdapter.clear();
             packages.clear();
+
             sdekPackageApi.packages().enqueue(new Callback<>() {
                 @Override
                 public void onResponse(Call<List<PackageResponse>> call, Response<List<PackageResponse>> response) {
@@ -105,7 +108,6 @@ public class HomeFragment extends Fragment {
                     handler.postDelayed(mainTask, 3000);
                 }
             });
-
         };
 
         mainHandler.post(mainTask);
