@@ -13,6 +13,6 @@ class Routes {
     router.define("/track_package", handler: trackPackageHandler);
     router.define("/home", handler: homeHandler);
     router.define("/details", handler: detailsHandler);
-
+    router.define("/register", handler: registerHandler);
   }
 }

@@ -161,6 +161,7 @@ import 'package:clientapp/view/client_package_details/client_package_details_con
 import 'package:clientapp/view/client_packages_page/client_packages_page_controller.dart';
 import 'package:clientapp/view/home_page/controller/home_controller.dart';
 import 'package:clientapp/view/login_page/controller/login_page_controller.dart';
+import 'package:clientapp/view/register_page/register_controller.dart';
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -352,4 +353,5 @@ void initGetIt() {
   getIt.registerLazySingleton(() => ClientPackagesPageController(getPackagesByClientIdUseCase: getIt(), getCurrentClientUseCase: getIt()));
   getIt.registerLazySingleton(() => ClientPackageDetailsController());
   getIt.registerLazySingleton(() => AccountController(getCurrentClientUseCase: getIt()));
+  getIt.registerLazySingleton(() => RegisterController(getRoleByIdUseCase: getIt(), addUserUseCase: getIt()));
 }

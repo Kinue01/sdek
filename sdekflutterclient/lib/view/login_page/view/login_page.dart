@@ -33,7 +33,8 @@ class LoginViewState extends State<LoginComponent> with GetItStateMixin {
 
   void onLogin() async {
     if (controller.login.value == '' || controller.password.value == '') {
-      showAdaptiveDialog(context: context, builder: (builder) => const AlertDialog(
+      showAdaptiveDialog(context: context, builder: (builder) =>
+      const AlertDialog(
         title: Text('Ошибка'),
         content: Text('Введите логин или пароль'),
       ));
@@ -42,7 +43,8 @@ class LoginViewState extends State<LoginComponent> with GetItStateMixin {
 
     User res = await controller.logIn();
     if (res.user_id == null) {
-      showAdaptiveDialog(context: context, builder: (builder) => const AlertDialog(
+      showAdaptiveDialog(context: context, builder: (builder) =>
+      const AlertDialog(
         title: Text('Ошибка'),
         content: Text('Нет такого пользователя'),
       ));
@@ -52,6 +54,10 @@ class LoginViewState extends State<LoginComponent> with GetItStateMixin {
     await controller.saveUser(res);
     await controller.saveClient();
     FluroApp.router.navigateTo(context, "/home");
+  }
+
+  void toRegister() {
+    FluroApp.router.navigateTo(context, "/register");
   }
 
   @override
@@ -96,10 +102,20 @@ class LoginViewState extends State<LoginComponent> with GetItStateMixin {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: onLogin,
-                    child: const Text('Войти')
-                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      ElevatedButton(
+                          onPressed: onLogin,
+                          child: const Text('Войти')
+                      ),
+                      ElevatedButton(
+                          onPressed: toRegister,
+                          child: const Text("Зарегистрироваться")
+                      ),
+                    ],
+                  )
                 ],
               ),
             ],
