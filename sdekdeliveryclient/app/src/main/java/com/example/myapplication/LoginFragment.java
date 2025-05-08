@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -55,6 +56,16 @@ public class LoginFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         binding.btnLogin.setOnClickListener(v -> {
+            if (binding.emailInp.getText().toString().isBlank()) {
+                Toast.makeText(getContext(), "Please enter your login", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            if (binding.passInp.getText().toString().isBlank()) {
+                Toast.makeText(getContext(), "Please enter your password", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             final String user = binding.emailInp.getText().toString();
             final String pass = binding.passInp.getText().toString();
 
@@ -72,6 +83,12 @@ public class LoginFragment extends Fragment {
                                         .stream()
                                         .filter(d -> d.person_user().user_id().equals(UserContext.currentUser.user_id()))
                                         .findFirst().orElse(null);
+
+                                if (UserContext.currentDeliveryPerson == null) {
+                                    Toast.makeText(requireContext(), "Delivery person not found", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    findNavController(LoginFragment.this).navigate(LoginFragmentDirections.actionLoginFragmentToHomeFragment());
+                                }
                             }
 
                             @Override
@@ -79,8 +96,8 @@ public class LoginFragment extends Fragment {
                                 System.out.println(throwable);
                             }
                         });
-
-                        findNavController(LoginFragment.this).navigate(LoginFragmentDirections.actionLoginFragmentToHomeFragment());
+                    } else {
+                        Toast.makeText(requireContext(), "User does not exists", Toast.LENGTH_SHORT).show();
                     }
                 }
 

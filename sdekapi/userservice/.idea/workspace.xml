@@ -7,12 +7,7 @@
     <cargoProject FILE="$PROJECT_DIR$/Cargo.toml" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6648004e-e4fb-4a12-afb0-9a9bddb440c8" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/../../sdekflutterclient/lib/view/register_page/register_controller.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../sdekflutterclient/lib/view/register_page/register_view.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../sdekflutterclient/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../sdekflutterclient/.idea/workspace.xml" afterDir="false" />
-    </list>
+    <list default="true" id="6648004e-e4fb-4a12-afb0-9a9bddb440c8" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -109,7 +104,7 @@
       <workItem from="1731512137872" duration="47000" />
       <workItem from="1743344391773" duration="311000" />
       <workItem from="1743349887197" duration="6000" />
-      <workItem from="1746187907134" duration="1323000" />
+      <workItem from="1746187907134" duration="1920000" />
     </task>
     <servers />
   </component>

@@ -52,6 +52,7 @@ public class HomeFragment extends Fragment {
     private final List<PackageResponse> packages = new ArrayList<>();
     private final Handler mainHandler = new Handler(Looper.myLooper());
     private ArrayAdapter<String> packagesAdapter;
+    private String currentPackage;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -118,7 +119,10 @@ public class HomeFragment extends Fragment {
         };
 
         binding.btn.setOnClickListener(v -> {
+            if (binding.items.getSelectedItem() == null) Toast.makeText(requireContext(), "Please select a package", Toast.LENGTH_SHORT).show();
+
             final String selectedPackageUuid = binding.items.getSelectedItem().toString();
+            currentPackage = selectedPackageUuid;
 
             final PackageResponse toUpdate = packages
                     .stream()
@@ -130,6 +134,7 @@ public class HomeFragment extends Fragment {
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                     final PackageStatus status = gson.fromJson(response.body().charStream(), PackageStatus.class);
 
+                    assert toUpdate != null;
                     final PackageResponse body = new PackageResponse(
                             toUpdate.package_uuid(),
                             toUpdate.package_send_date(),
@@ -177,11 +182,9 @@ public class HomeFragment extends Fragment {
             handler.post(() -> {});
             handler.postDelayed(() -> {}, 50000);
 
-            final String selectedPackageUuid = binding.items.getSelectedItem().toString();
-
             final PackageResponse toUpdate = packages
                     .stream()
-                    .filter(p -> p.package_uuid().toString().equals(selectedPackageUuid))
+                    .filter(p -> p.package_uuid().toString().equals(currentPackage))
                     .findFirst().orElse(null);
 
             sdekPackageApi.packageStatus(3).enqueue(new Callback<>() {
