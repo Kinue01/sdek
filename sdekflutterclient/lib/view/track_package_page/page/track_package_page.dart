@@ -1,7 +1,5 @@
 import 'dart:async';
-import 'dart:convert';
 
-import 'package:clientapp/domain/model/TransportPosition.dart';
 import 'package:clientapp/view/track_package_page/controller/track_package_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';

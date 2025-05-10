@@ -26,11 +26,19 @@ class ClientPackagesComponent extends StatefulWidget with GetItStatefulWidgetMix
 }
 
 class ClientPackagesState extends State<ClientPackagesComponent> with GetItStateMixin {
+  late ClientPackagesPageController _controller;
+  late TextEditingController _searchController;
+  var search = "";
+
   @override
   void initState() {
     super.initState();
+
+    _controller = get<ClientPackagesPageController>();
+    _searchController = TextEditingController();
+
     Future.delayed(Duration.zero, () async => {
-      await get<ClientPackagesPageController>().getPackages()
+      await _controller.getPackages()
     });
   }
 
@@ -38,15 +46,84 @@ class ClientPackagesState extends State<ClientPackagesComponent> with GetItState
   Widget build(BuildContext context) {
     final list = watchX((ClientPackagesPageController c) => c.packages);
 
-    return Expanded(
-      //padding: const EdgeInsets.only(left: 16, right: 16),
-      child: ListView.builder(
-        itemCount: list.length,
-        itemBuilder: (context, index) {
-          final item = list[index];
-          return ClientPackageItem(item: item, onTap: _goToDetails);
-        },
-      ),
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Card(
+            child: ListTile(
+              leading: Icon(Icons.search),
+              title: TextField(
+                controller: _searchController,
+                decoration: InputDecoration(
+                    hintText: 'Search', border: InputBorder.none),
+                onChanged: (text) {
+                  search = text;
+                },
+              ),
+              trailing: IconButton(
+                  onPressed: () {
+                    if (search.trim().isEmpty) {
+                      Future.delayed(Duration.zero, () async => {
+                        await _controller.getPackages()
+                      });
+                    }
+
+                    var temp = _controller.packages.value;
+                    _controller.packages.value = temp.where((p) => p.package_uuid!.contains(search)).toList(growable: true);
+                  },
+                  icon: Icon(Icons.search)
+              )
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            children: [
+              TextButton(
+                  onPressed: () {
+                    var temp = List<Package>.empty();
+                    Future.delayed(Duration.zero, () async {
+                      await _controller.getPackages();
+                      temp = _controller.packages.value;
+                      _controller.packages.value = temp.where((p) => p.package_status?.status_id == 2).toList(growable: true);
+                    });
+                  },
+                  child: Text('Вывести посылки в пути')
+              ),
+              TextButton(
+                  onPressed: () {
+                    var temp = List<Package>.empty();
+                    Future.delayed(Duration.zero, () async {
+                      await _controller.getPackages();
+                      temp = _controller.packages.value;
+                      _controller.packages.value = temp.where((p) => p.package_status?.status_id == 3).toList(growable: true);
+                    });
+                  },
+                  child: Text('Вывести доставленные посылки')
+              ),
+              TextButton(
+                  onPressed: () {
+                    Future.delayed(Duration.zero, () async => {
+                      await _controller.getPackages()
+                    });
+                  },
+                  child: Text('Сбросить')
+              )
+            ],
+          )
+        ),
+        Expanded(
+          child: ListView.builder(
+            itemCount: list.length,
+            itemBuilder: (context, index) {
+              final item = list[index];
+              return ClientPackageItem(item: item, onTap: _goToDetails);
+            },
+          ),
+        )
+      ],
     );
   }
 

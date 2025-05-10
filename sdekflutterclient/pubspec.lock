@@ -885,6 +885,30 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.8.4"
+  syncfusion_flutter_core:
+    dependency: transitive
+    description:
+      name: syncfusion_flutter_core
+      sha256: "4fb16cf25fa56f787f3991bbdea6241512a81cdbfad4255452f3fd01b7d5fb25"
+      url: "https://pub.dev"
+    source: hosted
+    version: "29.1.41"
+  syncfusion_flutter_datagrid:
+    dependency: "direct main"
+    description:
+      name: syncfusion_flutter_datagrid
+      sha256: "87e6edaca0886c74e5305c33bc716ac67a4428302a34eaa77b44c1738bb46f37"
+      url: "https://pub.dev"
+    source: hosted
+    version: "29.1.41"
+  syncfusion_flutter_maps:
+    dependency: "direct main"
+    description:
+      name: syncfusion_flutter_maps
+      sha256: "6186803e2e3b1863f9aea1deb648ee19b5019cd9dda78615acd84bdc3368c961"
+      url: "https://pub.dev"
+    source: hosted
+    version: "29.1.41"
   term_glyph:
     dependency: transitive
     description:

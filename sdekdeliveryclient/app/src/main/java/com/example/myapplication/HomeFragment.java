@@ -34,8 +34,15 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
 
 import static androidx.core.content.ContextCompat.getSystemService;
 
@@ -192,21 +199,29 @@ public class HomeFragment extends Fragment {
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                     final PackageStatus status = gson.fromJson(response.body().charStream(), PackageStatus.class);
 
-                    final PackageResponse packageResponse = new PackageResponse(
-                            toUpdate.package_uuid(),
-                            toUpdate.package_send_date(),
-                            toUpdate.package_receive_date(),
-                            toUpdate.package_weight(),
-                            toUpdate.package_deliveryperson(),
-                            toUpdate.package_type(),
-                            status,
-                            toUpdate.package_sender(),
-                            toUpdate.package_receiver(),
-                            toUpdate.package_warehouse(),
-                            toUpdate.package_paytype(),
-                            toUpdate.package_payer(),
-                            toUpdate.package_items()
-                    );
+                    DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+
+                    final PackageResponse packageResponse;
+                    try {
+                        assert toUpdate != null;
+                        packageResponse = new PackageResponse(
+                                toUpdate.package_uuid(),
+                                toUpdate.package_send_date(),
+                                Objects.requireNonNull(formatter.parse(LocalDate.now().toString())).toString(),
+                                toUpdate.package_weight(),
+                                toUpdate.package_deliveryperson(),
+                                toUpdate.package_type(),
+                                status,
+                                toUpdate.package_sender(),
+                                toUpdate.package_receiver(),
+                                toUpdate.package_warehouse(),
+                                toUpdate.package_paytype(),
+                                toUpdate.package_payer(),
+                                toUpdate.package_items()
+                        );
+                    } catch (ParseException e) {
+                        throw new RuntimeException(e);
+                    }
 
                     sdekPackageApi.updatePackage(packageResponse).enqueue(new Callback<>() {
                         @Override
