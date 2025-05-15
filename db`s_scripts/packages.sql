@@ -27,7 +27,7 @@ create table if not exists tb_package
 	package_send_date date,
 	package_receive_date date,
 	package_weight decimal(7, 3),
-	package_deliveryperson_id int not null,
+	package_deliveryperson_id int,
 	package_type_id smallint not null,
 	package_status_id smallint not null,
 	package_sender_id int not null,
@@ -170,7 +170,9 @@ values ('Наличными'), ('Картой'), ('СБП');
 
 insert into tb_package
 values 
-('8a1b056a-8c11-4929-9e47-11b13787e68a', '2023-12-05', '2024-01-12', 1.25, 1, 1, 1, 1, 2, 3, 3, 1);
+('8a1b056a-8c11-4929-9e47-11b13787e68a', '2023-12-05', '2024-01-12', 1.25, null, 1, 1, 1, 2, 3, 3, 1),
+('670ebb6d-8757-4a48-8a00-29d332a24552', '2023-08-11', '2023-12-12', 1.5, 1, 1, 2, 2, 3, 3, 3, 2),
+('ba888586-8610-45d5-b6c0-c51c17e7db04', '2023-03-25', '2023-08-18', 1.75, 2, 1, 3, 1, 3, 3, 3, 3);
 
 -- Delivery Person
 create or replace function fkey_deliveryperson_func() returns trigger

@@ -5,12 +5,27 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8150d90f-2e70-4c11-baaa-2d9bf53faa8e" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../sdekdeliveryclient/app/src/main/java/com/example/myapplication/HomeFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/../sdekdeliveryclient/app/src/main/java/com/example/myapplication/HomeFragment.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lib/data/repositoryimpl/current_employee_repositoryimpl.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lib/domain/repository/current_employee_repository.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lib/domain/usecase/employee/GetCurrentEmployeeUseCase.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lib/domain/usecase/employee/SaveCurrentEmployeeUseCase.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lib/view/employees_page/employees_page.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lib/view/employees_page/employees_page_controller.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lib/view/main_page/main_page_controller.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lib/view/packages_page/packages_page.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lib/view/packages_page/packages_page_controller.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lib/view/warehouses_page/warehouses_page.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lib/view/warehouses_page/warehouses_page_controller.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../compose.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../db`s_scripts/items.sql" beforeDir="false" afterPath="$PROJECT_DIR$/../db`s_scripts/items.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../db`s_scripts/packages.sql" beforeDir="false" afterPath="$PROJECT_DIR$/../db`s_scripts/packages.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../infrastructure.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../infrastructure.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/view/client_packages_page/client_packages_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/view/client_packages_page/client_packages_page.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/view/track_package_page/page/track_package_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/view/track_package_page/page/track_package_page.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/inject.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/inject.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/local/local_storage/employee_local_storage.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/local/local_storage/employee_local_storage.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/view/login_page/controller/login_page_controller.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/view/login_page/controller/login_page_controller.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/view/login_page/view/login_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/view/login_page/view/login_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/view/main_page/main_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/view/main_page/main_page.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -132,6 +147,8 @@
       <workItem from="1746286900085" duration="1707000" />
       <workItem from="1746797471735" duration="10546000" />
       <workItem from="1746887514697" duration="7293000" />
+      <workItem from="1747292715091" duration="1720000" />
+      <workItem from="1747342446134" duration="6702000" />
     </task>
     <servers />
   </component>

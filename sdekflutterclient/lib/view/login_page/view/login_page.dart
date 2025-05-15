@@ -52,7 +52,13 @@ class LoginViewState extends State<LoginComponent> with GetItStateMixin {
     }
 
     await controller.saveUser(res);
-    await controller.saveClient();
+
+    if (res.user_role.role_id == 1) {
+      await controller.saveClient();
+    } else {
+      await controller.saveEmployee();
+    }
+
     FluroApp.router.navigateTo(context, "/home");
   }
 

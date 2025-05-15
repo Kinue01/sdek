@@ -16,6 +16,7 @@ import 'package:clientapp/data/repository/warehouse_data_repository.dart';
 import 'package:clientapp/data/repositoryimpl/authorisation_repositoryimpl.dart';
 import 'package:clientapp/data/repositoryimpl/client_repositoryimpl.dart';
 import 'package:clientapp/data/repositoryimpl/current_client_repositoryimpl.dart';
+import 'package:clientapp/data/repositoryimpl/current_employee_repositoryimpl.dart';
 import 'package:clientapp/data/repositoryimpl/current_user_repositoryimpl.dart';
 import 'package:clientapp/data/repositoryimpl/delivery_person_repository_impl.dart';
 import 'package:clientapp/data/repositoryimpl/employee_repositoryimpl.dart';
@@ -34,6 +35,7 @@ import 'package:clientapp/data/repositoryimpl/warehouse_repository_impl.dart';
 import 'package:clientapp/domain/repository/authorisation_repository.dart';
 import 'package:clientapp/domain/repository/client_repository.dart';
 import 'package:clientapp/domain/repository/current_client_repository.dart';
+import 'package:clientapp/domain/repository/current_employee_repository.dart';
 import 'package:clientapp/domain/repository/current_user_repository.dart';
 import 'package:clientapp/domain/repository/delivery_person_repository.dart';
 import 'package:clientapp/domain/repository/employee_repository.dart';
@@ -67,6 +69,7 @@ import 'package:clientapp/domain/usecase/employee/DeleteEmployeeUseCase.dart';
 import 'package:clientapp/domain/usecase/employee/GetEmployeeByIdUseCase.dart';
 import 'package:clientapp/domain/usecase/employee/GetEmployeeByUserIdUseCase.dart';
 import 'package:clientapp/domain/usecase/employee/GetEmployeesUseCase.dart';
+import 'package:clientapp/domain/usecase/employee/SaveCurrentEmployeeUseCase.dart';
 import 'package:clientapp/domain/usecase/employee/UpdateEmployeeUseCase.dart';
 import 'package:clientapp/domain/usecase/message/SendMessageUseCase.dart';
 import 'package:clientapp/domain/usecase/pack/AddPackageUseCase.dart';
@@ -161,6 +164,7 @@ import 'package:clientapp/view/client_package_details/client_package_details_con
 import 'package:clientapp/view/client_packages_page/client_packages_page_controller.dart';
 import 'package:clientapp/view/home_page/controller/home_controller.dart';
 import 'package:clientapp/view/login_page/controller/login_page_controller.dart';
+import 'package:clientapp/view/main_page/main_page_controller.dart';
 import 'package:clientapp/view/register_page/register_controller.dart';
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
@@ -256,6 +260,7 @@ void initGetIt() {
   getIt.registerFactory<PackagePaytypeRepository>(() => PackagePaytypeRepositoryImpl(repository: getIt()));
   getIt.registerFactory<DeliveryPersonRepository>(() => DeliveryPersonRepositoryImpl(repository: getIt()));
   getIt.registerFactory<WarehouseRepository>(() => WarehouseRepositoryImpl(repository: getIt()));
+  getIt.registerFactory<CurrentEmployeeRepository>(() => CurrentEmployeeRepositoryImpl(employeeLocalStorage: getIt()));
 
 
   getIt.registerFactory(() => GetRolesUseCase(repository: getIt()));
@@ -342,6 +347,9 @@ void initGetIt() {
 
   getIt.registerFactory(() => GetWarehousesUseCase(repository: getIt()));
 
+  getIt.registerFactory(() => GetCurrentUserUseCase(repository: getIt()));
+  getIt.registerFactory(() => SaveCurrentEmployeeUseCase(repository: getIt()));
+
 
   // ----------------------------------------
   // VIEW
@@ -349,9 +357,10 @@ void initGetIt() {
   getIt.registerLazySingleton(() => HomeController());
   getIt.registerLazySingleton(() => SendPackageController(getPackageTypesUseCase: getIt(), addPackageUseCase: getIt(), getCurrentClientUseCase: getIt(), getClientsUseCase: getIt(), getAllServicesUseCase: getIt(), getCurrentUserUseCase: getIt(), getPackagePaytypesUseCase: getIt(), getDeliveryPersonalUseCase: getIt(), getWarehousesUseCase: getIt(), addPackageServicesUseCase: getIt()));
   getIt.registerLazySingleton(() => TrackPackageController(getPackagesByClientIdUseCase: getIt(), getCurrentClientUseCase: getIt()));
-  getIt.registerLazySingleton(() => LoginPageController(getUserByLoginPassUseCase: getIt(), getCurrentUserUseCase: getIt(), saveCurrentUserUseCase: getIt(), getClientByUserIdUseCase: getIt(), saveCurrentClientUseCase: getIt()));
+  getIt.registerLazySingleton(() => LoginPageController(getUserByLoginPassUseCase: getIt(), getCurrentUserUseCase: getIt(), saveCurrentUserUseCase: getIt(), getClientByUserIdUseCase: getIt(), saveCurrentClientUseCase: getIt(), getEmployeeByUserIdUseCase: getIt(), saveCurrentEmployeeUseCase: getIt()));
   getIt.registerLazySingleton(() => ClientPackagesPageController(getPackagesByClientIdUseCase: getIt(), getCurrentClientUseCase: getIt()));
   getIt.registerLazySingleton(() => ClientPackageDetailsController());
   getIt.registerLazySingleton(() => AccountController(getCurrentClientUseCase: getIt()));
   getIt.registerLazySingleton(() => RegisterController(getRoleByIdUseCase: getIt(), addUserUseCase: getIt()));
+  getIt.registerLazySingleton(() => MainPageController(getCurrentUserUseCase: getIt(), getCurrentClientUseCase: getIt(), getCurrentEmployeeUseCase: getIt()));
 }

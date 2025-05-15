@@ -1,9 +1,12 @@
 import 'package:clientapp/domain/model/Client.dart';
+import 'package:clientapp/domain/model/Employee.dart';
 import 'package:clientapp/domain/model/Role.dart';
 import 'package:clientapp/domain/model/User.dart';
 import 'package:clientapp/domain/usecase/auth/GetUserByLoginPassUseCase.dart';
 import 'package:clientapp/domain/usecase/client/GetClientByUserIdUseCase.dart';
 import 'package:clientapp/domain/usecase/client/SaveCurrentClientUseCase.dart';
+import 'package:clientapp/domain/usecase/employee/GetEmployeeByUserIdUseCase.dart';
+import 'package:clientapp/domain/usecase/employee/SaveCurrentEmployeeUseCase.dart';
 import 'package:clientapp/domain/usecase/user/GetCurrentUserUseCase.dart';
 import 'package:clientapp/domain/usecase/user/SaveCurrentUserUseCase.dart';
 import 'package:flutter/material.dart';
@@ -18,13 +21,17 @@ class LoginPageController {
   final GetCurrentUserUseCase getCurrentUserUseCase;
   final SaveCurrentClientUseCase saveCurrentClientUseCase;
   final GetClientByUserIdUseCase getClientByUserIdUseCase;
+  final GetEmployeeByUserIdUseCase getEmployeeByUserIdUseCase;
+  final SaveCurrentEmployeeUseCase saveCurrentEmployeeUseCase;
 
   LoginPageController({
     required this.getUserByLoginPassUseCase,
     required this.saveCurrentUserUseCase,
     required this.getCurrentUserUseCase,
     required this.saveCurrentClientUseCase,
-    required this.getClientByUserIdUseCase
+    required this.getClientByUserIdUseCase,
+    required this.getEmployeeByUserIdUseCase,
+    required this.saveCurrentEmployeeUseCase
   });
 
   Future<User> logIn() async {
@@ -39,5 +46,10 @@ class LoginPageController {
   Future<void> saveClient() async {
     Client client = await getClientByUserIdUseCase.exec(user.user_id!);
     saveCurrentClientUseCase.exec(client);
+  }
+
+  Future<void> saveEmployee() async {
+    Employee employee = await getEmployeeByUserIdUseCase.exec(user.user_id!);
+    await saveCurrentEmployeeUseCase.saveCurrentEmployee(employee);
   }
 }
