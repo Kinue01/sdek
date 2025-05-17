@@ -66,8 +66,7 @@ class AuthorisationApiImpl implements AuthorisationApi {
           return User(user_role: Role());
       }
     }
-    on Exception catch (e) {
-      print(e);
+    on Exception catch (_) {
       return User(user_role: Role());
     }
   }

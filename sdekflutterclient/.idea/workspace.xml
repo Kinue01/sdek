@@ -6,15 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="8150d90f-2e70-4c11-baaa-2d9bf53faa8e" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/inject.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/inject.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/remote/api/authorisation_api.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/remote/api/authorisation_api.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/view/main_page/main_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/view/main_page/main_page.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/view/navigation_service/route_handlers.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/view/navigation_service/route_handlers.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/view/navigation_service/routes.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/view/navigation_service/routes.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/view/packages_page/packages_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/view/packages_page/packages_page.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/view/packages_page/packages_page_controller.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/view/packages_page/packages_page_controller.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/remote/api/employee_api.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/remote/api/employee_api.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -139,7 +132,7 @@
       <workItem from="1747292715091" duration="1720000" />
       <workItem from="1747342446134" duration="6702000" />
       <workItem from="1747417229316" duration="2879000" />
-      <workItem from="1747475668317" duration="6080000" />
+      <workItem from="1747475668317" duration="9931000" />
     </task>
     <servers />
   </component>
@@ -150,32 +143,6 @@
     <ignored-roots>
       <path value="$PROJECT_DIR$/../.." />
     </ignored-roots>
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="Dart">
-          <url>file://$PROJECT_DIR$/lib/remote/api/authorisation_api.dart</url>
-          <line>60</line>
-          <option name="timeStamp" value="2" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="Dart">
-          <url>file://$PROJECT_DIR$/lib/remote/api/authorisation_api.dart</url>
-          <line>63</line>
-          <option name="timeStamp" value="3" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="Dart">
-          <url>file://$PROJECT_DIR$/lib/remote/api/authorisation_api.dart</url>
-          <line>65</line>
-          <option name="timeStamp" value="4" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="Dart">
-          <url>file://$PROJECT_DIR$/lib/remote/api/authorisation_api.dart</url>
-          <line>70</line>
-          <option name="timeStamp" value="6" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

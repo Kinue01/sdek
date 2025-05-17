@@ -85,7 +85,7 @@ pub async fn get_employees(
 }
 
 #[derive(Deserialize, IntoParams)]
-struct EmpSearchQuery {
+pub struct EmpSearchQuery {
     uuid: Uuid,
 }
 
@@ -102,11 +102,11 @@ struct EmpSearchQuery {
 )]
 pub async fn get_employee_by_id(
     State(mut state): State<AppState>,
-    uuid: Query<Uuid>,
+    uuid: Query<EmpSearchQuery>,
 ) -> Result<Json<Employee>, MyError> {
     let emp_redis: Employee = state
         .redis
-        .json_get("emp".to_owned() + &*uuid.0.to_string(), "$")
+        .json_get("emp".to_owned() + &*uuid.0.uuid.to_string(), "$")
         .await
         .unwrap_or_default();
 
@@ -115,7 +115,7 @@ pub async fn get_employee_by_id(
             let emp = sqlx::query_as!(
                 EmployeeResponse,
                 "select * from tb_employee where employee_id = $1",
-                &uuid.0
+                &uuid.0.uuid
             )
             .fetch_one(&state.postgres)
             .await
@@ -155,7 +155,7 @@ pub async fn get_employee_by_id(
 
             let _: () = state
                 .redis
-                .json_set("emp".to_owned() + &*uuid.0.to_string(), "$", &res)
+                .json_set("emp".to_owned() + &*uuid.0.uuid.to_string(), "$", &res)
                 .await
                 .unwrap();
 
@@ -165,14 +165,19 @@ pub async fn get_employee_by_id(
     }
 }
 
+#[derive(Deserialize, IntoParams)]
+pub struct GetEmpByUuid {
+    uuid: Uuid,
+}
+
 pub async fn get_employee_by_user_id(
     State(mut state): State<AppState>,
-    uuid: Query<Uuid>,
+    uuid: Query<GetEmpByUuid>,
 ) -> Result<Json<Employee>, MyError> {
     let emp = sqlx::query_as!(
         EmployeeResponse,
         "select * from tb_employee where employee_user_id = $1",
-        uuid.0
+        uuid.0.uuid
     )
     .fetch_one(&state.postgres)
     .await
@@ -220,7 +225,7 @@ pub async fn get_employee_by_user_id(
 
             let _: () = state
                 .redis
-                .json_set("emp".to_owned() + &*uuid.0.to_string(), "$", &res)
+                .json_set("emp".to_owned() + &*uuid.0.uuid.to_string(), "$", &res)
                 .await
                 .unwrap();
 

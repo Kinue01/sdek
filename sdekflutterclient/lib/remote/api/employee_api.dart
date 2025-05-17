@@ -59,7 +59,9 @@ class EmployeeApiImpl implements EmployeeApi {
 
   @override
   Future<Employee> getEmployeeByUserId(String uuid) async {
-    Response<Map<String, dynamic>> response = await client.get("$readUrl/api/employee_user", options: Options(extra: {'uuid': uuid}));
+    Response<Map<String, dynamic>> response = await client.get("$readUrl/api/employee_user", queryParameters: {
+      'uuid': uuid
+    });
     switch (response.statusCode) {
       case 200:
         return Employee.fromMap(response.data!);
