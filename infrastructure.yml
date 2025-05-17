@@ -71,21 +71,6 @@ services:
       MONGO_INITDB_DATABASE: sdek
     volumes:
       - ./init-mongo-db-with-collections.js:/docker-entrypoint-initdb.d/init-mongo-db-with-collections.js:ro
-  mongo-express:
-    image: mongo-express
-    restart: always
-    ports:
-    - 8081:8081
-    environment:
-      ME_CONFIG_MONGODB_SERVER: mongodb
-      ME_CONFIG_MONGODB_PORT: 27017
-      ME_CONFIG_MONGODB_AUTH_DATABASE: admin
-      ME_CONFIG_MONGODB_AUTH_USERNAME: admin
-      ME_CONFIG_MONGODB_AUTH_PASSWORD: 12345
-      ME_CONFIG_BASICAUTH_USERNAME: root
-      ME_CONFIG_BASICAUTH_PASSWORD: root
-    depends_on:
-      - mongodb
     
 volumes:
   eventstore-volume-data:

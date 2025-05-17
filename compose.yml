@@ -79,8 +79,10 @@ services:
     ports:
       - "8010:8010"
     depends_on:
-      - pgdb
-      - userservice
+      pgdb:
+        condition: service_healthy
+      userservice:
+        condition: service_started
 
   consumerreadservice:
     build: 
@@ -88,7 +90,6 @@ services:
     ports:
       - "8011:8011"
     depends_on:
-      - pgdb
       - consumerservice
 
   employereadeservice:
@@ -97,7 +98,6 @@ services:
     ports:
       - "8012:8012"
     depends_on:
-      - pgdb
       - employeeservice
 
   packagereadservice:
@@ -106,7 +106,6 @@ services:
     ports:
       - "8013:8013"
     depends_on:
-      - pgdb
       - packageservice
 
   transportreadservice:
@@ -115,7 +114,6 @@ services:
     ports:
       - "8015:8015"
     depends_on:
-      - pgdb
       - transportservice
 
   warehousereadservice:
@@ -124,7 +122,6 @@ services:
     ports:
       - "8016:8016"
     depends_on:
-      - pgdb
       - warehouseservice
 
   deliverypersonellreadservice:
@@ -133,7 +130,6 @@ services:
     ports:
       - "8017:8017"
     depends_on:
-      - pgdb
       - deliverypersonellservice
 
   servicesreadservice:
@@ -142,7 +138,6 @@ services:
     ports:
       - "8018:8018"
     depends_on:
-      - pgdb
       - servicesservice
 
   authservice:
@@ -151,5 +146,4 @@ services:
     ports:
       - "8020:8020"
     depends_on:
-      - pgdb
       - packagereadservice
