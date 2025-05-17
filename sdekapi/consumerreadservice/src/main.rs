@@ -56,7 +56,7 @@ async fn main() {
 
     let postgres = PgPoolOptions::new()
         .max_connections(1000000)
-        .acquire_timeout(Duration::from_secs(60))
+        .acquire_timeout(Duration::from_secs(120))
         .connect(&pg_url)
         .await
         .unwrap();
