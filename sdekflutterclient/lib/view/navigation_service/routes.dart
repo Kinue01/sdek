@@ -14,5 +14,6 @@ class Routes {
     router.define("/home", handler: homeHandler);
     router.define("/details", handler: detailsHandler);
     router.define("/register", handler: registerHandler);
+    router.define("/packages", handler: packagesHandler);
   }
 }

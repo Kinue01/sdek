@@ -165,6 +165,7 @@ import 'package:clientapp/view/client_packages_page/client_packages_page_control
 import 'package:clientapp/view/home_page/controller/home_controller.dart';
 import 'package:clientapp/view/login_page/controller/login_page_controller.dart';
 import 'package:clientapp/view/main_page/main_page_controller.dart';
+import 'package:clientapp/view/packages_page/packages_page_controller.dart';
 import 'package:clientapp/view/register_page/register_controller.dart';
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
@@ -347,7 +348,6 @@ void initGetIt() {
 
   getIt.registerFactory(() => GetWarehousesUseCase(repository: getIt()));
 
-  getIt.registerFactory(() => GetCurrentUserUseCase(repository: getIt()));
   getIt.registerFactory(() => SaveCurrentEmployeeUseCase(repository: getIt()));
 
 
@@ -363,4 +363,5 @@ void initGetIt() {
   getIt.registerLazySingleton(() => AccountController(getCurrentClientUseCase: getIt()));
   getIt.registerLazySingleton(() => RegisterController(getRoleByIdUseCase: getIt(), addUserUseCase: getIt()));
   getIt.registerLazySingleton(() => MainPageController(getCurrentUserUseCase: getIt(), getCurrentClientUseCase: getIt(), getCurrentEmployeeUseCase: getIt()));
+  getIt.registerFactory(() => PackagesPageController(getPackagesUseCase: getIt()));
 }

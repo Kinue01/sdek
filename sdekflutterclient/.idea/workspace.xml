@@ -5,27 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8150d90f-2e70-4c11-baaa-2d9bf53faa8e" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/lib/data/repositoryimpl/current_employee_repositoryimpl.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/domain/repository/current_employee_repository.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/domain/usecase/employee/GetCurrentEmployeeUseCase.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/domain/usecase/employee/SaveCurrentEmployeeUseCase.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/view/employees_page/employees_page.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/view/employees_page/employees_page_controller.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/view/main_page/main_page_controller.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/view/packages_page/packages_page.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/view/packages_page/packages_page_controller.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/view/warehouses_page/warehouses_page.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/view/warehouses_page/warehouses_page_controller.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../compose.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../db`s_scripts/items.sql" beforeDir="false" afterPath="$PROJECT_DIR$/../db`s_scripts/items.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../db`s_scripts/packages.sql" beforeDir="false" afterPath="$PROJECT_DIR$/../db`s_scripts/packages.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../infrastructure.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../infrastructure.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/inject.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/inject.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/local/local_storage/employee_local_storage.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/local/local_storage/employee_local_storage.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/view/login_page/controller/login_page_controller.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/view/login_page/controller/login_page_controller.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/view/login_page/view/login_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/view/login_page/view/login_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/remote/api/authorisation_api.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/remote/api/authorisation_api.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/view/main_page/main_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/view/main_page/main_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/view/navigation_service/route_handlers.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/view/navigation_service/route_handlers.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/view/navigation_service/routes.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/view/navigation_service/routes.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/view/packages_page/packages_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/view/packages_page/packages_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/view/packages_page/packages_page_controller.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/view/packages_page/packages_page_controller.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -62,28 +51,28 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Flutter.main.dart.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
-    &quot;flutter.view.tool.window.visible&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;io.flutter.reload.alreadyRun&quot;: &quot;true&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/flutter/bin&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;project.propVCSSupport.DirectoryMappings&quot;,
-    &quot;show.migrate.to.gradle.popup&quot;: &quot;false&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Flutter.main.dart.executor": "Debug",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "dart.analysis.tool.window.visible": "false",
+    "flutter.view.tool.window.visible": "true",
+    "git-widget-placeholder": "master",
+    "ignore.virus.scanning.warn.message": "true",
+    "io.flutter.reload.alreadyRun": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "D:/flutter/bin",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "project.propVCSSupport.DirectoryMappings",
+    "show.migrate.to.gradle.popup": "false",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RunManager">
     <configuration name="main.dart" type="FlutterRunConfigurationType" factoryName="Flutter">
       <option name="filePath" value="$PROJECT_DIR$/lib/main.dart" />
@@ -149,6 +138,8 @@
       <workItem from="1746887514697" duration="7293000" />
       <workItem from="1747292715091" duration="1720000" />
       <workItem from="1747342446134" duration="6702000" />
+      <workItem from="1747417229316" duration="2879000" />
+      <workItem from="1747475668317" duration="6080000" />
     </task>
     <servers />
   </component>
@@ -159,6 +150,32 @@
     <ignored-roots>
       <path value="$PROJECT_DIR$/../.." />
     </ignored-roots>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="Dart">
+          <url>file://$PROJECT_DIR$/lib/remote/api/authorisation_api.dart</url>
+          <line>60</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="Dart">
+          <url>file://$PROJECT_DIR$/lib/remote/api/authorisation_api.dart</url>
+          <line>63</line>
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="Dart">
+          <url>file://$PROJECT_DIR$/lib/remote/api/authorisation_api.dart</url>
+          <line>65</line>
+          <option name="timeStamp" value="4" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="Dart">
+          <url>file://$PROJECT_DIR$/lib/remote/api/authorisation_api.dart</url>
+          <line>70</line>
+          <option name="timeStamp" value="6" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

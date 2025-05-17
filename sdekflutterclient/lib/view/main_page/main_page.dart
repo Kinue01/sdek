@@ -1,6 +1,7 @@
 import 'package:clientapp/view/account_page/account_page.dart';
 import 'package:clientapp/view/home_page/view/home_view.dart';
 import 'package:clientapp/view/main_page/main_page_controller.dart';
+import 'package:clientapp/view/packages_page/packages_page.dart';
 import 'package:clientapp/view/send_package_page/page/send_package_page.dart';
 import 'package:clientapp/view/track_package_page/page/track_package_page.dart';
 import 'package:flutter/material.dart';
@@ -50,7 +51,7 @@ class MainState extends State<MainComponent> with GetItStateMixin {
 
     if (_controller.currentUser.user_role.role_id == 2 && _controller.currentEmployee.employee_position.position_id == 1) {
       _views = [
-        // todo add widget with all packages
+        const PackagesPage(),
         // todo add table widget with employees
         const SendPackagePage(),
         const TrackPackagePage(),
@@ -82,7 +83,7 @@ class MainState extends State<MainComponent> with GetItStateMixin {
 
     if (_controller.currentUser.user_role.role_id == 2 && _controller.currentEmployee.employee_position.position_id != 1) {
       _views = [
-        // todo add widget with all packages
+        const PackagesPage(),
         // todo add table widget with employees
         // todo add table widget with warehouses
         const TrackPackagePage(),

@@ -50,6 +50,7 @@ dependencies:
   envied_generator: ^1.1.1
   syncfusion_flutter_maps: ^29.1.41
   syncfusion_flutter_datagrid: ^29.1.41
+  getwidget: ^6.0.0
 
 dev_dependencies:
   flutter_test:

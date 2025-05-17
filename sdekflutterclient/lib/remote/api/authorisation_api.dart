@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:clientapp/Env.dart';
 import 'package:clientapp/domain/model/Role.dart';
 import 'package:clientapp/domain/model/User.dart';
@@ -64,7 +66,8 @@ class AuthorisationApiImpl implements AuthorisationApi {
           return User(user_role: Role());
       }
     }
-    on Exception catch (_) {
+    on Exception catch (e) {
+      print(e);
       return User(user_role: Role());
     }
   }
