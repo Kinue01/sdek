@@ -24,7 +24,7 @@ pub struct Package {
     pub package_send_date: NaiveDate,
     pub package_receive_date: NaiveDate,
     pub package_weight: bigdecimal::BigDecimal,
-    pub package_deliveryperson: DeliveryPerson,
+    pub package_deliveryperson: Option<DeliveryPerson>,
     pub package_type: PackageType,
     pub package_status: PackageStatus,
     pub package_sender: Client,

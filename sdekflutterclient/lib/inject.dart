@@ -66,6 +66,7 @@ import 'package:clientapp/domain/usecase/client/UpdateClientUseCase.dart';
 import 'package:clientapp/domain/usecase/delivery_person/get_delivery_personal_use_case.dart';
 import 'package:clientapp/domain/usecase/employee/AddEmployeeUseCase.dart';
 import 'package:clientapp/domain/usecase/employee/DeleteEmployeeUseCase.dart';
+import 'package:clientapp/domain/usecase/employee/GetCurrentEmployeeUseCase.dart';
 import 'package:clientapp/domain/usecase/employee/GetEmployeeByIdUseCase.dart';
 import 'package:clientapp/domain/usecase/employee/GetEmployeeByUserIdUseCase.dart';
 import 'package:clientapp/domain/usecase/employee/GetEmployeesUseCase.dart';
@@ -348,6 +349,7 @@ void initGetIt() {
 
   getIt.registerFactory(() => GetWarehousesUseCase(repository: getIt()));
 
+  getIt.registerFactory(() => GetCurrentEmployeeUseCase(repository: getIt()));
   getIt.registerFactory(() => SaveCurrentEmployeeUseCase(repository: getIt()));
 
 
