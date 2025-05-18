@@ -28,249 +28,254 @@ async fn get_items(postgres: Pool<Postgres>, pack_items: Vec<PackageItems>) -> V
 pub async fn get_packages(
     State(mut state): State<AppState>,
 ) -> Result<Json<Vec<Package>>, MyError> {
-    let packages_redis: Vec<Package> = state.redis.get("packages").await.unwrap();
+    // let packages_redis: Vec<Package> = state.redis.get("packages").await.unwrap();
 
-    match packages_redis.is_empty() {
-        true => {
-            let packages = sqlx::query_as!(PackageResponse, "select * from tb_package")
-                .fetch_all(&state.postgres)
-                .await
-                .map_err(MyError::DBError)?;
+    // match packages_redis.is_empty() {
+    //     true => {
+    //         
+    //     }
+    //     false => Ok(Json(packages_redis)),
+    // }
 
-            let res = futures::stream::iter(packages)
-                .map(|x| async {
-                    let postgres = state.postgres.clone();
-                    let yield_pg = state.postgres.clone();
+    let packages = sqlx::query_as!(PackageResponse, "select * from tb_package")
+        .fetch_all(&state.postgres)
+        .await
+        .map_err(MyError::DBError)?;
 
-                    tokio::spawn(async move {
-                        let sender = sqlx::query_as!(ClientResponse, "select * from tb_fclient where client_id = $1", x.clone().package_sender_id)
+    let res = futures::stream::iter(packages)
+        .map(|x| async {
+            let postgres = state.postgres.clone();
+            let yield_pg = state.postgres.clone();
+
+            tokio::spawn(async move {
+                let sender = sqlx::query_as!(ClientResponse, "select * from tb_fclient where client_id = $1", x.clone().package_sender_id)
+                    .fetch_one(&postgres)
+                    .await
+                    .map_err(MyError::DBError).unwrap();
+
+                let receiver = sqlx::query_as!(ClientResponse, "select * from tb_fclient where client_id = $1", x.clone().package_receiver_id)
+                    .fetch_one(&postgres)
+                    .await
+                    .map_err(MyError::DBError).unwrap();
+
+                let sender_user = sqlx::query_as!(UserResponse, "select * from tb_fuser where user_id = $1", &sender.client_user_id)
+                    .fetch_one(&postgres)
+                    .await
+                    .map_err(MyError::DBError).unwrap();
+
+                let receiver_user = sqlx::query_as!(UserResponse, "select * from tb_fuser where user_id = $1", &receiver.client_user_id)
+                    .fetch_one(&postgres)
+                    .await
+                    .map_err(MyError::DBError).unwrap();
+
+                let warehouse = sqlx::query_as!(WarehouseResponse, "select * from tb_fwarehouse where warehouse_id = $1", &x.package_warehouse_id)
+                    .fetch_one(&postgres)
+                    .await
+                    .map_err(MyError::DBError).unwrap();
+
+                let delivery: DeliveryPersonResponse;
+                let delivery_user: UserResponse;
+                let transport: TransportResponse;
+
+                match x.package_deliveryperson_id {
+                    Some(id) => {
+                        delivery = sqlx::query_as!(DeliveryPersonResponse, "select * from tb_fdelivery_person where person_id = $1", id)
                             .fetch_one(&postgres)
                             .await
                             .map_err(MyError::DBError).unwrap();
 
-                        let receiver = sqlx::query_as!(ClientResponse, "select * from tb_fclient where client_id = $1", x.clone().package_receiver_id)
+                        delivery_user = sqlx::query_as!(UserResponse, "select * from tb_fuser where user_id = $1", &delivery.person_user_id)
                             .fetch_one(&postgres)
                             .await
                             .map_err(MyError::DBError).unwrap();
 
-                        let sender_user = sqlx::query_as!(UserResponse, "select * from tb_fuser where user_id = $1", &sender.client_user_id)
+                        transport = sqlx::query_as!(TransportResponse, "select * from tb_ftransport where transport_id = $1", &delivery.person_transport_id)
                             .fetch_one(&postgres)
                             .await
                             .map_err(MyError::DBError).unwrap();
+                    }
+                    None => {
+                        delivery = DeliveryPersonResponse {
+                            person_id: 0,
+                            person_lastname: "".to_string(),
+                            person_firstname: "".to_string(),
+                            person_middlename: "".to_string(),
+                            person_user_id: Default::default(),
+                            person_transport_id: 0,
+                        };
 
-                        let receiver_user = sqlx::query_as!(UserResponse, "select * from tb_fuser where user_id = $1", &receiver.client_user_id)
-                            .fetch_one(&postgres)
-                            .await
-                            .map_err(MyError::DBError).unwrap();
+                        delivery_user = UserResponse {
+                            user_id: Default::default(),
+                            user_login: "".to_string(),
+                            user_password: "".to_string(),
+                            user_email: Option::from("".to_string()),
+                            user_phone: "".to_string(),
+                            user_access_token: Option::from("".to_string()),
+                            user_role_id: 1,
+                        };
 
-                        let warehouse = sqlx::query_as!(WarehouseResponse, "select * from tb_fwarehouse where warehouse_id = $1", &x.package_warehouse_id)
-                            .fetch_one(&postgres)
-                            .await
-                            .map_err(MyError::DBError).unwrap();
+                        transport = TransportResponse {
+                            transport_id: 0,
+                            transport_name: "".to_string(),
+                            transport_reg_number: "".to_string(),
+                            transport_type_id: 1,
+                            transport_status_id: 1,
+                        };
+                    }
+                }
 
-                        let delivery: DeliveryPersonResponse;
-                        let delivery_user: UserResponse;
-                        let transport: TransportResponse;
-                        
-                        if x.package_deliveryperson_id.is_some() {
-                            delivery = sqlx::query_as!(DeliveryPersonResponse, "select * from tb_fdelivery_person where person_id = $1", &x.package_deliveryperson_id.unwrap())
-                                .fetch_one(&postgres)
-                                .await
-                                .map_err(MyError::DBError).unwrap();
+                let items: Vec<PackageItems> = sqlx::query_as!(PackageItems, "select * from tb_fpackage_items where package_id = $1", &x.package_uuid)
+                    .fetch_all(&postgres)
+                    .await
+                    .map_err(MyError::DBError)
+                    .unwrap();
 
-                            delivery_user = sqlx::query_as!(UserResponse, "select * from tb_fuser where user_id = $1", &delivery.person_user_id)
-                                .fetch_one(&postgres)
-                                .await
-                                .map_err(MyError::DBError).unwrap();
+                let mut payer: ClientResponse;
+                let mut payer_user: UserResponse;
 
-                            transport = sqlx::query_as!(TransportResponse, "select * from tb_ftransport where transport_id = $1", &delivery.person_transport_id)
-                                .fetch_one(&postgres)
-                                .await
-                                .map_err(MyError::DBError).unwrap();
-                        } else {
-                            delivery = DeliveryPersonResponse {
-                                person_id: 0,
-                                person_lastname: "".to_string(),
-                                person_firstname: "".to_string(),
-                                person_middlename: "".to_string(),
-                                person_user_id: Default::default(),
-                                person_transport_id: 0,
-                            };
-                            
-                            delivery_user = UserResponse {
-                                user_id: Default::default(),
-                                user_login: "".to_string(),
-                                user_password: "".to_string(),
-                                user_email: None,
-                                user_phone: "".to_string(),
-                                user_access_token: None,
-                                user_role_id: 0,
-                            };
-                            
-                            transport = TransportResponse {
-                                transport_id: 0,
-                                transport_name: "".to_string(),
-                                transport_reg_number: "".to_string(),
-                                transport_type_id: 0,
-                                transport_status_id: 0,
-                            };
-                        }
-                            
-                        let items: Vec<PackageItems> = sqlx::query_as!(PackageItems, "select * from tb_fpackage_items where package_id = $1", &x.package_uuid)
-                            .fetch_all(&postgres)
-                            .await
-                            .map_err(MyError::DBError)
-                            .unwrap();
+                if sender.client_id == x.package_payer_id {
+                    payer = sender.clone();
+                    payer_user = sender_user.clone();
+                }
+                else {
+                    payer = receiver.clone();
+                    payer_user = receiver_user.clone();
+                }
 
-                        let mut payer: ClientResponse;
-                        let mut payer_user: UserResponse;
-
-                        if sender.client_id == x.package_payer_id {
-                            payer = sender.clone();
-                            payer_user = sender_user.clone();
-                        }
-                        else {
-                            payer = receiver.clone();
-                            payer_user = receiver_user.clone();
-                        }
-
-                        Package {
-                            package_uuid: x.clone().package_uuid,
-                            package_send_date: x.package_send_date.unwrap(),
-                            package_receive_date: x.package_receive_date.unwrap(),
-                            package_weight: x.package_weight.unwrap(),
-                            package_type: sqlx::query_as!(
+                Package {
+                    package_uuid: x.clone().package_uuid,
+                    package_send_date: x.package_send_date.unwrap(),
+                    package_receive_date: x.package_receive_date.unwrap(),
+                    package_weight: x.package_weight.unwrap(),
+                    package_type: sqlx::query_as!(
                                 PackageType,
                                 "select * from tb_package_type where type_id = $1",
                                 &x.package_type_id
                             )
-                            .fetch_one(&postgres)
-                            .await
-                            .map_err(MyError::DBError)
-                            .unwrap(),
-                            package_status: sqlx::query_as!(
+                        .fetch_one(&postgres)
+                        .await
+                        .map_err(MyError::DBError)
+                        .unwrap(),
+                    package_status: sqlx::query_as!(
                                 PackageStatus,
                                 "select * from tb_package_status where status_id = $1",
                                 &x.package_status_id
                             )
-                            .fetch_one(&postgres)
-                            .await
-                            .map_err(MyError::DBError)
-                            .unwrap(),
-                            package_sender: Client {
-                                client_id: sender.client_id,
-                                client_lastname: sender.client_lastname,
-                                client_firstname: sender.client_firstname,
-                                client_middlename: sender.client_middlename,
-                                client_user: User {
-                                    user_id: sender_user.user_id,
-                                    user_login: sender_user.user_login,
-                                    user_password: sender_user.user_password,
-                                    user_email: sender_user.user_email.unwrap(),
-                                    user_phone: sender_user.user_phone,
-                                    user_access_token: sender_user.user_access_token.unwrap(),
-                                    user_role: sqlx::query_as!(RoleResponse, "select * from tb_fuser_role where role_id = $1", &sender_user.user_role_id)
-                                        .fetch_one(&postgres)
-                                        .await
-                                        .map_err(MyError::DBError).unwrap(),
-                                },
-                            },
-                            package_receiver: Client {
-                                client_id: receiver.client_id,
-                                client_lastname: receiver.client_lastname,
-                                client_firstname: receiver.client_firstname,
-                                client_middlename: receiver.client_middlename,
-                                client_user: User {
-                                    user_id: receiver_user.user_id,
-                                    user_login: receiver_user.user_login,
-                                    user_password: receiver_user.user_password,
-                                    user_email: receiver_user.user_email.unwrap(),
-                                    user_phone: receiver_user.user_phone,
-                                    user_access_token: receiver_user.user_access_token.unwrap(),
-                                    user_role: sqlx::query_as!(RoleResponse, "select * from tb_fuser_role where role_id = $1", &receiver_user.user_role_id)
-                                        .fetch_one(&postgres)
-                                        .await
-                                        .map_err(MyError::DBError).unwrap(),
-                                },
-                            },
-                            package_warehouse: Warehouse {
-                                warehouse_id: warehouse.warehouse_id,
-                                warehouse_name: warehouse.warehouse_name,
-                                warehouse_address: warehouse.warehouse_address,
-                                warehouse_type: sqlx::query_as!(WarehouseTypeResponse, "select * from tb_fwarehouse_type where type_id = $1", warehouse.warehouse_type_id)
-                                    .fetch_one(&postgres)
-                                    .await
-                                    .map_err(MyError::DBError).unwrap(),
-                            },
-                            package_paytype: sqlx::query_as!(PackagePaytype, "select * from tb_package_paytype where type_id = $1", &x.package_paytype_id)
+                        .fetch_one(&postgres)
+                        .await
+                        .map_err(MyError::DBError)
+                        .unwrap(),
+                    package_sender: Client {
+                        client_id: sender.client_id,
+                        client_lastname: sender.client_lastname,
+                        client_firstname: sender.client_firstname,
+                        client_middlename: sender.client_middlename,
+                        client_user: User {
+                            user_id: sender_user.user_id,
+                            user_login: sender_user.user_login,
+                            user_password: sender_user.user_password,
+                            user_email: sender_user.user_email.unwrap(),
+                            user_phone: sender_user.user_phone,
+                            user_access_token: sender_user.user_access_token.unwrap(),
+                            user_role: sqlx::query_as!(RoleResponse, "select * from tb_fuser_role where role_id = $1", &sender_user.user_role_id)
                                 .fetch_one(&postgres)
                                 .await
                                 .map_err(MyError::DBError).unwrap(),
-                            package_payer: Client {
-                                client_id: payer.client_id,
-                                client_lastname: payer.client_lastname,
-                                client_firstname: payer.client_firstname,
-                                client_middlename: payer.client_middlename,
-                                client_user: User {
-                                    user_id: payer_user.user_id,
-                                    user_login: payer_user.user_login,
-                                    user_password: payer_user.user_password,
-                                    user_email: payer_user.user_email.unwrap(),
-                                    user_phone: payer_user.user_phone,
-                                    user_access_token: payer_user.user_access_token.unwrap(),
-                                    user_role: sqlx::query_as!(RoleResponse, "select * from tb_fuser_role where role_id = $1", &payer_user.user_role_id)
-                                        .fetch_one(&postgres)
-                                        .await
-                                        .map_err(MyError::DBError).unwrap(),
-                                },
-                            },
-                            package_items: get_items(yield_pg, items).await,
-                            package_deliveryperson: Option::from(DeliveryPerson {
-                                person_id: delivery.person_id,
-                                person_lastname: delivery.person_lastname,
-                                person_firstname: delivery.person_firstname,
-                                person_middlename: delivery.person_middlename,
-                                person_user: User {
-                                    user_id: delivery_user.user_id,
-                                    user_login: delivery_user.user_login,
-                                    user_password: delivery_user.user_password,
-                                    user_email: delivery_user.user_email.unwrap(),
-                                    user_phone: delivery_user.user_phone,
-                                    user_access_token: delivery_user.user_access_token.unwrap(),
-                                    user_role: sqlx::query_as!(RoleResponse, "select * from tb_fuser_role where role_id = $1", &delivery_user.user_role_id)
-                                        .fetch_one(&postgres)
-                                        .await
-                                        .map_err(MyError::DBError).unwrap(),
-                                },
-                                person_transport: Transport {
-                                    transport_id: transport.transport_id,
-                                    transport_name: transport.transport_name,
-                                    transport_reg_number: transport.transport_reg_number,
-                                    transport_type: sqlx::query_as!(TransportTypeResponse, "select * from tb_ftransport_type where type_id = $1", transport.transport_type_id)
-                                        .fetch_one(&postgres)
-                                        .await
-                                        .map_err(MyError::DBError).unwrap(),
-                                    transport_status: sqlx::query_as!(TransportStatusResponse, "select * from tb_ftransport_status where status_id = $1", transport.transport_status_id)
-                                        .fetch_one(&postgres)
-                                        .await
-                                        .map_err(MyError::DBError).unwrap(),
-                                },
-                            })
-                        }
+                        },
+                    },
+                    package_receiver: Client {
+                        client_id: receiver.client_id,
+                        client_lastname: receiver.client_lastname,
+                        client_firstname: receiver.client_firstname,
+                        client_middlename: receiver.client_middlename,
+                        client_user: User {
+                            user_id: receiver_user.user_id,
+                            user_login: receiver_user.user_login,
+                            user_password: receiver_user.user_password,
+                            user_email: receiver_user.user_email.unwrap(),
+                            user_phone: receiver_user.user_phone,
+                            user_access_token: receiver_user.user_access_token.unwrap(),
+                            user_role: sqlx::query_as!(RoleResponse, "select * from tb_fuser_role where role_id = $1", &receiver_user.user_role_id)
+                                .fetch_one(&postgres)
+                                .await
+                                .map_err(MyError::DBError).unwrap(),
+                        },
+                    },
+                    package_warehouse: Warehouse {
+                        warehouse_id: warehouse.warehouse_id,
+                        warehouse_name: warehouse.warehouse_name,
+                        warehouse_address: warehouse.warehouse_address,
+                        warehouse_type: sqlx::query_as!(WarehouseTypeResponse, "select * from tb_fwarehouse_type where type_id = $1", warehouse.warehouse_type_id)
+                            .fetch_one(&postgres)
+                            .await
+                            .map_err(MyError::DBError).unwrap(),
+                    },
+                    package_paytype: sqlx::query_as!(PackagePaytype, "select * from tb_package_paytype where type_id = $1", &x.package_paytype_id)
+                        .fetch_one(&postgres)
+                        .await
+                        .map_err(MyError::DBError).unwrap(),
+                    package_payer: Client {
+                        client_id: payer.client_id,
+                        client_lastname: payer.client_lastname,
+                        client_firstname: payer.client_firstname,
+                        client_middlename: payer.client_middlename,
+                        client_user: User {
+                            user_id: payer_user.user_id,
+                            user_login: payer_user.user_login,
+                            user_password: payer_user.user_password,
+                            user_email: payer_user.user_email.unwrap(),
+                            user_phone: payer_user.user_phone,
+                            user_access_token: payer_user.user_access_token.unwrap(),
+                            user_role: sqlx::query_as!(RoleResponse, "select * from tb_fuser_role where role_id = $1", &payer_user.user_role_id)
+                                .fetch_one(&postgres)
+                                .await
+                                .map_err(MyError::DBError).unwrap(),
+                        },
+                    },
+                    package_items: get_items(yield_pg, items).await,
+                    package_deliveryperson: Option::from(DeliveryPerson {
+                        person_id: delivery.person_id,
+                        person_lastname: delivery.person_lastname,
+                        person_firstname: delivery.person_firstname,
+                        person_middlename: delivery.person_middlename,
+                        person_user: User {
+                            user_id: delivery_user.user_id,
+                            user_login: delivery_user.user_login,
+                            user_password: delivery_user.user_password,
+                            user_email: delivery_user.user_email.unwrap(),
+                            user_phone: delivery_user.user_phone,
+                            user_access_token: delivery_user.user_access_token.unwrap(),
+                            user_role: sqlx::query_as!(RoleResponse, "select * from tb_fuser_role where role_id = $1", &delivery_user.user_role_id)
+                                .fetch_one(&postgres)
+                                .await
+                                .map_err(MyError::DBError).unwrap(),
+                        },
+                        person_transport: Transport {
+                            transport_id: transport.transport_id,
+                            transport_name: transport.transport_name,
+                            transport_reg_number: transport.transport_reg_number,
+                            transport_type: sqlx::query_as!(TransportTypeResponse, "select * from tb_ftransport_type where type_id = $1", transport.transport_type_id)
+                                .fetch_one(&postgres)
+                                .await
+                                .map_err(MyError::DBError).unwrap(),
+                            transport_status: sqlx::query_as!(TransportStatusResponse, "select * from tb_ftransport_status where status_id = $1", transport.transport_status_id)
+                                .fetch_one(&postgres)
+                                .await
+                                .map_err(MyError::DBError).unwrap(),
+                        },
                     })
-                    .await
-                    .unwrap()
-                })
-                .buffer_unordered(10)
-                .collect::<Vec<_>>()
-                .await;
+                }
+            })
+                .await
+                .unwrap()
+        })
+        .buffer_unordered(10)
+        .collect::<Vec<_>>()
+        .await;
 
-            let _: () = state.redis.set("packages", &res).await.unwrap();
+    // let _: () = state.redis.set("packages", &res).await.unwrap();
 
-            Ok(Json(res))
-        }
-        false => Ok(Json(packages_redis)),
-    }
+    Ok(Json(res))
 }
 
 pub async fn get_package_by_id(
@@ -352,18 +357,18 @@ pub async fn get_package_by_id(
                     user_id: Default::default(),
                     user_login: "".to_string(),
                     user_password: "".to_string(),
-                    user_email: None,
+                    user_email: Option::from("".to_string()),
                     user_phone: "".to_string(),
-                    user_access_token: None,
-                    user_role_id: 0,
+                    user_access_token: Option::from("".to_string()),
+                    user_role_id: 1,
                 };
 
                 transport = TransportResponse {
                     transport_id: 0,
                     transport_name: "".to_string(),
                     transport_reg_number: "".to_string(),
-                    transport_type_id: 0,
-                    transport_status_id: 0,
+                    transport_type_id: 1,
+                    transport_status_id: 1,
                 };
             }
 
@@ -688,18 +693,18 @@ pub async fn get_client_packages_by_id(
                         user_id: Default::default(),
                         user_login: "".to_string(),
                         user_password: "".to_string(),
-                        user_email: None,
+                        user_email: Option::from("".to_string()),
                         user_phone: "".to_string(),
-                        user_access_token: None,
-                        user_role_id: 0,
+                        user_access_token: Option::from("".to_string()),
+                        user_role_id: 1,
                     };
 
                     transport = TransportResponse {
                         transport_id: 0,
                         transport_name: "".to_string(),
                         transport_reg_number: "".to_string(),
-                        transport_type_id: 0,
-                        transport_status_id: 0,
+                        transport_type_id: 1,
+                        transport_status_id: 1,
                     };
                 }
 

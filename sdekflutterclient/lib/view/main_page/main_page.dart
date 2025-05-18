@@ -39,101 +39,102 @@ class MainState extends State<MainComponent> with GetItStateMixin {
   }
 
   void ini() {
-    setState(() {
-      Future.delayed(Duration.zero, () async {
-        await _controller.getCurrentUser();
+    Future.delayed(Duration.zero, () async {
+      await _controller.getCurrentUser();
 
-        if (_controller.currentUser.user_role.role_id == 1) {
-          await _controller.getCurrentClient();
-        } else {
-          await _controller.getCurrentEmployee();
-        }
+      if (_controller.currentUser.user_role.role_id == 1) {
+        await _controller.getCurrentClient();
+      } else {
+        await _controller.getCurrentEmployee();
+      }
 
-        if (_controller.currentUser.user_role.role_id == 2 && _controller.currentEmployee.employee_position.position_id == 1) {
-          _views = [
-            const PackagesPage(),
-            const PackagesPage(), // <-- todo add table widget with employees
-            const SendPackagePage(),
-            const TrackPackagePage(),
-            const AccountPage()
-          ];
-          _bottomItems = [
-            BottomNavigationBarItem(
-                icon: Icon(Icons.list),
-                label: 'Посылки'
-            ),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.person),
-                label: 'Сотрудники'
-            ),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.send),
-                label: 'Оформить'
-            ),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.track_changes),
-                label: 'Отследить'
-            ),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.account_circle),
-                label: 'Аккаунт'
-            )
-          ];
-        }
+      if (_controller.currentUser.user_role.role_id == 2 && _controller.currentEmployee.employee_position.position_id == 1) {
+        _views = [
+          const PackagesPage(),
+          const PackagesPage(), // <-- todo add table widget with employees
+          const SendPackagePage(),
+          const TrackPackagePage(),
+          const AccountPage()
+        ];
+        _bottomItems = [
+          BottomNavigationBarItem(
+              icon: Icon(Icons.list),
+              label: 'Посылки'
+          ),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.person),
+              label: 'Сотрудники'
+          ),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.send),
+              label: 'Оформить'
+          ),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.track_changes),
+              label: 'Отследить'
+          ),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.account_circle),
+              label: 'Аккаунт'
+          )
+        ];
+      }
 
-        if (_controller.currentUser.user_role.role_id == 2 && _controller.currentEmployee.employee_position.position_id != 1) {
-          _views = [
-            const PackagesPage(),
-            // todo add table widget with employees
-            // todo add table widget with warehouses
-            const TrackPackagePage(),
-            const AccountPage()
-          ];
-          _bottomItems = [
-            BottomNavigationBarItem(
-                icon: Icon(Icons.list),
-                label: 'Посылки'
-            ),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.person),
-                label: 'Сотрудники'
-            ),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.warehouse),
-                label: 'Склады'
-            ),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.track_changes),
-                label: 'Отследить'
-            ),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.account_circle),
-                label: 'Аккаунт'
-            )
-          ];
-        }
+      if (_controller.currentUser.user_role.role_id == 2 && _controller.currentEmployee.employee_position.position_id != 1) {
+        _views = [
+          const PackagesPage(),
+          // todo add table widget with employees
+          // todo add table widget with warehouses
+          const TrackPackagePage(),
+          const AccountPage()
+        ];
+        _bottomItems = [
+          BottomNavigationBarItem(
+              icon: Icon(Icons.list),
+              label: 'Посылки'
+          ),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.person),
+              label: 'Сотрудники'
+          ),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.warehouse),
+              label: 'Склады'
+          ),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.track_changes),
+              label: 'Отследить'
+          ),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.account_circle),
+              label: 'Аккаунт'
+          )
+        ];
+      }
 
-        if (_controller.currentUser.user_role.role_id == 1) {
-          _views = [
-            const HomePage(),
-            const TrackPackagePage(),
-            const AccountPage()
-          ];
-          _bottomItems = [
-            BottomNavigationBarItem(
-                icon: Icon(Icons.home),
-                label: 'Дом'
-            ),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.track_changes),
-                label: 'Отследить'
-            ),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.account_circle),
-                label: 'Аккаунт'
-            )
-          ];
-        }
+      if (_controller.currentUser.user_role.role_id == 1) {
+        _views = [
+          const HomePage(),
+          const TrackPackagePage(),
+          const AccountPage()
+        ];
+        _bottomItems = [
+          BottomNavigationBarItem(
+              icon: Icon(Icons.home),
+              label: 'Дом'
+          ),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.track_changes),
+              label: 'Отследить'
+          ),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.account_circle),
+              label: 'Аккаунт'
+          )
+        ];
+      }
+      setState(() {
+
       });
     });
   }
