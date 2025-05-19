@@ -163,6 +163,7 @@ import 'package:clientapp/remote/repositoryimpl/warehouse_data_repository_impl.d
 import 'package:clientapp/view/account_page/account_controller.dart';
 import 'package:clientapp/view/client_package_details/client_package_details_controller.dart';
 import 'package:clientapp/view/client_packages_page/client_packages_page_controller.dart';
+import 'package:clientapp/view/employees_page/employees_page_controller.dart';
 import 'package:clientapp/view/home_page/controller/home_controller.dart';
 import 'package:clientapp/view/login_page/controller/login_page_controller.dart';
 import 'package:clientapp/view/main_page/main_page_controller.dart';
@@ -362,8 +363,9 @@ void initGetIt() {
   getIt.registerLazySingleton(() => LoginPageController(getUserByLoginPassUseCase: getIt(), getCurrentUserUseCase: getIt(), saveCurrentUserUseCase: getIt(), getClientByUserIdUseCase: getIt(), saveCurrentClientUseCase: getIt(), getEmployeeByUserIdUseCase: getIt(), saveCurrentEmployeeUseCase: getIt()));
   getIt.registerLazySingleton(() => ClientPackagesPageController(getPackagesByClientIdUseCase: getIt(), getCurrentClientUseCase: getIt()));
   getIt.registerLazySingleton(() => ClientPackageDetailsController());
-  getIt.registerLazySingleton(() => AccountController(getCurrentClientUseCase: getIt()));
+  getIt.registerLazySingleton(() => AccountController(getCurrentClientUseCase: getIt(), getCurrentEmployeeUseCase: getIt()));
   getIt.registerLazySingleton(() => RegisterController(getRoleByIdUseCase: getIt(), addUserUseCase: getIt()));
   getIt.registerLazySingleton(() => MainPageController(getCurrentUserUseCase: getIt(), getCurrentClientUseCase: getIt(), getCurrentEmployeeUseCase: getIt()));
-  getIt.registerFactory(() => PackagesPageController(getPackagesUseCase: getIt()));
+  getIt.registerLazySingleton(() => PackagesPageController(getPackagesUseCase: getIt(), getClientsUseCase: getIt(), getDeliveryPersonalUseCase: getIt(), getPackageStatusesUseCase: getIt(), getPackageTypesUseCase: getIt(), getWarehousesUseCase: getIt()));
+  getIt.registerLazySingleton(() => EmployeesPageContoller(getEmployeesUseCase: getIt(), getPositionsUseCase: getIt(), addEmployeeUseCase: getIt()));
 }

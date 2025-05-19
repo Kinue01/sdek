@@ -72,7 +72,7 @@ class EmployeeApiImpl implements EmployeeApi {
 
   @override
   Future<List<Employee>> getEmployees() async {
-    Response<List<Map<String, dynamic>>> response = await client.get("$readUrl/api/employees");
+    Response<List<dynamic>> response = await client.get("$readUrl/api/employees");
     switch (response.statusCode) {
       case 200:
         return response.data!.map((e) => Employee.fromMap(e)).toList();

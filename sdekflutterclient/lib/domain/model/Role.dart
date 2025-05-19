@@ -3,8 +3,8 @@ import 'dart:convert';
 import 'package:equatable/equatable.dart';
 
 class Role with EquatableMixin {
-  final int? role_id;
-  final String? role_name;
+  late final int? role_id;
+  late final String? role_name;
 
   Role({
     this.role_id,

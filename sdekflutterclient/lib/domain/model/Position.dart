@@ -4,9 +4,9 @@ import 'package:equatable/equatable.dart';
 
 class Position with EquatableMixin {
 
-  final int? position_id;
-  final String? position_name;
-  final int? position_base_pay;
+  late final int? position_id;
+  late final String? position_name;
+  late final int? position_base_pay;
 
   Position({
     this.position_id,

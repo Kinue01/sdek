@@ -1,4 +1,5 @@
 import 'package:clientapp/view/account_page/account_page.dart';
+import 'package:clientapp/view/employees_page/employees_page.dart';
 import 'package:clientapp/view/home_page/view/home_view.dart';
 import 'package:clientapp/view/main_page/main_page_controller.dart';
 import 'package:clientapp/view/packages_page/packages_page.dart';
@@ -51,7 +52,7 @@ class MainState extends State<MainComponent> with GetItStateMixin {
       if (_controller.currentUser.user_role.role_id == 2 && _controller.currentEmployee.employee_position.position_id == 1) {
         _views = [
           const PackagesPage(),
-          const PackagesPage(), // <-- todo add table widget with employees
+          const EmployeesPage(),
           const SendPackagePage(),
           const TrackPackagePage(),
           const AccountPage()
@@ -83,7 +84,7 @@ class MainState extends State<MainComponent> with GetItStateMixin {
       if (_controller.currentUser.user_role.role_id == 2 && _controller.currentEmployee.employee_position.position_id != 1) {
         _views = [
           const PackagesPage(),
-          // todo add table widget with employees
+          const EmployeesPage(),
           // todo add table widget with warehouses
           const TrackPackagePage(),
           const AccountPage()

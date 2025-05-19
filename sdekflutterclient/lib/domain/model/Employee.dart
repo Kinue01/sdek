@@ -5,11 +5,11 @@ import 'User.dart';
 
 class Employee with EquatableMixin {
   final String? employee_id;
-  final String? employee_lastname;
-  final String? employee_firstname;
-  final String? employee_middlename;
+  late final String? employee_lastname;
+  late final String? employee_firstname;
+  late final String? employee_middlename;
   final Position employee_position;
-  final User employee_user;
+  late final User employee_user;
 
   Employee({
     this.employee_id,

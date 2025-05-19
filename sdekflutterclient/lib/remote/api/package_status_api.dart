@@ -45,7 +45,7 @@ class PackageStatusApiImpl implements PackageStatusApi {
 
   @override
   Future<PackageStatus> getPackageStatusById(int id) async {
-    Response<Map<String, dynamic>> response = await client.get("$readUrl/api/status", options: Options(extra: {'id': id}));
+    Response<Map<String, dynamic>> response = await client.get("$readUrl/api/package_status", options: Options(extra: {'id': id}));
     switch (response.statusCode) {
       case 200:
         return PackageStatus.fromMap(response.data!);
@@ -56,7 +56,7 @@ class PackageStatusApiImpl implements PackageStatusApi {
 
   @override
   Future<List<PackageStatus>> getStatuses() async {
-    Response<List<Map<String, dynamic>>> response = await client.get("$readUrl/api/statuses");
+    Response<List<dynamic>> response = await client.get("$readUrl/api/package_statuses");
     switch (response.statusCode) {
       case 200:
         return response.data!.map((e) => PackageStatus.fromMap(e)).toList();

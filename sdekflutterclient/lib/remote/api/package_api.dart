@@ -59,7 +59,7 @@ class PackageApiImpl implements PackageApi {
 
   @override
   Future<List<Package>> getPackages() async {
-    Response<List<Map<String, dynamic>>> response = await client.get("$readUrl/api/packages");
+    Response<List<dynamic>> response = await client.get("$readUrl/api/packages");
     switch (response.statusCode) {
       case 200:
         return response.data!.map((e) => Package.fromMap(e)).toList();

@@ -4,10 +4,10 @@ import 'Role.dart';
 
 class User with EquatableMixin {
   final String? user_id;
-  final String? user_login;
-  final String? user_password;
-  final String? user_email;
-  final String? user_phone;
+  late final String? user_login;
+  late final String? user_password;
+  late final String? user_email;
+  late final String? user_phone;
   final String? user_access_token;
   final Role user_role;
 

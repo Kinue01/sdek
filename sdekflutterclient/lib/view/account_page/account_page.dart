@@ -1,4 +1,5 @@
 import 'package:clientapp/domain/model/Client.dart';
+import 'package:clientapp/domain/model/Employee.dart';
 import 'package:clientapp/domain/model/Role.dart';
 import 'package:clientapp/domain/model/User.dart';
 import 'package:clientapp/view/account_page/account_controller.dart';
@@ -26,11 +27,11 @@ class AccountComponent extends StatefulWidget with GetItStatefulWidgetMixin {
 class AccountState extends State<AccountComponent> with GetItStateMixin {
   late AccountController? controller;
   Client? client;
+  Employee? employee;
 
   @override
   void dispose() {
     super.dispose();
-    controller?.client.value = null;
     controller = null;
   }
 
@@ -44,6 +45,11 @@ class AccountState extends State<AccountComponent> with GetItStateMixin {
     controller?.client.addListener(() {
       setState(() {
         client = controller!.client.value;
+      });
+    });
+    controller?.employee.addListener(() {
+      setState(() {
+        employee = controller!.employee.value;
       });
     });
   }
@@ -60,19 +66,28 @@ class AccountState extends State<AccountComponent> with GetItStateMixin {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
+              client != null && client!.client_id != null ?
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
                   Image.asset("assets/images/acc.png", width: 200, height: 200),
                   Text("${client?.client_lastname} ${client?.client_firstname} ${client?.client_middlename}")
                 ],
+              ) :
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  Image.asset("assets/images/acc.png", width: 200, height: 200),
+                  Text("${employee?.employee_lastname} ${employee?.employee_firstname} ${employee?.employee_middlename}")
+                ],
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
-                  Text("${client?.client_user.user_phone}"),
-                  Text("${client?.client_user.user_email}"),
-                  Text("${client?.client_user.user_role.role_name}")
+                  Text("${employee?.employee_user.user_phone}"),
+                  Text("${employee?.employee_user.user_email}"),
+                  Text("${employee?.employee_user.user_role.role_name}"),
+                  Text("${employee?.employee_position.position_name}")
                 ],
               )
             ],

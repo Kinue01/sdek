@@ -1,3 +1,8 @@
+import 'package:clientapp/domain/model/Client.dart';
+import 'package:clientapp/domain/model/DeliveryPerson.dart';
+import 'package:clientapp/domain/model/PackageStatus.dart';
+import 'package:clientapp/domain/model/PackageType.dart';
+import 'package:clientapp/domain/model/Warehouse.dart';
 import 'package:clientapp/view/client_package_details/client_package_details.dart';
 import 'package:clientapp/view/packages_page/packages_page_controller.dart';
 import 'package:flutter/material.dart';
@@ -32,13 +37,20 @@ class PackagesState extends State<PackagesComponent> with GetItStateMixin {
     'package_status': null,
     'package_sender': null,
     'package_receiver': null,
-    // Add more filters as needed
+    'package_warehouse': null,
+    'package_deliveryperson': null
   };
 
   @override
   void initState() {
     super.initState();
     _controller = get();
+    Future.delayed(Duration.zero, () async {
+      await _controller.init();
+      setState(() {
+
+      });
+    });
   }
 
   // Dummy filter UI, can be extended
@@ -46,49 +58,59 @@ class PackagesState extends State<PackagesComponent> with GetItStateMixin {
     return Wrap(
       spacing: 8,
       children: [
-        FilterChip(
-          label: Text('Type'),
-          selected: filters['package_type'] != null,
-          onSelected: (_) {
-            setState(() {
-              filters['package_type'] =
-                  filters['package_type'] == null ? 'Electronics' : null;
-              filteredPackages();
-            });
+        DropdownMenu<PackageStatus>(
+          label: Text("Status"),
+          onSelected: (PackageStatus? status) {
+            filters['package_status'] = status;
+            filteredPackages();
           },
+            dropdownMenuEntries: _controller.packStatuses
+                .map<DropdownMenuEntry<PackageStatus>>((PackageStatus status) => DropdownMenuEntry<PackageStatus>(value: status, label: status.status_name!)).toList()
         ),
-        FilterChip(
-          label: Text('Status'),
-          selected: filters['package_status'] != null,
-          onSelected: (_) {
-            setState(() {
-              filters['package_status'] =
-                  filters['package_status'] == null ? 'Delivered' : null;
+        DropdownMenu<PackageType>(
+          label: Text("Type"),
+            onSelected: (PackageType? status) {
+              filters['package_type'] = status;
               filteredPackages();
-            });
-          },
+            },
+            dropdownMenuEntries: _controller.packTypes
+                .map<DropdownMenuEntry<PackageType>>((PackageType status) => DropdownMenuEntry<PackageType>(value: status, label: status.type_name!)).toList()
         ),
-        FilterChip(
-          label: Text('Sender'),
-          selected: filters['package_sender'] != null,
-          onSelected: (_) {
-            setState(() {
-              filters['package_sender'] =
-                  filters['package_sender'] == null ? 'John Doe' : null;
+        DropdownMenu<Client>(
+          label: Text("Sender"),
+            onSelected: (Client? status) {
+              filters['package_sender'] = status;
               filteredPackages();
-            });
-          },
+            },
+            dropdownMenuEntries: _controller.clients
+                .map<DropdownMenuEntry<Client>>((Client status) => DropdownMenuEntry<Client>(value: status, label: "${status.client_lastname!} ${status.client_firstname!} ${status.client_middlename!}")).toList()
         ),
-        FilterChip(
-          label: Text('Receiver'),
-          selected: filters['package_receiver'] != null,
-          onSelected: (_) {
-            setState(() {
-              filters['package_receiver'] =
-                  filters['package_receiver'] == null ? 'Jane Smith' : null;
+        DropdownMenu<Client>(
+          label: Text("Receiver"),
+            onSelected: (Client? status) {
+              filters['package_receiver'] = status;
               filteredPackages();
-            });
-          },
+            },
+            dropdownMenuEntries: _controller.clients
+                .map<DropdownMenuEntry<Client>>((Client status) => DropdownMenuEntry<Client>(value: status, label: "${status.client_lastname!} ${status.client_firstname!} ${status.client_middlename!}")).toList()
+        ),
+        DropdownMenu<Warehouse>(
+            label: Text("Warehouse"),
+            onSelected: (Warehouse? status) {
+              filters['package_warehouse'] = status;
+              filteredPackages();
+            },
+            dropdownMenuEntries: _controller.warehouses
+                .map<DropdownMenuEntry<Warehouse>>((Warehouse status) => DropdownMenuEntry<Warehouse>(value: status, label: status.warehouse_name!)).toList()
+        ),
+        DropdownMenu<DeliveryPerson>(
+            label: Text("Delivery person"),
+            onSelected: (DeliveryPerson? status) {
+              filters['package_deliveryperson'] = status;
+              filteredPackages();
+            },
+            dropdownMenuEntries: _controller.delivery
+                .map<DropdownMenuEntry<DeliveryPerson>>((DeliveryPerson status) => DropdownMenuEntry<DeliveryPerson>(value: status, label: "${status.person_lastname!} ${status.person_firstname!} ${status.person_middlename!}")).toList()
         ),
       ],
     );
@@ -104,39 +126,44 @@ class PackagesState extends State<PackagesComponent> with GetItStateMixin {
       // Apply additional filters
       final matchesType = filters['package_type'] == null ||
           (pkg.package_type != null &&
-              pkg.package_type!.type_name!
-                  .toLowerCase()
-                  .contains(filters['package_type'].toLowerCase()));
+              pkg.package_type!.type_id! == filters['package_type'].type_id!);
 
       final matchesStatus = filters['package_status'] == null ||
           (pkg.package_status != null &&
-              pkg.package_status!.status_name!
-                  .toLowerCase()
-                  .contains(filters['package_status'].toLowerCase()));
+              pkg.package_status!.status_id! == filters['package_status'].status_id!);
 
       final matchesSender = filters['package_sender'] == null ||
           (pkg.package_sender != null &&
-              pkg.package_sender!.client_lastname!
-                  .toLowerCase()
-                  .contains(filters['package_sender'].toLowerCase()));
+              pkg.package_sender!.client_id! == filters['package_sender'].client_id!);
 
       final matchesReceiver = filters['package_receiver'] == null ||
           (pkg.package_receiver != null &&
-              pkg.package_receiver!.client_lastname!
-                  .toLowerCase()
-                  .contains(filters['package_receiver'].toLowerCase()));
+              pkg.package_receiver!.client_id! == filters['package_receiver'].client_id!);
+
+      final matchesWarehouse = filters['package_warehouse'] == null ||
+          (pkg.package_warehouse != null &&
+              pkg.package_warehouse!.warehouse_id! == filters['package_warehouse'].warehouse_id!);
+
+      final matchesDelivery = filters['package_deliveryperson'] == null ||
+          (pkg.package_deliveryperson != null &&
+              pkg.package_deliveryperson!.person_id! == filters['package_deliveryperson'].person_id!);
 
       return matchesSearch &&
           matchesType &&
           matchesStatus &&
           matchesSender &&
-          matchesReceiver;
+          matchesReceiver &&
+          matchesWarehouse &&
+          matchesDelivery;
     }).toList();
+    setState(() {
+
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    final list = watchX((PackagesPageController c) => c.filteredPackages);
+    var list = watchX((PackagesPageController c) => c.filteredPackages);
 
     return Scaffold(
         appBar: AppBar(title: Text('Посылки')),
@@ -152,9 +179,8 @@ class PackagesState extends State<PackagesComponent> with GetItStateMixin {
                   prefixIcon: Icon(Icons.search),
                 ),
                 onChanged: (value) {
-                  setState(() {
-                    searchQuery = value;
-                  });
+                  searchQuery = value;
+                  filteredPackages();
                 },
               ),
             ),

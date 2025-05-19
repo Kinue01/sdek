@@ -246,22 +246,24 @@ pub async fn get_employee_by_user_id(
 pub async fn get_positions(
     State(mut state): State<AppState>,
 ) -> Result<Json<Vec<PositionResponse>>, MyError> {
-    let poses_redis: Vec<PositionResponse> =
-        state.redis.json_get("poses", "$").await.map_err(MyError::RDbError)?;
+    // let poses_redis: Vec<PositionResponse> =
+    //     state.redis.json_get("poses", "$").await.map_err(MyError::RDbError)?;
+    // 
+    // match poses_redis.is_empty() {
+    //     true => {
+    //         
+    //     }
+    //     false => Ok(Json(poses_redis)),
+    // }
 
-    match poses_redis.is_empty() {
-        true => {
-            let poses = sqlx::query_as!(PositionResponse, "select * from tb_position")
-                .fetch_all(&state.postgres)
-                .await
-                .map_err(MyError::DBError)?;
+    let poses = sqlx::query_as!(PositionResponse, "select * from tb_position")
+        .fetch_all(&state.postgres)
+        .await
+        .map_err(MyError::DBError)?;
 
-            let _: () = state.redis.json_set("poses", "$", &poses).await.unwrap();
+    // let _: () = state.redis.json_set("poses", "$", &poses).await.unwrap();
 
-            Ok(Json(poses))
-        }
-        false => Ok(Json(poses_redis)),
-    }
+    Ok(Json(poses))
 }
 
 #[derive(Deserialize, IntoParams)]
