@@ -6,28 +6,17 @@
   <component name="ChangeListManager">
     <list default="true" id="8150d90f-2e70-4c11-baaa-2d9bf53faa8e" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/domain/model/Employee.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/domain/model/Employee.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/domain/model/Position.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/domain/model/Position.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/domain/model/Role.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/domain/model/Role.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/domain/model/User.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/domain/model/User.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/images/acc.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/images/acc.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/images/logo.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/images/logo.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/inject.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/inject.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/remote/api/employee_api.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/remote/api/employee_api.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/remote/api/package_api.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/remote/api/package_api.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/remote/api/package_status_api.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/remote/api/package_status_api.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/view/account_page/account_controller.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/view/account_page/account_controller.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/view/account_page/account_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/view/account_page/account_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/remote/api/position_api.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/remote/api/position_api.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/view/employees_page/employees_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/view/employees_page/employees_page.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/view/employees_page/employees_page_controller.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/view/employees_page/employees_page_controller.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/view/main_page/main_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/view/main_page/main_page.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/view/packages_page/packages_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/view/packages_page/packages_page.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/view/packages_page/packages_page_controller.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/view/packages_page/packages_page_controller.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/linux/flutter/generated_plugin_registrant.cc" beforeDir="false" afterPath="$PROJECT_DIR$/linux/flutter/generated_plugin_registrant.cc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/linux/flutter/generated_plugins.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/linux/flutter/generated_plugins.cmake" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/macos/Flutter/GeneratedPluginRegistrant.swift" beforeDir="false" afterPath="$PROJECT_DIR$/macos/Flutter/GeneratedPluginRegistrant.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/view/track_package_page/controller/track_package_controller.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/view/track_package_page/controller/track_package_controller.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/view/warehouses_page/warehouses_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/view/warehouses_page/warehouses_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/view/warehouses_page/warehouses_page_controller.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/view/warehouses_page/warehouses_page_controller.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/windows/flutter/generated_plugin_registrant.cc" beforeDir="false" afterPath="$PROJECT_DIR$/windows/flutter/generated_plugin_registrant.cc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/windows/flutter/generated_plugins.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/windows/flutter/generated_plugins.cmake" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -64,28 +53,28 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Flutter.main.dart.executor&quot;: &quot;Debug&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
-    &quot;flutter.view.tool.window.visible&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;io.flutter.reload.alreadyRun&quot;: &quot;true&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/flutter/bin&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;project.propVCSSupport.DirectoryMappings&quot;,
-    &quot;show.migrate.to.gradle.popup&quot;: &quot;false&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Flutter.main.dart.executor": "Debug",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "dart.analysis.tool.window.visible": "false",
+    "flutter.view.tool.window.visible": "true",
+    "git-widget-placeholder": "master",
+    "ignore.virus.scanning.warn.message": "true",
+    "io.flutter.reload.alreadyRun": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "D:/flutter/bin",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "project.propVCSSupport.DirectoryMappings",
+    "show.migrate.to.gradle.popup": "false",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RunManager">
     <configuration name="main.dart" type="FlutterRunConfigurationType" factoryName="Flutter">
       <option name="filePath" value="$PROJECT_DIR$/lib/main.dart" />
@@ -155,7 +144,9 @@
       <workItem from="1747475668317" duration="10528000" />
       <workItem from="1747495407944" duration="5612000" />
       <workItem from="1747557272350" duration="16663000" />
-      <workItem from="1747682369620" duration="510000" />
+      <workItem from="1747682369620" duration="1728000" />
+      <workItem from="1747770506937" duration="10795000" />
+      <workItem from="1747862013588" duration="4884000" />
     </task>
     <servers />
   </component>

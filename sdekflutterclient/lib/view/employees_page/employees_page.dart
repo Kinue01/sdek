@@ -7,6 +7,7 @@ import 'package:clientapp/view/employees_page/employees_page_controller.dart';
 import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it_mixin/get_it_mixin.dart';
+import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 
 class EmployeesPage extends StatelessWidget {
   const EmployeesPage({super.key});
@@ -79,24 +80,56 @@ class EmployeesState extends State<EmployeesComponent> with GetItStateMixin {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             TextField(
+                              decoration: InputDecoration(
+                                labelText: "Фамилия",
+                                border: UnderlineInputBorder()
+                              ),
                               controller: _lastNameController,
                             ),
                             TextField(
+                              decoration: InputDecoration(
+                                  labelText: "Имя",
+                                  border: UnderlineInputBorder()
+                              ),
                               controller: _firstNameController,
                             ),
                             TextField(
+                              decoration: InputDecoration(
+                                  labelText: "Отчество",
+                                  border: UnderlineInputBorder()
+                              ),
                               controller: _middleNameController,
                             ),
                             TextField(
+                              decoration: InputDecoration(
+                                  labelText: "Логин",
+                                  border: UnderlineInputBorder()
+                              ),
                               controller: _loginController,
                             ),
                             TextField(
+                              decoration: InputDecoration(
+                                  labelText: "Пароль",
+                                  border: UnderlineInputBorder()
+                              ),
                               controller: _passController,
+                              obscureText: true,
+                              enableSuggestions: false,
+                              autocorrect: false,
+                            ),
+                            InternationalPhoneNumberInput(
+                                onInputChanged: (PhoneNumber num) async {
+                                  PhoneNumber number = await PhoneNumber.getRegionInfoFromPhoneNumber(num.parseNumber());
+                                  String parsableNumber = number.parseNumber();
+                                  _phoneController.text = parsableNumber;
+                                },
+                              // textFieldController: _phoneController,
                             ),
                             TextField(
-                              controller: _phoneController,
-                            ),
-                            TextField(
+                              decoration: InputDecoration(
+                                  labelText: "Почта",
+                                  border: UnderlineInputBorder()
+                              ),
                               controller: _emailController,
                             ),
                             DropdownMenu<Position>(

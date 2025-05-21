@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:clientapp/Env.dart';
 import 'package:clientapp/domain/model/Package.dart';
+import 'package:clientapp/domain/usecase/pack/GetPackagesUseCase.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
@@ -18,13 +19,15 @@ class TrackPackageController {
   final client = ValueNotifier(Client(client_user: User(user_role: Role())));
   final GetPackagesByClientIdUseCase getPackagesByClientIdUseCase;
   final GetCurrentClientUseCase getCurrentClientUseCase;
+  final GetPackagesUseCase getPackagesUseCase;
   late final channel = WebSocketChannel.connect(Uri.parse("${Env.prod_ws}/transportreadservice/api/transport_pos"));
 
   late StreamController streamController = StreamController.broadcast();
 
   TrackPackageController({
     required this.getPackagesByClientIdUseCase,
-    required this.getCurrentClientUseCase
+    required this.getCurrentClientUseCase,
+    required this.getPackagesUseCase
   }) {
     channel.stream.listen((ev) {
       final res = json.decode(ev).cast<dynamic>().toList();
@@ -45,7 +48,9 @@ class TrackPackageController {
 
   Future<void> getClientPackages() async {
     client.value = await getCurrentClientUseCase.exec();
-    packages.value = await getPackagesByClientIdUseCase.exec(client.value.client_id!);
+
+    if (client.value == null) packages.value = await getPackagesUseCase.exec();
+    else packages.value = await getPackagesByClientIdUseCase.exec(client.value.client_id!);
   }
 
   void init() {

@@ -5,6 +5,7 @@ import 'package:clientapp/view/main_page/main_page_controller.dart';
 import 'package:clientapp/view/packages_page/packages_page.dart';
 import 'package:clientapp/view/send_package_page/page/send_package_page.dart';
 import 'package:clientapp/view/track_package_page/page/track_package_page.dart';
+import 'package:clientapp/view/warehouses_page/warehouses_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it_mixin/get_it_mixin.dart';
 
@@ -85,7 +86,7 @@ class MainState extends State<MainComponent> with GetItStateMixin {
         _views = [
           const PackagesPage(),
           const EmployeesPage(),
-          // todo add table widget with warehouses
+          const WarehousePage(),
           const TrackPackagePage(),
           const AccountPage()
         ];
@@ -145,6 +146,7 @@ class MainState extends State<MainComponent> with GetItStateMixin {
     return Scaffold(
       body: _views[_index],
       bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
         currentIndex: _index,
         onTap: (int index) => {
           setState(() {

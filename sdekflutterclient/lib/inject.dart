@@ -169,6 +169,7 @@ import 'package:clientapp/view/login_page/controller/login_page_controller.dart'
 import 'package:clientapp/view/main_page/main_page_controller.dart';
 import 'package:clientapp/view/packages_page/packages_page_controller.dart';
 import 'package:clientapp/view/register_page/register_controller.dart';
+import 'package:clientapp/view/warehouses_page/warehouses_page_controller.dart';
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -359,7 +360,7 @@ void initGetIt() {
   // ----------------------------------------
   getIt.registerLazySingleton(() => HomeController());
   getIt.registerLazySingleton(() => SendPackageController(getPackageTypesUseCase: getIt(), addPackageUseCase: getIt(), getCurrentClientUseCase: getIt(), getClientsUseCase: getIt(), getAllServicesUseCase: getIt(), getCurrentUserUseCase: getIt(), getPackagePaytypesUseCase: getIt(), getDeliveryPersonalUseCase: getIt(), getWarehousesUseCase: getIt(), addPackageServicesUseCase: getIt()));
-  getIt.registerLazySingleton(() => TrackPackageController(getPackagesByClientIdUseCase: getIt(), getCurrentClientUseCase: getIt()));
+  getIt.registerLazySingleton(() => TrackPackageController(getPackagesByClientIdUseCase: getIt(), getCurrentClientUseCase: getIt(), getPackagesUseCase: getIt()));
   getIt.registerLazySingleton(() => LoginPageController(getUserByLoginPassUseCase: getIt(), getCurrentUserUseCase: getIt(), saveCurrentUserUseCase: getIt(), getClientByUserIdUseCase: getIt(), saveCurrentClientUseCase: getIt(), getEmployeeByUserIdUseCase: getIt(), saveCurrentEmployeeUseCase: getIt()));
   getIt.registerLazySingleton(() => ClientPackagesPageController(getPackagesByClientIdUseCase: getIt(), getCurrentClientUseCase: getIt()));
   getIt.registerLazySingleton(() => ClientPackageDetailsController());
@@ -368,4 +369,5 @@ void initGetIt() {
   getIt.registerLazySingleton(() => MainPageController(getCurrentUserUseCase: getIt(), getCurrentClientUseCase: getIt(), getCurrentEmployeeUseCase: getIt()));
   getIt.registerLazySingleton(() => PackagesPageController(getPackagesUseCase: getIt(), getClientsUseCase: getIt(), getDeliveryPersonalUseCase: getIt(), getPackageStatusesUseCase: getIt(), getPackageTypesUseCase: getIt(), getWarehousesUseCase: getIt()));
   getIt.registerLazySingleton(() => EmployeesPageContoller(getEmployeesUseCase: getIt(), getPositionsUseCase: getIt(), addEmployeeUseCase: getIt()));
+  getIt.registerLazySingleton(() => WarehousePageController(getWarehousesUseCase: getIt()));
 }

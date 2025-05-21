@@ -67,7 +67,7 @@ async fn main() {
     let es_url = std::env::var("EVENTSTORE_URL").unwrap_or_default();
 
     let pool = PgPoolOptions::new()
-        .max_connections(1000000)
+        .max_connections(20)
         .acquire_timeout(Duration::from_secs(120))
         .connect(pg_url.as_str())
         .await
