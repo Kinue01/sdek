@@ -1,5 +1,5 @@
-use axum::{http::Method, Router, routing::get};
 use axum::routing::post;
+use axum::{http::Method, routing::get, Router};
 use dotenvy::dotenv;
 use tower::ServiceBuilder;
 use tower_http::{
@@ -40,8 +40,8 @@ async fn main() {
         .allow_headers(Any);
 
     let tracing = TraceLayer::new_for_http()
-        .make_span_with(trace::DefaultMakeSpan::new().level(tracing::Level::INFO))
-        .on_response(trace::DefaultOnResponse::new().level(tracing::Level::INFO));
+        .make_span_with(trace::DefaultMakeSpan::new().level(tracing::Level::DEBUG))
+        .on_response(trace::DefaultOnResponse::new().level(tracing::Level::DEBUG));
 
     dotenv().ok();
 

@@ -1,13 +1,9 @@
 package com.example.servicesreadservice.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.UUID;
 
 @Data
 @AllArgsConstructor
@@ -16,9 +12,11 @@ import java.util.UUID;
 @Table(name = "tb_fclient")
 public class DbClient {
     @Id
-    int client_id;
-    String client_lastname;
-    String client_firstname;
-    String client_middlename;
-    UUID client_user_id;
+    private int client_id;
+    private String client_lastname;
+    private String client_firstname;
+    private String client_middlename;
+    @ManyToOne
+    @JoinColumn(name = "client_user_id")
+    private DbUser client_user;
 }

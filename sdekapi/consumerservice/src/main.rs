@@ -1,6 +1,6 @@
 use axum::http::Method;
-use axum::Router;
 use axum::routing::{get, post};
+use axum::Router;
 use dotenvy::dotenv;
 use tower::ServiceBuilder;
 use tower_http::cors::{Any, CorsLayer};
@@ -32,8 +32,8 @@ async fn main() {
         .allow_headers(Any);
 
     let tracing = TraceLayer::new_for_http()
-        .make_span_with(trace::DefaultMakeSpan::new().level(tracing::Level::INFO))
-        .on_response(trace::DefaultOnResponse::new().level(tracing::Level::INFO));
+        .make_span_with(trace::DefaultMakeSpan::new().level(tracing::Level::DEBUG))
+        .on_response(trace::DefaultOnResponse::new().level(tracing::Level::DEBUG));
 
     dotenv().ok();
 
@@ -44,7 +44,9 @@ async fn main() {
     let app = Router::new()
         .route(
             "/customerservice/api/client",
-            post(add_client).patch(update_client).delete(delete_client),
+            post(add_client)
+                .patch(update_client)
+                .delete(delete_client),
         )
         .merge(SwaggerUi::new("/customerservice/swagger").url("/customerservice/api-doc/openapi.json", ApiDoc::openapi()))
         .with_state(event_client)

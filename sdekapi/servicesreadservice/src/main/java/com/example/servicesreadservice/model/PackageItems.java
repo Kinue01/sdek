@@ -16,7 +16,7 @@ import java.util.UUID;
 @Table(name = "tb_fpackage_items")
 public class PackageItems {
     @Id
-    UUID package_id;
-    int item_id;
-    int item_quantity;
+    private UUID package_id;
+    private int item_id;
+    private int item_quantity;
 }

@@ -11,7 +11,7 @@ derive_more = { version = "2.0.1", features = ["full"] }
 dotenvy = "0.15.7"
 redis = { version = "0.31.0", features = ["uuid", "aio", "ahash", "tokio-comp", "connection-manager", "json"] }
 redis-macros = { version = "0.5.4", features = ["default"] }
-sqlx = { version = "0.8.5", features = ["runtime-tokio", "tls-native-tls", "chrono", "postgres", "uuid", "macros", "bigdecimal"] }
+sqlx = { version = "0.8.6", features = ["runtime-tokio", "tls-native-tls", "chrono", "postgres", "uuid", "macros", "bigdecimal"] }
 tokio = { version = "1.45.0", features = ["macros", "rt-multi-thread"] }
 tower = "0.5.2"
 tower-http = { version = "0.6.4", features = ["trace", "cors"] }
@@ -21,7 +21,7 @@ utoipa = { version = "5.3.1", features = ["axum_extras", "uuid"] }
 utoipa-swagger-ui = { version = "9.0.0", features = ["axum"] }
 futures = "0.3.31"
 eventstore = "4.0.0"
-bigdecimal = { version = "0.4.7", features = ["serde"] }
+bigdecimal = { version = "0.4.8", features = ["serde"] }
 itertools = "0.14.0"
 
 [dependencies.uuid]

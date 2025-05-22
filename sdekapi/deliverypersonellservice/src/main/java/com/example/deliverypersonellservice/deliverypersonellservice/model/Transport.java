@@ -8,9 +8,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Transport {
-    int transport_id;
-    String transport_name;
-    String transport_reg_number;
-    TransportType transport_type;
-    TransportStatus transport_status;
+    private int transport_id;
+    private String transport_name;
+    private String transport_reg_number;
+    private TransportType transport_type;
+    private TransportStatus transport_status;
 }

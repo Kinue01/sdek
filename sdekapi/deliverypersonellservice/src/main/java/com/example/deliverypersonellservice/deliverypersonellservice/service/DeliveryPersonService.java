@@ -1,11 +1,11 @@
 package com.example.deliverypersonellservice.deliverypersonellservice.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.SneakyThrows;
-import org.springframework.stereotype.Service;
 import com.eventstore.dbclient.EventData;
 import com.eventstore.dbclient.EventStoreDBClient;
 import com.example.deliverypersonellservice.deliverypersonellservice.model.DeliveryPerson;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.SneakyThrows;
+import org.springframework.stereotype.Service;
 
 @Service
 public class DeliveryPersonService {

@@ -2,8 +2,8 @@ use axum::extract::{Json, State};
 use axum::http::StatusCode;
 use eventstore::EventData;
 
-use crate::{AppState, model::*};
 use crate::error::MyError;
+use crate::{model::*, AppState};
 
 pub async fn add_user(
     State(state): State<AppState>,

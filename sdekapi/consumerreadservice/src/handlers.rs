@@ -1,18 +1,17 @@
-use std::clone::Clone;
-use std::ptr::null;
 use axum::extract::{Query, State};
 use axum::Json;
 use derive_more::Display;
 use futures::StreamExt;
 use redis::{AsyncCommands, JsonAsyncCommands};
 use serde::Deserialize;
+use std::clone::Clone;
 use utoipa::IntoParams;
 use uuid::Uuid;
 
-use crate::AppState;
 use crate::error::MyError;
 use crate::error::MyError::RDbError;
 use crate::model::*;
+use crate::AppState;
 
 #[utoipa::path(
     get,
@@ -158,22 +157,26 @@ pub async fn get_client_by_user_id(
     State(mut state): State<AppState>,
     uuid: Query<ClientUserParams>,
 ) -> Result<Json<Client>, MyError> {
-    let client = sqlx::query_as!(
-        ClientResponse,
-        "select * from tb_client where client_user_id = $1",
-        uuid.0.uuid
+    let client_id: (i32,) = sqlx::query_as(
+        "select client_id from tb_client where client_user_id = ?",
     )
+        .bind(uuid.uuid)
     .fetch_one(&state.postgres)
     .await
     .map_err(MyError::DBError)?;
 
     let client_redis = state
         .redis
-        .get("client".to_owned() + &*client.client_id.to_string())
+        .get("client".to_owned() + &*client_id.0.to_string())
         .await.map_err(RDbError);
 
     match !client_redis.is_ok() {
         true => {
+            let client = sqlx::query_as!(ClientResponse, "select * from tb_client where client_id = $1", &client_id.0)
+                .fetch_one(&state.postgres)
+                .await
+                .map_err(MyError::DBError)?;
+            
             let user_resp = sqlx::query_as!(UserResponse, "select * from tb_fuser where user_id = $1", &client.client_user_id)
                 .fetch_one(&state.postgres)
                 .await
@@ -200,7 +203,7 @@ pub async fn get_client_by_user_id(
 
             let _: () = state
                 .redis
-                .set("client".to_owned() + &*client.client_id.to_string(), &res)
+                .set("client".to_owned() + &*client_id.0.to_string(), &res)
                 .await
                 .unwrap();
 

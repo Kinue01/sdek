@@ -174,23 +174,27 @@ pub async fn get_employee_by_user_id(
     State(mut state): State<AppState>,
     uuid: Query<GetEmpByUuid>,
 ) -> Result<Json<Employee>, MyError> {
-    let emp = sqlx::query_as!(
-        EmployeeResponse,
-        "select * from tb_employee where employee_user_id = $1",
-        uuid.0.uuid
+    let emp: (Uuid,) = sqlx::query_as(
+        "select employee_id from tb_employee where employee_user_id = ?"
     )
+        .bind(uuid.uuid)
     .fetch_one(&state.postgres)
     .await
     .map_err(MyError::DBError)?;
 
     let emp_redis: Employee = state
         .redis
-        .json_get("emp".to_owned() + &*emp.employee_id.to_string(), "$")
+        .json_get("emp".to_owned() + &*emp.0.to_string(), "$")
         .await
         .unwrap_or_default();
 
     match emp_redis.employee_id {
         u if u == Uuid::default() => {
+            let emp = sqlx::query_as!(EmployeeResponse, "select * from tb_employee where employee_id = $1", &emp.0)
+                .fetch_one(&state.postgres)
+                .await
+                .map_err(MyError::DBError)?;
+            
             let user = sqlx::query_as!(UserResponse, "select * from tb_fuser where user_id = $1", emp.employee_user_id)
                 .fetch_one(&state.postgres)
                 .await
@@ -225,7 +229,7 @@ pub async fn get_employee_by_user_id(
 
             let _: () = state
                 .redis
-                .json_set("emp".to_owned() + &*uuid.0.uuid.to_string(), "$", &res)
+                .json_set("emp".to_owned() + &*emp.employee_id.to_string(), "$", &res)
                 .await
                 .unwrap();
 
@@ -244,30 +248,18 @@ pub async fn get_employee_by_user_id(
     )
 )]
 pub async fn get_positions(
-    State(mut state): State<AppState>,
+    State(state): State<AppState>,
 ) -> Result<Json<Vec<PositionResponse>>, MyError> {
-    // let poses_redis: Vec<PositionResponse> =
-    //     state.redis.json_get("poses", "$").await.map_err(MyError::RDbError)?;
-    // 
-    // match poses_redis.is_empty() {
-    //     true => {
-    //         
-    //     }
-    //     false => Ok(Json(poses_redis)),
-    // }
-
     let poses = sqlx::query_as!(PositionResponse, "select * from tb_position")
         .fetch_all(&state.postgres)
         .await
         .map_err(MyError::DBError)?;
 
-    // let _: () = state.redis.json_set("poses", "$", &poses).await.unwrap();
-
     Ok(Json(poses))
 }
 
 #[derive(Deserialize, IntoParams)]
-struct PosSearchQuery {
+pub struct PosSearchQuery {
     id: i16,
 }
 
@@ -284,11 +276,11 @@ struct PosSearchQuery {
 )]
 pub async fn get_position_by_id(
     State(mut state): State<AppState>,
-    id: Query<i16>,
+    id: Query<PosSearchQuery>,
 ) -> Result<Json<PositionResponse>, MyError> {
     let pos_redis: PositionResponse = state
         .redis
-        .json_get("pos".to_string() + &*id.0.to_string(),"$")
+        .json_get("pos".to_string() + &*id.id.to_string(),"$")
         .await
         .map_err(MyError::RDbError)?;
 
@@ -297,7 +289,7 @@ pub async fn get_position_by_id(
             let pos = sqlx::query_as!(
                 PositionResponse,
                 "select * from tb_position where position_id = $1",
-                id.0
+                id.id
             )
             .fetch_one(&state.postgres)
             .await
@@ -305,7 +297,7 @@ pub async fn get_position_by_id(
 
             let _: () = state
                 .redis
-                .json_set("pos".to_string() + &*id.0.to_string(), "$", &pos)
+                .json_set("pos".to_string() + &*id.id.to_string(), "$", &pos)
                 .await
                 .unwrap();
 
@@ -327,7 +319,6 @@ pub async fn update_db_poses(State(mut state): State<AppState>) {
             .get_original_event()
             .as_json::<PositionResponse>()
             .unwrap();
-        let _: () = state.redis.json_del("poses", "$").await.unwrap();
         match event.event.unwrap().event_type.as_str() {
             "position_add" => {
                 let _ = sqlx::query!(

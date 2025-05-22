@@ -1,4 +1,4 @@
-use axum::{body, Error, http::StatusCode, response::{IntoResponse, Response}};
+use axum::{body, http::StatusCode, response::{IntoResponse, Response}, Error};
 use derive_more::Display;
 use redis::RedisError;
 

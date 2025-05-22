@@ -15,7 +15,7 @@ import org.springframework.data.mongodb.core.mapping.MongoId;
 @Document("warehouseLocations")
 public class WarehouseLocation {
     @MongoId
-    String id;
+    private String id;
     @GeoSpatialIndexed(type = GeoSpatialIndexType.GEO_2DSPHERE)
-    Point location;
+    private Point location;
 }

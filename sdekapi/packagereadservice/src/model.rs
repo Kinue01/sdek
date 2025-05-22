@@ -1,11 +1,9 @@
-use redis::{RedisWrite, ToRedisArgs};
+use redis::RedisWrite;
 use redis_macros::{FromRedisValue, ToRedisArgs};
 use serde::{Deserialize, Serialize};
 use sqlx::types::chrono::NaiveDate;
-use tower_http::trace::OnResponse;
 use utoipa::ToSchema;
 use uuid::Uuid;
-use crate::error::MyError;
 
 #[derive(Clone, Debug, Deserialize, Serialize, FromRedisValue, ToRedisArgs)]
 pub struct PackageType {

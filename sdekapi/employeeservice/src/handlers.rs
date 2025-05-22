@@ -3,9 +3,9 @@ use axum::http::StatusCode;
 use axum::Json;
 use eventstore::EventData;
 
-use crate::AppState;
 use crate::error::MyError;
 use crate::model::*;
+use crate::AppState;
 
 #[utoipa::path(
     post,

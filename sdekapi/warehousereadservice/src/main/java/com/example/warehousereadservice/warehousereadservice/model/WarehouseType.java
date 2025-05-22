@@ -14,9 +14,9 @@ import java.io.Serializable;
 @Table(name = "tb_warehouse_type")
 public class WarehouseType implements Serializable {
     @Id
-    short type_id;
-    String type_name;
-    int type_small_quantity;
-    int type_med_quantity;
-    int type_huge_quantity;
+    private short type_id;
+    private String type_name;
+    private int type_small_quantity;
+    private int type_med_quantity;
+    private int type_huge_quantity;
 }

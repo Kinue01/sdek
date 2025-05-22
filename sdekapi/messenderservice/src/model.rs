@@ -1,4 +1,3 @@
-use bincode::Encode;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 

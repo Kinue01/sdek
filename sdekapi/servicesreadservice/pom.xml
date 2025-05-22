@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.4.3</version>
+		<version>3.4.5</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.example</groupId>
@@ -52,11 +52,7 @@
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
+			<version>1.18.38</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -69,7 +65,7 @@
 		<dependency>
 			<groupId>com.eventstore</groupId>
 			<artifactId>db-client-java</artifactId>
-			<version>5.4.4</version>
+			<version>5.4.5</version>
 		</dependency>
 		<dependency>
 			<groupId>org.modelmapper</groupId>
@@ -90,6 +86,7 @@
 							<artifactId>lombok</artifactId>
 						</exclude>
 					</excludes>
+					<mainClass>com.example.servicesreadservice.ServicesreadserviceApplication</mainClass>
 				</configuration>
 			</plugin>
 		</plugins>

@@ -8,10 +8,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DeliveryPerson {
-    int person_id;
-    String person_lastname;
-    String person_firstname;
-    String person_middlename;
-    User user;
-    Transport transport;
+    private int person_id;
+    private String person_lastname;
+    private String person_firstname;
+    private String person_middlename;
+    private User user;
+    private Transport transport;
 }

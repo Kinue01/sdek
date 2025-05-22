@@ -1,9 +1,10 @@
 package com.example.servicesreadservice.service;
 
 import com.eventstore.dbclient.*;
-import com.example.servicesreadservice.mapper.PackageServicesToResponseMapper;
+import com.example.servicesreadservice.model.DbPackage;
 import com.example.servicesreadservice.model.PackageServiceResponse;
-import com.example.servicesreadservice.repository.PackageServiceRepository;
+import com.example.servicesreadservice.repository.PackageRepository;
+import com.example.servicesreadservice.repository.ServiceRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
 import lombok.SneakyThrows;
@@ -12,15 +13,15 @@ import org.springframework.stereotype.Service;
 @Service
 public class UpdatePackageServicesService {
     private final EventStoreDBClient eventStoreDBClient;
-    private final PackageServiceRepository packageServiceRepository;
+    private final PackageRepository packageRepository;
+    private final ServiceRepository serviceRepository;
     private final ObjectMapper objectMapper;
-    private final PackageServicesToResponseMapper packageServicesToResponseMapper;
 
-    public UpdatePackageServicesService(EventStoreDBClient eventStoreDBClient, PackageServiceRepository packageServiceRepository, ObjectMapper objectMapper, PackageServicesToResponseMapper packageServicesToResponseMapper) {
+    public UpdatePackageServicesService(EventStoreDBClient eventStoreDBClient, ObjectMapper objectMapper, ServiceRepository serviceRepository, PackageRepository packageRepository) {
         this.eventStoreDBClient = eventStoreDBClient;
-        this.packageServiceRepository = packageServiceRepository;
         this.objectMapper = objectMapper;
-        this.packageServicesToResponseMapper = packageServicesToResponseMapper;
+        this.serviceRepository = serviceRepository;
+        this.packageRepository = packageRepository;
     }
 
     @PostConstruct
@@ -33,11 +34,23 @@ public class UpdatePackageServicesService {
                 switch (ev.getEventType()) {
                     case "package_services_add", "package_services_update" -> {
                         PackageServiceResponse response = objectMapper.readValue(ev.getEventData(), PackageServiceResponse.class);
-                        packageServiceRepository.save(packageServicesToResponseMapper.mapTo(response));
+
+                        serviceRepository.save(response.getService()); // save service
+
+                        DbPackage dbPackage = packageRepository.findById(response.getDb_package().getPackage_uuid()).orElse(null);
+                        assert dbPackage != null;
+                        dbPackage.getPackage_services().add(response.getService());
+                        packageRepository.save(dbPackage); // save package with new/updated service
                     }
                     case "package_services_delete" -> {
                         PackageServiceResponse input = objectMapper.readValue(ev.getEventData(), PackageServiceResponse.class);
-                        packageServiceRepository.delete(packageServicesToResponseMapper.mapTo(input));
+
+                        serviceRepository.delete(input.getService());
+
+                        DbPackage dbPackage = packageRepository.findById(input.getDb_package().getPackage_uuid()).orElse(null);
+                        assert dbPackage != null;
+                        dbPackage.getPackage_services().remove(input.getService());
+                        packageRepository.save(dbPackage);
                     }
                 }
                 super.onEvent(subscription, event);

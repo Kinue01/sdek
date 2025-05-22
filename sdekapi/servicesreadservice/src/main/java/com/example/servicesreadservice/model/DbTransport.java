@@ -1,8 +1,6 @@
 package com.example.servicesreadservice.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,9 +12,13 @@ import lombok.NoArgsConstructor;
 @Table(name = "tb_ftransport")
 public class DbTransport {
     @Id
-    int transport_id;
-    String transport_name;
-    String transport_reg_number;
-    short transport_type_id;
-    short transport_status_id;
+    private int transport_id;
+    private String transport_name;
+    private String transport_reg_number;
+    @ManyToOne
+    @JoinColumn(name = "transport_type_id")
+    private TransportType transport_type;
+    @ManyToOne
+    @JoinColumn(name = "transport_status_id")
+    private TransportStatus transport_status;
 }

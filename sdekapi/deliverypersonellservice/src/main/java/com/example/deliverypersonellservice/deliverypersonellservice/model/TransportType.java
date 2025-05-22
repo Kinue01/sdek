@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TransportType {
-    short type_id;
-    String type_name;
+    private short type_id;
+    private String type_name;
 }

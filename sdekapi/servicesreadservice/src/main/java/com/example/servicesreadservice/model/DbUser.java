@@ -1,8 +1,6 @@
 package com.example.servicesreadservice.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,11 +14,13 @@ import java.util.UUID;
 @Table(name = "tb_fuser")
 public class DbUser {
     @Id
-    UUID user_id;
-    String user_login;
-    String user_password;
-    String user_email;
-    String user_phone;
-    String user_access_token;
-    short user_role_id;
+    private UUID user_id;
+    private String user_login;
+    private String user_password;
+    private String user_email;
+    private String user_phone;
+    private String user_access_token;
+    @ManyToOne
+    @JoinColumn(name = "user_role_id")
+    private Role user_role;
 }

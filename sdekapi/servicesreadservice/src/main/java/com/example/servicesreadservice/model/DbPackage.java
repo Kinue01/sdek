@@ -1,15 +1,14 @@
 package com.example.servicesreadservice.model;
 
 import jakarta.annotation.Nullable;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -19,19 +18,49 @@ import java.util.UUID;
 @Table(name = "tb_fpackage")
 public class DbPackage {
     @Id
-    UUID package_uuid;
+    private UUID package_uuid;
     @Nullable
-    LocalDate package_send_date;
+    private LocalDate package_send_date;
     @Nullable
-    LocalDate package_receive_date;
+    private LocalDate package_receive_date;
     @Nullable
-    BigDecimal package_weight;
-    int package_deliveryperson_id;
-    short package_type_id;
-    short package_status_id;
-    int package_sender_id;
-    int package_receiver_id;
-    int package_warehouse_id;
-    short package_paytype_id;
-    int package_payer_id;
+    private BigDecimal package_weight;
+    @ManyToOne
+    @JoinColumn(name = "package_deliveryperson_id")
+    private DbDeliveryPerson package_deliveryperson;
+    @ManyToOne
+    @JoinColumn(name = "package_type_id")
+    private PackageType package_type;
+    @ManyToOne
+    @JoinColumn(name = "package_status_id")
+    private PackageStatus package_status;
+    @ManyToOne
+    @JoinColumn(name = "package_sender_id")
+    private DbClient package_sender;
+    @ManyToOne
+    @JoinColumn(name = "package_receiver_id")
+    private DbClient package_receiver;
+    @ManyToOne
+    @JoinColumn(name = "package_warehouse_id")
+    private DbWarehouse package_warehouse;
+    @ManyToOne
+    @JoinColumn(name = "package_paytype_id")
+    private PackagePaytype package_paytype;
+    @ManyToOne
+    @JoinColumn(name = "package_payer_id")
+    private DbClient package_payer;
+    @ManyToMany
+    @JoinTable(
+            name = "tb_fpackage_items",
+            joinColumns = @JoinColumn(name = "package_id"),
+            inverseJoinColumns = @JoinColumn(name = "item_id")
+    )
+    private List<PackageItem> package_items;
+    @ManyToMany
+    @JoinTable(
+            name = "tb_package_services",
+            joinColumns = @JoinColumn(name = "package_id"),
+            inverseJoinColumns = @JoinColumn(name = "service_id")
+    )
+    private List<DbService> package_services;
 }

@@ -1,5 +1,5 @@
-use ::serde::{Deserialize, Serialize};
 use redis_macros::{FromRedisValue, ToRedisArgs};
+use ::serde::{Deserialize, Serialize};
 use utoipa::ToSchema;
 use uuid::Uuid;
 

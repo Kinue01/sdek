@@ -1,8 +1,8 @@
-use axum::extract::WebSocketUpgrade;
+use crate::model;
 use axum::extract::ws::WebSocket;
+use axum::extract::WebSocketUpgrade;
 use axum::response::Response;
 use eventstore::{Client, Subscription};
-use crate::model;
 
 pub async fn handler(ws: WebSocketUpgrade) -> Response {
     let client = Client::new("esdb://admin:@eventstore:2113?tls=false".parse().unwrap_or_default()).unwrap();

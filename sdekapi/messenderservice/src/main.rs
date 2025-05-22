@@ -1,6 +1,6 @@
 use axum::http::Method;
-use axum::Router;
 use axum::routing::get;
+use axum::Router;
 use tower_http::cors::{Any, CorsLayer};
 use tower_http::trace;
 use tower_http::trace::TraceLayer;
@@ -23,8 +23,8 @@ async fn main() {
         .allow_headers(Any);
 
     let tracing = TraceLayer::new_for_http()
-        .make_span_with(trace::DefaultMakeSpan::new().level(tracing::Level::INFO))
-        .on_response(trace::DefaultOnResponse::new().level(tracing::Level::INFO));
+        .make_span_with(trace::DefaultMakeSpan::new().level(tracing::Level::DEBUG))
+        .on_response(trace::DefaultOnResponse::new().level(tracing::Level::DEBUG));
 
     let app = Router::new()
         .route("/messageservice/ws", get(handler))

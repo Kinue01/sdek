@@ -6,9 +6,9 @@ use serde::Deserialize;
 use utoipa::IntoParams;
 use uuid::Uuid;
 
-use crate::AppState;
 use crate::error::MyError;
 use crate::model::{RoleResponse, User, UserResponse};
+use crate::AppState;
 
 #[utoipa::path(
     get,
@@ -43,8 +43,8 @@ pub async fn get_roles(
 }
 
 #[derive(Deserialize, IntoParams)]
-struct RoleSearchQuery {
-    id: i32,
+pub struct RoleSearchQuery {
+    id: i16,
 }
 
 #[utoipa::path(
@@ -60,11 +60,11 @@ struct RoleSearchQuery {
 )]
 pub async fn get_role_by_id(
     State(mut state): State<AppState>,
-    id: Query<i16>,
+    id: Query<RoleSearchQuery>,
 ) -> Result<Json<RoleResponse>, MyError> {
     let role_redis: RoleResponse = state
         .redis
-        .get("role".to_string() + &*id.to_string())
+        .get("role".to_string() + &*id.id.to_string())
         .await
         .unwrap_or_default();
 
@@ -73,7 +73,7 @@ pub async fn get_role_by_id(
             let role = sqlx::query_as!(
                 RoleResponse,
                 "select * from tb_role where role_id = $1",
-                id.0
+                id.id
             )
             .fetch_one(&state.postgres)
             .await
@@ -81,7 +81,7 @@ pub async fn get_role_by_id(
 
             let _: () = state
                 .redis
-                .set("role".to_string() + &*id.to_string(), &role)
+                .set("role".to_string() + &*id.id.to_string(), &role)
                 .await
                 .map_err(MyError::RDbError)?;
 
@@ -150,7 +150,7 @@ pub async fn get_users(State(mut state): State<AppState>) -> Result<Json<Vec<Use
 }
 
 #[derive(Deserialize, IntoParams)]
-struct UserSearchQuery {
+pub struct UserSearchQuery {
     uuid: Uuid,
 }
 
@@ -167,11 +167,11 @@ struct UserSearchQuery {
 )]
 pub async fn get_user_by_id(
     State(mut state): State<AppState>,
-    uuid: Query<Uuid>,
+    uuid: Query<UserSearchQuery>,
 ) -> Result<Json<User>, MyError> {
     let user_redis: User = state
         .redis
-        .get("user".to_owned() + &*uuid.0.to_string())
+        .get("user".to_owned() + &*uuid.uuid.to_string())
         .await
         .unwrap_or_default();
 
@@ -180,7 +180,7 @@ pub async fn get_user_by_id(
             let user = sqlx::query_as!(
                 UserResponse,
                 "select * from tb_user where user_id = $1",
-                &uuid.0
+                &uuid.uuid
             )
             .fetch_one(&state.postgres)
             .await
@@ -205,7 +205,7 @@ pub async fn get_user_by_id(
 
             let _: () = state
                 .redis
-                .set("user".to_owned() + &*uuid.0.to_string(), &res)
+                .set("user".to_owned() + &*uuid.uuid.to_string(), &res)
                 .await
                 .unwrap();
 
@@ -224,13 +224,12 @@ pub async fn update_db(State(mut state): State<AppState>) {
     loop {
         let event = stream.next().await.unwrap();
         let ev = event.get_original_event().as_json::<User>().unwrap();
+        let _: () = state.redis.del("users").await.unwrap();
         match event.event.unwrap().event_type.as_str() {
             "user_add" => {
                 let _ = sqlx::query!("insert into tb_user (user_id, user_login, user_password, user_email, user_phone, user_access_token, user_role_id) values ($1, $2, $3, $4, $5, $6, $7)", &ev.user_id, &ev.user_login, &ev.user_password, &ev.user_email, &ev.user_phone, &ev.user_access_token, &ev.user_role.role_id)
                     .execute(&state.postgres)
                     .await.map_err(MyError::DBError).unwrap();
-                
-                let _: () = state.redis.del("users").await.unwrap();
             }
             "user_update" => {
                 let _ = sqlx::query!("update tb_user set user_login = $1, user_password = $2, user_email = $3, user_phone = $4, user_access_token = $5, user_role_id = $6 where user_id = $7", &ev.user_login, &ev.user_password, &ev.user_email, &ev.user_phone, &ev.user_access_token, &ev.user_role.role_id, &ev.user_id)

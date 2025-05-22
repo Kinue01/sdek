@@ -1,6 +1,6 @@
 use axum::http::Method;
-use axum::Router;
 use axum::routing::{get, post};
+use axum::Router;
 use dotenvy::dotenv;
 use eventstore::Client;
 use tower::ServiceBuilder;
@@ -40,13 +40,15 @@ async fn main() {
         .allow_headers(Any);
 
     let tracing = TraceLayer::new_for_http()
-        .make_span_with(trace::DefaultMakeSpan::new().level(tracing::Level::INFO))
-        .on_response(trace::DefaultOnResponse::new().level(tracing::Level::INFO));
+        .make_span_with(trace::DefaultMakeSpan::new().level(tracing::Level::DEBUG))
+        .on_response(trace::DefaultOnResponse::new().level(tracing::Level::DEBUG));
 
     dotenv().ok();
 
+    let eventstore_url = std::env::var("EVENTSTORE_URL").unwrap();
+
     let event_client =
-        Client::new("esdb://admin:@eventstore:2113".parse().unwrap_or_default()).unwrap();
+        Client::new(eventstore_url.parse().unwrap()).unwrap();
 
     let state = AppState { event_client };
 

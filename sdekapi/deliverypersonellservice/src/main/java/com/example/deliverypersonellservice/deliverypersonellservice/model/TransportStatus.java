@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TransportStatus {
-    short status_id;
-    String status_name;
+    private short status_id;
+    private String status_name;
 }

@@ -14,10 +14,10 @@ import java.io.Serializable;
 @Table(name = "tb_warehouse")
 public class WarehouseResponse implements Serializable {
     @Id
-    int warehouse_id;
-    String warehouse_name;
-    String warehouse_address;
+    private int warehouse_id;
+    private String warehouse_name;
+    private String warehouse_address;
     @ManyToOne
     @JoinColumn(name = "warehouse_type_id")
-    WarehouseType warehouse_type;
+    private WarehouseType warehouse_type;
 }

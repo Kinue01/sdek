@@ -14,6 +14,6 @@ import lombok.NoArgsConstructor;
 @Table(name = "tb_ftransport_type")
 public class TransportType {
     @Id
-    short type_id;
-    String type_name;
+    private short type_id;
+    private String type_name;
 }

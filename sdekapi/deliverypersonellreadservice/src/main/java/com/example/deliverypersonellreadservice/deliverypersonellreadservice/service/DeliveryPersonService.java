@@ -1,33 +1,29 @@
 package com.example.deliverypersonellreadservice.deliverypersonellreadservice.service;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-import com.example.deliverypersonellreadservice.deliverypersonellreadservice.mapper.DeliveryPersonToDeliveryPersonResponseMapper;
+import com.example.deliverypersonellreadservice.deliverypersonellreadservice.model.DeliveryPerson;
+import com.example.deliverypersonellreadservice.deliverypersonellreadservice.repository.DeliveryPersonRepository;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
-import com.example.deliverypersonellreadservice.deliverypersonellreadservice.model.DeliveryPersonResponse;
-import com.example.deliverypersonellreadservice.deliverypersonellreadservice.repository.DeliveryPersonRepository;
+
+import java.util.List;
 
 @Service
 public class DeliveryPersonService {
     private final DeliveryPersonRepository repository;
-    private final DeliveryPersonToDeliveryPersonResponseMapper mapper;
 
-    public DeliveryPersonService(DeliveryPersonRepository repository, DeliveryPersonToDeliveryPersonResponseMapper mapper) {
+    public DeliveryPersonService(DeliveryPersonRepository repository) {
         this.repository = repository;
-        this.mapper = mapper;
     }
 
     @Cacheable("deliveryPersonal")
-    public List<DeliveryPersonResponse> getPersons() {
-        return repository.findAll().parallelStream().map(mapper::mapTo).collect(Collectors.toList());
+    public List<DeliveryPerson> getPersons() {
+        return repository.findAll();
     }
 
-    @Cacheable("delivery_person")
-    public DeliveryPersonResponse getPersonById(int id) {
+    @Cacheable("deliveryPerson")
+    public DeliveryPerson getPersonById(int id) {
         var person = repository.findById(id).orElse(null);
         assert person != null;
-        return mapper.mapTo(person);
+        return person;
     }
 }

@@ -49,7 +49,9 @@ class TrackPackageController {
   Future<void> getClientPackages() async {
     client.value = await getCurrentClientUseCase.exec();
 
-    if (client.value == null) packages.value = await getPackagesUseCase.exec();
+    print(client.value);
+
+    if (client.value.client_id ==null) packages.value = await getPackagesUseCase.exec();
     else packages.value = await getPackagesByClientIdUseCase.exec(client.value.client_id!);
   }
 

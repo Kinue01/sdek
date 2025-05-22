@@ -2,12 +2,12 @@ use std::time::Duration;
 
 use axum::extract::State;
 use axum::http::Method;
-use axum::Router;
 use axum::routing::get;
+use axum::Router;
 use dotenvy::dotenv;
 use redis::aio::MultiplexedConnection;
-use sqlx::{Pool, Postgres};
 use sqlx::postgres::PgPoolOptions;
+use sqlx::{Pool, Postgres};
 use tower::ServiceBuilder;
 use tower_http::cors::{Any, CorsLayer};
 use tower_http::trace;
@@ -45,18 +45,17 @@ async fn main() {
         .allow_headers(Any);
 
     let tracing = TraceLayer::new_for_http()
-        .make_span_with(trace::DefaultMakeSpan::new().level(tracing::Level::INFO))
-        .on_response(trace::DefaultOnResponse::new().level(tracing::Level::INFO));
+        .make_span_with(trace::DefaultMakeSpan::new().level(tracing::Level::DEBUG))
+        .on_response(trace::DefaultOnResponse::new().level(tracing::Level::DEBUG));
 
     dotenv().ok();
 
     let pg_url = std::env::var("DATABASE_URL").unwrap_or_default();
     let redis_url = std::env::var("REDIS_URL").unwrap_or_default();
-    let mongo_url = std::env::var("MONGO_URL").unwrap_or_default();
     let es_url = std::env::var("EVENTSTORE_URL").unwrap_or_default();
 
     let postgres = PgPoolOptions::new()
-        .max_connections(20)
+        .max_connections(5)
         .acquire_timeout(Duration::from_secs(120))
         .connect(&pg_url)
         .await

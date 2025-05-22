@@ -1,3 +1,6 @@
+use crate::error::MyError;
+use crate::model::*;
+use crate::AppState;
 use axum::extract::ws::{Message, Utf8Bytes, WebSocket};
 use axum::extract::{Query, State, WebSocketUpgrade};
 use axum::response::Response;
@@ -5,12 +8,9 @@ use axum::Json;
 use futures::{StreamExt, TryFutureExt};
 use mongodb::bson::{doc, Document};
 use mongodb::{Collection, Cursor};
-use redis::{AsyncCommands, JsonAsyncCommands};
+use redis::JsonAsyncCommands;
+use serde::{Deserialize, Serialize};
 use std::time::Duration;
-use serde_json::Value;
-use crate::AppState;
-use crate::error::MyError;
-use crate::model::*;
 
 pub async fn get_transport_types(
     State(mut state): State<AppState>,
@@ -33,13 +33,18 @@ pub async fn get_transport_types(
     }
 }
 
+#[derive(Deserialize, Serialize)]
+pub struct TransTypeQuery {
+    id: i16
+}
+
 pub async fn get_transport_type_by_id(
     State(mut state): State<AppState>,
-    id: Query<i16>,
+    id: Query<TransTypeQuery>,
 ) -> Result<Json<TransportTypeResponse>, MyError> {
     let type_redis: TransportTypeResponse = state
         .redis
-        .json_get("trans_type".to_string() + &*id.0.to_string(), "$")
+        .json_get("trans_type".to_string() + &*id.id.to_string(), "$")
         .await
         .unwrap_or_default();
 
@@ -48,7 +53,7 @@ pub async fn get_transport_type_by_id(
             let res = sqlx::query_as!(
                 TransportTypeResponse,
                 "select * from tb_transport_type where type_id = $1",
-                id.0
+                id.id
             )
             .fetch_one(&state.postgres)
             .await
@@ -56,7 +61,7 @@ pub async fn get_transport_type_by_id(
 
             let _: () = state
                 .redis
-                .json_set("trans_type".to_string() + &*id.0.to_string(), "$", &res)
+                .json_set("trans_type".to_string() + &*id.id.to_string(), "$", &res)
                 .await
                 .unwrap();
 
@@ -116,13 +121,18 @@ pub async fn get_transport(
     }
 }
 
+#[derive(Deserialize, Serialize)]
+pub struct TransQuery {
+    id: i32
+}
+
 pub async fn get_transport_by_id(
     State(mut state): State<AppState>,
-    id: Query<i32>,
+    id: Query<TransQuery>,
 ) -> Result<Json<Transport>, MyError> {
     let trans_redis: Transport = state
         .redis
-        .json_get("trans".to_owned() + &*id.0.to_string(), "$")
+        .json_get("trans".to_owned() + &*id.id.to_string(), "$")
         .await
         .unwrap_or_default();
 
@@ -131,7 +141,7 @@ pub async fn get_transport_by_id(
             let trans = sqlx::query_as!(
                 TransportResponse,
                 "select * from tb_transport where transport_id = $1",
-                id.0
+                id.id
             )
             .fetch_one(&state.postgres)
             .await
@@ -157,7 +167,7 @@ pub async fn get_transport_by_id(
 
             let _: () = state
                 .redis
-                .json_set("trans".to_owned() + &*id.0.to_string(), "$", &res)
+                .json_set("trans".to_owned() + &*id.id.to_string(), "$", &res)
                 .await
                 .unwrap();
 
@@ -167,19 +177,26 @@ pub async fn get_transport_by_id(
     }
 }
 
+#[derive(Deserialize, Serialize)]
+pub struct TransByDriverQuery {
+    id: i32
+}
+
 pub async fn get_transport_by_driver_id(
     State(state): State<AppState>,
-    id: Query<i32>,
+    id: Query<TransByDriverQuery>,
 ) -> Result<Json<Transport>, MyError> {
     let trans = sqlx::query!(
         "select person_transport_id from tb_fdelivery_person where person_id = $1",
-        id.0
+        id.id
     )
     .fetch_one(&state.postgres)
     .await
     .map_err(MyError::DBError)?;
 
-    let res = get_transport_by_id(State(state), Query(trans.person_transport_id))
+    let res = get_transport_by_id(State(state), Query(TransQuery {
+        id: trans.person_transport_id
+    }))
         .await
         .unwrap_or_default().0;
 

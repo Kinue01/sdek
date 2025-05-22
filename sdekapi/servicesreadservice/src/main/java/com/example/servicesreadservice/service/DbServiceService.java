@@ -1,14 +1,11 @@
 package com.example.servicesreadservice.service;
 
 import com.example.servicesreadservice.model.DbService;
+import com.example.servicesreadservice.repository.ServiceRepository;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import com.example.servicesreadservice.repository.ServiceRepository;
-
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 @Service
 public class DbServiceService {

@@ -1,15 +1,18 @@
 use std::thread;
 use std::time::Duration;
 
+use crate::error::*;
+use crate::handlers::{get_role_by_id, get_roles, get_user_by_id, get_users, update_db};
+use crate::model::*;
 use axum::extract::State;
 use axum::http::Method;
-use axum::{middleware, Router};
 use axum::routing::get;
+use axum::{middleware, Router};
 use dotenvy::dotenv;
 use futures::TryFutureExt;
 use redis::aio::MultiplexedConnection;
-use sqlx::PgPool;
 use sqlx::postgres::PgPoolOptions;
+use sqlx::PgPool;
 use tower::ServiceBuilder;
 use tower_http::cors::{Any, CorsLayer};
 use tower_http::trace;
@@ -17,9 +20,6 @@ use tower_http::trace::TraceLayer;
 use utoipa::OpenApi;
 use utoipa_swagger_ui::SwaggerUi;
 use uuid::Variant::Future;
-use crate::handlers::{get_role_by_id, get_roles, get_user_by_id, get_users, update_db};
-use crate::model::*;
-use crate::error::*;
 
 mod error;
 mod handlers;
@@ -57,8 +57,8 @@ async fn main() {
         .allow_headers(Any);
 
     let tracing = TraceLayer::new_for_http()
-        .make_span_with(trace::DefaultMakeSpan::new().level(tracing::Level::INFO))
-        .on_response(trace::DefaultOnResponse::new().level(tracing::Level::INFO));
+        .make_span_with(trace::DefaultMakeSpan::new().level(tracing::Level::DEBUG))
+        .on_response(trace::DefaultOnResponse::new().level(tracing::Level::DEBUG));
 
     dotenv().ok();
 
@@ -67,7 +67,7 @@ async fn main() {
     let es_url = std::env::var("EVENTSTORE_URL").unwrap_or_default();
 
     let pool = PgPoolOptions::new()
-        .max_connections(20)
+        .max_connections(5)
         .acquire_timeout(Duration::from_secs(120))
         .connect(pg_url.as_str())
         .await

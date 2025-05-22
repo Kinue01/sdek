@@ -1,8 +1,8 @@
 package com.example.deliverypersonellreadservice.deliverypersonellreadservice.controller;
 
-import org.springframework.web.bind.annotation.*;
-import com.example.deliverypersonellreadservice.deliverypersonellreadservice.model.DeliveryPersonResponse;
+import com.example.deliverypersonellreadservice.deliverypersonellreadservice.model.DeliveryPerson;
 import com.example.deliverypersonellreadservice.deliverypersonellreadservice.service.DeliveryPersonService;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -17,12 +17,12 @@ public class DeliveryPersonController {
     }
 
     @GetMapping("/delivery_person/{id}")
-    public DeliveryPersonResponse getPerson(@PathVariable("id") int id) {
+    public DeliveryPerson getPerson(@PathVariable("id") int id) {
         return service.getPersonById(id);
     }
 
     @GetMapping("/delivery_personell")
-    public List<DeliveryPersonResponse> getPersons() {
+    public List<DeliveryPerson> getPersons() {
         return service.getPersons();
     }
 }

@@ -16,7 +16,7 @@ import java.util.UUID;
 @Table(name = "tb_package_services")
 public class PackageServices {
     @Id
-    UUID package_id;
-    short service_id;
-    int service_count;
+    private UUID package_id;
+    private short service_id;
+    private int service_count;
 }

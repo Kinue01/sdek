@@ -9,6 +9,11 @@ services:
       - EVENTSTORE_HTTP_PORT=2113
       - EVENTSTORE_INSECURE=true
       - EVENTSTORE_ENABLE_ATOM_PUB_OVER_HTTP=true
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail --insecure http://eventstore:2113/health/live || exit 1" ]
+      interval: 1s
+      timeout: 5s
+      retries: 10
     ports:
       - "2113:2113"
       - "1112:1112"
@@ -20,6 +25,7 @@ services:
       - type: volume
         source: eventstore-volume-logs
         target: /var/log/eventstore
+    restart: always
   nginx:
     image: nginx
     ports:
@@ -51,6 +57,7 @@ services:
     volumes:
       - ./db`s_scripts/:/db_scripts/
       - ./db`s_scripts/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
+      - ./max-conns.sql:/docker-entrypoint-initdb.d/max_conns.sql
       - postgres_data:/var/lib/postgresql/data/
     restart: unless-stopped
     healthcheck:

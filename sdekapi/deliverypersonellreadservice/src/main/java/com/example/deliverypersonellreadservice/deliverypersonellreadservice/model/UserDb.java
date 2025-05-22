@@ -1,9 +1,7 @@
 package com.example.deliverypersonellreadservice.deliverypersonellreadservice.model;
 
 import jakarta.annotation.Nullable;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,13 +15,15 @@ import java.util.UUID;
 @Table(name = "tb_fuser")
 public class UserDb {
     @Id
-    UUID user_id;
-    String user_login;
-    String user_password;
+    private UUID user_id;
+    private String user_login;
+    private String user_password;
     @Nullable
-    String user_email;
-    String user_phone;
+    private String user_email;
+    private String user_phone;
     @Nullable
-    String user_access_token;
-    short user_role_id;
+    private String user_access_token;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_role_id")
+    private Role user_role;
 }

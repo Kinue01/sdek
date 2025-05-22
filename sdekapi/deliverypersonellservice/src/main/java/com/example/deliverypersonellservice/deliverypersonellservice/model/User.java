@@ -10,11 +10,11 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class User {
-    UUID user_id;
-    String user_login;
-    String user_password;
-    String user_email;
-    String user_phone;
-    String user_access_token;
-    Role user_role;
+    private UUID user_id;
+    private String user_login;
+    private String user_password;
+    private String user_email;
+    private String user_phone;
+    private String user_access_token;
+    private Role user_role;
 }

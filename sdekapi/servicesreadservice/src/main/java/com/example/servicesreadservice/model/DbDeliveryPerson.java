@@ -1,13 +1,9 @@
 package com.example.servicesreadservice.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.UUID;
 
 @Entity
 @Table(name = "tb_fdelivery_person")
@@ -16,10 +12,14 @@ import java.util.UUID;
 @NoArgsConstructor
 public class DbDeliveryPerson {
     @Id
-    int person_id;
-    String person_lastname;
-    String person_firstname;
-    String person_middlename;
-    UUID person_user_id;
-    int person_transport_id;
+    private int person_id;
+    private String person_lastname;
+    private String person_firstname;
+    private String person_middlename;
+    @ManyToOne
+    @JoinColumn(name = "person_user_id")
+    private DbUser person_user;
+    @ManyToOne
+    @JoinColumn(name = "person_transport_id")
+    private DbTransport person_transport;
 }

@@ -1,8 +1,8 @@
-use axum::extract::{State, WebSocketUpgrade};
 use axum::extract::ws::WebSocket;
+use axum::extract::{State, WebSocketUpgrade};
 use axum::http::StatusCode;
-use axum::Json;
 use axum::response::Response;
+use axum::Json;
 use eventstore::{Client, EventData};
 
 use crate::error::MyError;

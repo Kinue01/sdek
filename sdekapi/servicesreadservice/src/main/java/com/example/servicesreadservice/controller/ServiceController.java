@@ -32,6 +32,6 @@ public class ServiceController {
 
     @GetMapping("/package_services/{id}")
     public List<DbService> getServicesByPackageId(@PathVariable("id") UUID packageId) {
-        return packageServicesService.getPackageServiceById(packageId).parallelStream().map(item -> dbServiceService.getServiceById(item.getService().getService_id())).toList();
+        return packageServicesService.getPackageServiceById(packageId);
     }
 }

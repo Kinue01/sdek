@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.geo.Point;
 
 @Data
 @AllArgsConstructor
@@ -13,8 +12,10 @@ import org.springframework.data.geo.Point;
 @Table(name = "tb_fwarehouse")
 public class DbWarehouse {
     @Id
-    int warehouse_id;
-    String warehouse_name;
-    String warehouse_address;
-    short warehouse_type_id;
+    private int warehouse_id;
+    private String warehouse_name;
+    private String warehouse_address;
+    @ManyToOne
+    @JoinColumn(name = "warehouse_type_id")
+    private WarehouseType warehouse_type;
 }
