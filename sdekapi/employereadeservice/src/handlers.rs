@@ -1,15 +1,15 @@
-use std::clone::Clone;
 use axum::extract::{Query, State};
 use axum::Json;
 use futures::StreamExt;
-use redis::{AsyncCommands, JsonAsyncCommands};
+use redis::{JsonAsyncCommands};
 use serde::Deserialize;
+use std::clone::Clone;
 use utoipa::IntoParams;
 use uuid::Uuid;
 
-use crate::AppState;
 use crate::error::MyError;
 use crate::model::*;
+use crate::AppState;
 
 #[utoipa::path(
     get,
@@ -174,23 +174,23 @@ pub async fn get_employee_by_user_id(
     State(mut state): State<AppState>,
     uuid: Query<GetEmpByUuid>,
 ) -> Result<Json<Employee>, MyError> {
-    let emp: (Uuid,) = sqlx::query_as(
-        "select employee_id from tb_employee where employee_user_id = ?"
+    let emp = sqlx::query!(
+        "select employee_id from tb_employee where employee_user_id = $1",
+        uuid.uuid
     )
-        .bind(uuid.uuid)
     .fetch_one(&state.postgres)
     .await
     .map_err(MyError::DBError)?;
 
     let emp_redis: Employee = state
         .redis
-        .json_get("emp".to_owned() + &*emp.0.to_string(), "$")
+        .json_get("emp".to_owned() + &*emp.employee_id.to_string(), "$")
         .await
         .unwrap_or_default();
 
     match emp_redis.employee_id {
         u if u == Uuid::default() => {
-            let emp = sqlx::query_as!(EmployeeResponse, "select * from tb_employee where employee_id = $1", &emp.0)
+            let emp = sqlx::query_as!(EmployeeResponse, "select * from tb_employee where employee_id = $1", &emp.employee_id)
                 .fetch_one(&state.postgres)
                 .await
                 .map_err(MyError::DBError)?;

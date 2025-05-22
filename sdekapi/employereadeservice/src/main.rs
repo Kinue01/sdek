@@ -2,12 +2,12 @@ use std::time::Duration;
 
 use axum::extract::State;
 use axum::http::Method;
-use axum::Router;
 use axum::routing::get;
+use axum::Router;
 use dotenvy::dotenv;
 use redis::aio::MultiplexedConnection;
-use sqlx::PgPool;
 use sqlx::postgres::PgPoolOptions;
+use sqlx::PgPool;
 use tower::ServiceBuilder;
 use tower_http::cors::{Any, CorsLayer};
 use tower_http::trace;

@@ -1,0 +1,22 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "select client_id from tb_client where client_user_id = $1",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "client_id",
+        "type_info": "Int4"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid"
+      ]
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "27dcb2765ae5e93965ae0a49661f43b9bc8aa02e13c6ecee12d8b44d4b1e5997"
+}

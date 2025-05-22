@@ -157,22 +157,22 @@ pub async fn get_client_by_user_id(
     State(mut state): State<AppState>,
     uuid: Query<ClientUserParams>,
 ) -> Result<Json<Client>, MyError> {
-    let client_id: (i32,) = sqlx::query_as(
-        "select client_id from tb_client where client_user_id = ?",
+    let client_id = sqlx::query!(
+        "select client_id from tb_client where client_user_id = $1",
+        uuid.uuid
     )
-        .bind(uuid.uuid)
     .fetch_one(&state.postgres)
     .await
     .map_err(MyError::DBError)?;
 
     let client_redis = state
         .redis
-        .get("client".to_owned() + &*client_id.0.to_string())
+        .get("client".to_owned() + &*client_id.client_id.to_string())
         .await.map_err(RDbError);
 
     match !client_redis.is_ok() {
         true => {
-            let client = sqlx::query_as!(ClientResponse, "select * from tb_client where client_id = $1", &client_id.0)
+            let client = sqlx::query_as!(ClientResponse, "select * from tb_client where client_id = $1", &client_id.client_id)
                 .fetch_one(&state.postgres)
                 .await
                 .map_err(MyError::DBError)?;
@@ -203,7 +203,7 @@ pub async fn get_client_by_user_id(
 
             let _: () = state
                 .redis
-                .set("client".to_owned() + &*client_id.0.to_string(), &res)
+                .set("client".to_owned() + &*client_id.client_id.to_string(), &res)
                 .await
                 .unwrap();
 
