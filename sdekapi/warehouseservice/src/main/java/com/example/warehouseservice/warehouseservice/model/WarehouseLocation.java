@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class WarehouseLocation {
-    String id;
-    Point location;
+    private String id;
+    private Point location;
 }

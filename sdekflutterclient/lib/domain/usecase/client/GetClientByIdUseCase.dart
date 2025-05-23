@@ -1,4 +1,5 @@
 import 'package:clientapp/domain/model/Client.dart';
+
 import '../../repository/client_repository.dart';
 
 class GetClientByIdUseCase {

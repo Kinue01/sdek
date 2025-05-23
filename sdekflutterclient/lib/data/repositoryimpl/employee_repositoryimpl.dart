@@ -1,8 +1,5 @@
 import 'package:clientapp/data/repository/employee_data_repository.dart';
 import 'package:clientapp/domain/model/Employee.dart';
-import 'package:clientapp/domain/model/Position.dart';
-import 'package:clientapp/domain/model/Role.dart';
-import 'package:clientapp/domain/model/User.dart';
 import 'package:clientapp/domain/repository/employee_repository.dart';
 import 'package:clientapp/local/local_storage/employee_local_storage.dart';
 

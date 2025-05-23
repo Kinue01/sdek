@@ -2,7 +2,6 @@ import 'package:clientapp/data/repository/user_data_repository.dart';
 import 'package:clientapp/domain/model/User.dart';
 import 'package:clientapp/domain/repository/user_repository.dart';
 import 'package:clientapp/local/local_storage/user_local_storage.dart';
-import '../../domain/model/Role.dart';
 
 class UserRepositoryImpl implements UserRepository {
   UserDataRepository repository;

@@ -1,7 +1,5 @@
 import 'package:clientapp/data/repository/client_data_repository.dart';
 import 'package:clientapp/domain/model/Client.dart';
-import 'package:clientapp/domain/model/Role.dart';
-import 'package:clientapp/domain/model/User.dart';
 import 'package:clientapp/domain/repository/client_repository.dart';
 import 'package:clientapp/local/local_storage/client_local_storage.dart';
 

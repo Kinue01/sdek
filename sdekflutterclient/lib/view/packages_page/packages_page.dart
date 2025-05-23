@@ -3,12 +3,10 @@ import 'package:clientapp/domain/model/DeliveryPerson.dart';
 import 'package:clientapp/domain/model/PackageStatus.dart';
 import 'package:clientapp/domain/model/PackageType.dart';
 import 'package:clientapp/domain/model/Warehouse.dart';
-import 'package:clientapp/view/client_package_details/client_package_details.dart';
 import 'package:clientapp/view/packages_page/packages_page_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it_mixin/get_it_mixin.dart';
 
-import '../../domain/model/Package.dart';
 import '../client_package_details/client_package_details_controller.dart';
 import '../navigation_service/FluroApp.dart';
 

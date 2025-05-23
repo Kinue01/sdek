@@ -9,8 +9,8 @@ class DeliveryPerson with EquatableMixin {
   final String? person_lastname;
   final String? person_firstname;
   final String? person_middlename;
-  final User? person_user;
-  final Transport? person_transport;
+  late final User? person_user;
+  late final Transport? person_transport;
 
   DeliveryPerson({
     this.person_id,

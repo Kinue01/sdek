@@ -6,7 +6,6 @@ import 'package:clientapp/domain/model/PackagePaytype.dart';
 import 'package:clientapp/domain/model/PackageServices.dart';
 import 'package:clientapp/domain/model/PackageStatus.dart';
 import 'package:clientapp/domain/model/PackageType.dart';
-import 'package:clientapp/domain/model/Role.dart';
 import 'package:clientapp/domain/model/Service.dart';
 import 'package:clientapp/domain/model/User.dart';
 import 'package:clientapp/domain/model/Warehouse.dart';
@@ -18,11 +17,9 @@ import 'package:clientapp/domain/usecase/package_paytype/get_package_paytype_use
 import 'package:clientapp/domain/usecase/package_type/GetPackageTypesUseCase.dart';
 import 'package:clientapp/domain/usecase/service/AddPackageServicesUseCase.dart';
 import 'package:clientapp/domain/usecase/service/GetAllServicesUseCase.dart';
-import 'package:clientapp/domain/usecase/transport_type/GetTransportTypesUseCase.dart';
 import 'package:clientapp/domain/usecase/user/GetCurrentUserUseCase.dart';
 import 'package:clientapp/domain/usecase/warehouse/get_warehouses_use_case.dart';
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
 
 class SendPackageController {
   final ValueNotifier<List<PackageType>> packageTypes = ValueNotifier(<PackageType>[]);

@@ -28,6 +28,8 @@ import okhttp3.Request;
 import okhttp3.ResponseBody;
 import okhttp3.WebSocket;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -47,6 +49,7 @@ import java.util.Objects;
 import static androidx.core.content.ContextCompat.getSystemService;
 
 public class HomeFragment extends Fragment {
+    private static final Logger log = LoggerFactory.getLogger(HomeFragment.class);
     private FragmentHomeBinding binding;
     private FusedLocationProviderClient mFusedLocationClient;
     private final Gson gson = new Gson();
@@ -59,7 +62,7 @@ public class HomeFragment extends Fragment {
     private final List<PackageResponse> packages = new ArrayList<>();
     private final Handler mainHandler = new Handler(Looper.myLooper());
     private ArrayAdapter<String> packagesAdapter;
-    private String currentPackage;
+    private PackageResponse currentPackage;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -101,6 +104,7 @@ public class HomeFragment extends Fragment {
             sdekPackageApi.packages().enqueue(new Callback<>() {
                 @Override
                 public void onResponse(Call<List<PackageResponse>> call, Response<List<PackageResponse>> response) {
+                    assert response.body() != null;
                     response.body().forEach(pkg -> {
                         if (pkg.package_status().status_id() == 1) {
                             packagesAdapter.add(pkg.package_uuid().toString());
@@ -112,7 +116,7 @@ public class HomeFragment extends Fragment {
 
                 @Override
                 public void onFailure(Call<List<PackageResponse>> call, Throwable throwable) {
-                    System.out.println(throwable);
+                    log.error(String.valueOf(throwable));
                     handler.postDelayed(mainTask, 3000);
                 }
             });
@@ -129,19 +133,24 @@ public class HomeFragment extends Fragment {
             if (binding.items.getSelectedItem() == null) Toast.makeText(requireContext(), "Please select a package", Toast.LENGTH_SHORT).show();
 
             final String selectedPackageUuid = binding.items.getSelectedItem().toString();
-            currentPackage = selectedPackageUuid;
 
             final PackageResponse toUpdate = packages
                     .stream()
                     .filter(p -> p.package_uuid().toString().equals(selectedPackageUuid))
                     .findFirst().orElse(null);
 
+            assert toUpdate != null;
+
+            currentPackage = toUpdate;
+
             sdekPackageApi.packageStatus(2).enqueue(new Callback<>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                    final PackageStatus status = gson.fromJson(response.body().charStream(), PackageStatus.class);
-
-                    assert toUpdate != null;
+                    final PackageStatus status;
+                    try (ResponseBody body = response.body()) {
+                        assert body != null;
+                        status = gson.fromJson(body.charStream(), PackageStatus.class);
+                    }
                     final PackageResponse body = new PackageResponse(
                             toUpdate.package_uuid(),
                             toUpdate.package_send_date(),
@@ -172,14 +181,14 @@ public class HomeFragment extends Fragment {
 
                         @Override
                         public void onFailure(Call<ResponseBody> call, Throwable throwable) {
-                            System.out.println(throwable);
+                            log.error(String.valueOf(throwable));
                         }
                     });
                 }
 
                 @Override
                 public void onFailure(Call<ResponseBody> call, Throwable throwable) {
-                    System.out.println(throwable);
+                    log.error(String.valueOf(throwable));
                 }
             });
         });
@@ -189,35 +198,33 @@ public class HomeFragment extends Fragment {
             handler.post(() -> {});
             handler.postDelayed(() -> {}, 50000);
 
-            final PackageResponse toUpdate = packages
-                    .stream()
-                    .filter(p -> p.package_uuid().toString().equals(currentPackage))
-                    .findFirst().orElse(null);
-
             sdekPackageApi.packageStatus(3).enqueue(new Callback<>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                    final PackageStatus status = gson.fromJson(response.body().charStream(), PackageStatus.class);
+                    final PackageStatus status;
+                    try (ResponseBody responseBody = response.body()) {
+                        assert responseBody != null;
+                        status = gson.fromJson(responseBody.charStream(), PackageStatus.class);
+                    }
 
                     DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
 
                     final PackageResponse packageResponse;
                     try {
-                        assert toUpdate != null;
                         packageResponse = new PackageResponse(
-                                toUpdate.package_uuid(),
-                                toUpdate.package_send_date(),
+                                currentPackage.package_uuid(),
+                                currentPackage.package_send_date(),
                                 Objects.requireNonNull(formatter.parse(LocalDate.now().toString())).toString(),
-                                toUpdate.package_weight(),
-                                toUpdate.package_deliveryperson(),
-                                toUpdate.package_type(),
+                                currentPackage.package_weight(),
+                                currentPackage.package_deliveryperson(),
+                                currentPackage.package_type(),
                                 status,
-                                toUpdate.package_sender(),
-                                toUpdate.package_receiver(),
-                                toUpdate.package_warehouse(),
-                                toUpdate.package_paytype(),
-                                toUpdate.package_payer(),
-                                toUpdate.package_items()
+                                currentPackage.package_sender(),
+                                currentPackage.package_receiver(),
+                                currentPackage.package_warehouse(),
+                                currentPackage.package_paytype(),
+                                currentPackage.package_payer(),
+                                currentPackage.package_items()
                         );
                     } catch (ParseException e) {
                         throw new RuntimeException(e);
@@ -234,14 +241,14 @@ public class HomeFragment extends Fragment {
 
                         @Override
                         public void onFailure(Call<ResponseBody> call, Throwable throwable) {
-                            System.out.println(throwable);
+                            log.error(String.valueOf(throwable));
                         }
                     });
                 }
 
                 @Override
                 public void onFailure(Call<ResponseBody> call, Throwable throwable) {
-                    System.out.println(throwable);
+                    log.error(String.valueOf(throwable));
                 }
             });
         });

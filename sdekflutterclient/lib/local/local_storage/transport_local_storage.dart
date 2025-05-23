@@ -1,9 +1,5 @@
-import 'package:clientapp/domain/model/Employee.dart';
-import 'package:clientapp/domain/model/Position.dart';
-import 'package:clientapp/domain/model/Role.dart';
 import 'package:clientapp/domain/model/Transport.dart';
 import 'package:clientapp/domain/model/TransportType.dart';
-import 'package:clientapp/domain/model/User.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 abstract class TransportLocalStorage {

@@ -1,5 +1,7 @@
 import 'dart:convert';
+
 import 'package:equatable/equatable.dart';
+
 import 'Role.dart';
 
 class User with EquatableMixin {

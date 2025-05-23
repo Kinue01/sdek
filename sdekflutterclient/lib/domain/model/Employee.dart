@@ -1,6 +1,9 @@
 import 'dart:convert';
+
 import 'package:clientapp/domain/model/Position.dart';
+import 'package:clientapp/domain/model/Transport.dart';
 import 'package:equatable/equatable.dart';
+
 import 'User.dart';
 
 class Employee with EquatableMixin {
@@ -10,6 +13,7 @@ class Employee with EquatableMixin {
   late final String? employee_middlename;
   final Position employee_position;
   late final User employee_user;
+  late Transport? delivery_transport;
 
   Employee({
     this.employee_id,
@@ -17,7 +21,8 @@ class Employee with EquatableMixin {
     this.employee_firstname,
     this.employee_middlename,
     required this.employee_position,
-    required this.employee_user
+    required this.employee_user,
+    this.delivery_transport
   });
 
   @override
@@ -45,6 +50,7 @@ class Employee with EquatableMixin {
     employee_middlename: json['employee_middlename'],
     employee_position: Position.fromMap(json['employee_position']),
     employee_user: User.fromMap(json['employee_user']),
+    delivery_transport: null
   );
 
   Map<String, dynamic> toMap() => {

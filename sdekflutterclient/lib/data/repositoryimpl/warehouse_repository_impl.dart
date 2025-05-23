@@ -10,13 +10,27 @@ class WarehouseRepositoryImpl implements WarehouseRepository {
   });
 
   @override
-  Future<Warehouse> getWarehouseById(int id) {
-    // TODO: implement getWarehouseById
-    throw UnimplementedError();
+  Future<Warehouse> getWarehouseById(int id) async {
+    return await repository.getWarehouseById(id);
   }
 
   @override
   Future<List<Warehouse>> getWarehouses() async {
     return repository.getWarehouses();
+  }
+
+  @override
+  Future<void> addWarehouse(Warehouse warehouse) async {
+    await repository.addWarehouse(warehouse);
+  }
+
+  @override
+  Future<void> deleteWarehouse(Warehouse warehouse) async {
+    await repository.deleteWarehouse(warehouse);
+  }
+
+  @override
+  Future<void> updateWarehouse(Warehouse warehouse) async {
+    await repository.updateWarehouse(warehouse);
   }
 }

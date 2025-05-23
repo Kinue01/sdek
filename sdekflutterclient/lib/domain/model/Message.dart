@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:equatable/equatable.dart';
+
 import 'User.dart';
 
 class Message with EquatableMixin {

@@ -1,4 +1,5 @@
 import 'package:clientapp/domain/repository/user_repository.dart';
+
 import '../../model/User.dart';
 
 class DeleteUserUseCase {

@@ -1,4 +1,5 @@
 import 'package:shared_preferences/shared_preferences.dart';
+
 import '../../domain/model/Role.dart';
 
 abstract class RoleLocalStorage {

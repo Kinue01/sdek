@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:clientapp/domain/model/Employee.dart';
 import 'package:clientapp/domain/model/TransportStatus.dart';
 import 'package:clientapp/domain/model/TransportType.dart';
 import 'package:equatable/equatable.dart';
@@ -9,14 +8,14 @@ class Transport with EquatableMixin {
   final int? transport_id;
   final String? transport_name;
   final String? transport_reg_number;
-  final TransportType transport_type;
+  late final TransportType? transport_type;
   final TransportStatus? transport_status;
 
   Transport({
     this.transport_id,
     this.transport_name,
     this.transport_reg_number,
-    required this.transport_type,
+    this.transport_type,
     this.transport_status
   });
 
@@ -49,7 +48,7 @@ class Transport with EquatableMixin {
     'transport_id': transport_id,
     'transport_name': transport_name,
     'transport_reg_number': transport_reg_number,
-    'transport_type': transport_type.toMap(),
+    'transport_type': transport_type?.toMap(),
     'transport_status': transport_status?.toMap(),
   };
 }

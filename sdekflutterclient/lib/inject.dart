@@ -1,3 +1,4 @@
+import 'package:clientapp/data/repository/WarehouseTypeDataRepository.dart';
 import 'package:clientapp/data/repository/authorisation_data_repository.dart';
 import 'package:clientapp/data/repository/client_data_repository.dart';
 import 'package:clientapp/data/repository/delivery_person_data_repository.dart';
@@ -32,6 +33,7 @@ import 'package:clientapp/data/repositoryimpl/transport_repositoryimpl.dart';
 import 'package:clientapp/data/repositoryimpl/transport_type_repositoryimpl.dart';
 import 'package:clientapp/data/repositoryimpl/user_repositoryimpl.dart';
 import 'package:clientapp/data/repositoryimpl/warehouse_repository_impl.dart';
+import 'package:clientapp/domain/repository/WarehouseTypeRepository.dart';
 import 'package:clientapp/domain/repository/authorisation_repository.dart';
 import 'package:clientapp/domain/repository/client_repository.dart';
 import 'package:clientapp/domain/repository/current_client_repository.dart';
@@ -51,6 +53,10 @@ import 'package:clientapp/domain/repository/transport_repository.dart';
 import 'package:clientapp/domain/repository/transport_type_repository.dart';
 import 'package:clientapp/domain/repository/user_repository.dart';
 import 'package:clientapp/domain/repository/warehouse_repository.dart';
+import 'package:clientapp/domain/usecase/delivery_person/AddDeliveryPersonUseCase.dart';
+import 'package:clientapp/domain/usecase/delivery_person/DeleteDeliveryPersonUseCase.dart';
+import 'package:clientapp/domain/usecase/delivery_person/UpdateDeliveryPersonUseCase.dart';
+import 'package:clientapp/domain/usecase/warehouse_type/GetWarehouseTypesUseCase.dart';
 import 'package:clientapp/domain/usecase/auth/GetGoogleUrlUseCase.dart';
 import 'package:clientapp/domain/usecase/auth/GetUserByLoginPassUseCase.dart';
 import 'package:clientapp/domain/usecase/auth/RevokeTokenBySecretUseCase.dart';
@@ -117,6 +123,9 @@ import 'package:clientapp/domain/usecase/user/GetUserByIdUseCase.dart';
 import 'package:clientapp/domain/usecase/user/GetUsersUseCase.dart';
 import 'package:clientapp/domain/usecase/user/SaveCurrentUserUseCase.dart';
 import 'package:clientapp/domain/usecase/user/UpdateUserUseCase.dart';
+import 'package:clientapp/domain/usecase/warehouse/AddWarehouseUseCase.dart';
+import 'package:clientapp/domain/usecase/warehouse/DeleteWarehouseUseCase.dart';
+import 'package:clientapp/domain/usecase/warehouse/UpdateWarehouseUseCase.dart';
 import 'package:clientapp/domain/usecase/warehouse/get_warehouses_use_case.dart';
 import 'package:clientapp/local/local_storage/client_local_storage.dart';
 import 'package:clientapp/local/local_storage/employee_local_storage.dart';
@@ -144,6 +153,7 @@ import 'package:clientapp/remote/api/transport_api.dart';
 import 'package:clientapp/remote/api/transport_type_api.dart';
 import 'package:clientapp/remote/api/user_api.dart';
 import 'package:clientapp/remote/api/warehouse_api.dart';
+import 'package:clientapp/remote/repositoryimpl/WarehouseTypeDataRepositoryImpl.dart';
 import 'package:clientapp/remote/repositoryimpl/authorisation_data_repository_impl.dart';
 import 'package:clientapp/remote/repositoryimpl/client_data_repository_impl.dart';
 import 'package:clientapp/remote/repositoryimpl/delivery_person_data_repository_impl.dart';
@@ -173,7 +183,9 @@ import 'package:clientapp/view/warehouses_page/warehouses_page_controller.dart';
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import 'data/repository/role_data_repository.dart';
+import 'data/repositoryimpl/WarehouseTypeRepositoryImpl.dart';
 import 'domain/usecase/message/ReceiveMessageUseCase.dart';
 import 'view/send_package_page/controller/send_package_controller.dart';
 import 'view/track_package_page/controller/track_package_controller.dart';
@@ -241,6 +253,7 @@ void initGetIt() {
   getIt.registerFactory<PackagePaytypeDataRepository>(() => PackagePaytypeDataRepositoryImpl(api: getIt()));
   getIt.registerFactory<DeliveryPersonDataRepository>(() => DeliveryPersonDataRepositoryImpl(api: getIt()));
   getIt.registerFactory<WarehouseDataRepository>(() => WarehouseDataRepositoryImpl(api: getIt()));
+  getIt.registerFactory<WarehouseTypeDataRepository>(() => WarehouseTypeDataRepositoryImpl(api: getIt()));
 
 
   // ------------------------------------------
@@ -265,8 +278,12 @@ void initGetIt() {
   getIt.registerFactory<DeliveryPersonRepository>(() => DeliveryPersonRepositoryImpl(repository: getIt()));
   getIt.registerFactory<WarehouseRepository>(() => WarehouseRepositoryImpl(repository: getIt()));
   getIt.registerFactory<CurrentEmployeeRepository>(() => CurrentEmployeeRepositoryImpl(employeeLocalStorage: getIt()));
+  getIt.registerFactory<WarehouseTypeRepository>(() => WarehouseTypeRepositoryImpl(repository: getIt()));
 
 
+  // ----------------------------------------
+  // USE CASES
+  // ----------------------------------------
   getIt.registerFactory(() => GetRolesUseCase(repository: getIt()));
   getIt.registerFactory(() => GetRoleByIdUseCase(repository: getIt()));
 
@@ -348,11 +365,19 @@ void initGetIt() {
   getIt.registerFactory(() => GetPackagePaytypesUseCase(repository: getIt()));
 
   getIt.registerFactory(() => GetDeliveryPersonalUseCase(repository: getIt()));
+  getIt.registerFactory(() => AddDeliveryPersonUseCase(repository: getIt()));
+  getIt.registerFactory(() => UpdateDeliveryPersonUseCase(repository: getIt()));
+  getIt.registerFactory(() => DeleteDeliveryPersonUseCase(repository: getIt()));
 
   getIt.registerFactory(() => GetWarehousesUseCase(repository: getIt()));
+  getIt.registerFactory(() => AddWarehouseUseCase(repository: getIt()));
+  getIt.registerFactory(() => UpdateWarehouseUseCase(repository: getIt()));
+  getIt.registerFactory(() => DeleteWarehouseUseCase(repository: getIt()));
 
   getIt.registerFactory(() => GetCurrentEmployeeUseCase(repository: getIt()));
   getIt.registerFactory(() => SaveCurrentEmployeeUseCase(repository: getIt()));
+
+  getIt.registerFactory(() => GetWarehouseTypesUseCase(repository: getIt()));
 
 
   // ----------------------------------------
@@ -368,6 +393,6 @@ void initGetIt() {
   getIt.registerLazySingleton(() => RegisterController(getRoleByIdUseCase: getIt(), addUserUseCase: getIt()));
   getIt.registerLazySingleton(() => MainPageController(getCurrentUserUseCase: getIt(), getCurrentClientUseCase: getIt(), getCurrentEmployeeUseCase: getIt()));
   getIt.registerLazySingleton(() => PackagesPageController(getPackagesUseCase: getIt(), getClientsUseCase: getIt(), getDeliveryPersonalUseCase: getIt(), getPackageStatusesUseCase: getIt(), getPackageTypesUseCase: getIt(), getWarehousesUseCase: getIt()));
-  getIt.registerLazySingleton(() => EmployeesPageContoller(getEmployeesUseCase: getIt(), getPositionsUseCase: getIt(), addEmployeeUseCase: getIt()));
-  getIt.registerLazySingleton(() => WarehousePageController(getWarehousesUseCase: getIt()));
+  getIt.registerLazySingleton(() => EmployeesPageContoller(getEmployeesUseCase: getIt(), getPositionsUseCase: getIt(), addEmployeeUseCase: getIt(), updateEmployeeUseCase: getIt(), deleteEmployeeUseCase: getIt(), getDeliveryPersonalUseCase: getIt(), addDeliveryPersonUseCase: getIt(), updateDeliveryPersonUseCase: getIt(), deleteDeliveryPersonUseCase: getIt(), getTransportTypesUseCase: getIt()));
+  getIt.registerLazySingleton(() => WarehousePageController(getWarehousesUseCase: getIt(), addWarehouseUseCase: getIt(), updateWarehouseUseCase: getIt(), deleteWarehouseUseCase: getIt(), getWarehouseTypesUseCase: getIt()));
 }

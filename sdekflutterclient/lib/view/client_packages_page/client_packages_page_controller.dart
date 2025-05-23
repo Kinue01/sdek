@@ -1,13 +1,6 @@
 import 'package:clientapp/domain/model/Client.dart';
-import 'package:clientapp/domain/model/Employee.dart';
 import 'package:clientapp/domain/model/Package.dart';
-import 'package:clientapp/domain/model/PackageItem.dart';
-import 'package:clientapp/domain/model/PackageStatus.dart';
-import 'package:clientapp/domain/model/PackageType.dart';
-import 'package:clientapp/domain/model/Position.dart';
 import 'package:clientapp/domain/model/Role.dart';
-import 'package:clientapp/domain/model/Transport.dart';
-import 'package:clientapp/domain/model/TransportType.dart';
 import 'package:clientapp/domain/model/User.dart';
 import 'package:clientapp/domain/usecase/client/GetCurrentClientUseCase.dart';
 import 'package:clientapp/domain/usecase/pack/GetPackagesByClientIdUseCase.dart';

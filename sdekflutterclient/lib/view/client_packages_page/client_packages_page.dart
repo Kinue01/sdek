@@ -1,7 +1,6 @@
 import 'package:clientapp/domain/model/Package.dart';
 import 'package:clientapp/view/client_package_details/client_package_details_controller.dart';
 import 'package:clientapp/view/client_package_item/client_package_item.dart';
-import 'package:clientapp/view/client_package_item_header/client_package_item_header.dart';
 import 'package:clientapp/view/client_packages_page/client_packages_page_controller.dart';
 import 'package:clientapp/view/navigation_service/FluroApp.dart';
 import 'package:flutter/material.dart';

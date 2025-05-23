@@ -10,14 +10,11 @@ import jakarta.validation.constraints.NotBlank;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Warehouse {
-    int warehouse_id;
-
+    private int warehouse_id;
     @NotBlank
-    String warehouse_name;
-
+    private String warehouse_name;
     @NotBlank
-    String warehouse_address;
-
+    private String warehouse_address;
     @NotBlank
-    WarehouseType warehouse_type;
+    private WarehouseType warehouse_type;
 }
