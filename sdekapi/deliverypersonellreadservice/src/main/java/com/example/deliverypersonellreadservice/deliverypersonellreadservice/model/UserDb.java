@@ -23,7 +23,7 @@ public class UserDb {
     private String user_phone;
     @Nullable
     private String user_access_token;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "user_role_id")
     private Role user_role;
 }

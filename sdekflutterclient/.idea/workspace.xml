@@ -5,7 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8150d90f-2e70-4c11-baaa-2d9bf53faa8e" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../sdekdeliveryclient/gradle/libs.versions.toml" beforeDir="false" afterPath="$PROJECT_DIR$/../sdekdeliveryclient/gradle/libs.versions.toml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sdekapi/deliverypersonellreadservice/src/main/java/com/example/deliverypersonellreadservice/deliverypersonellreadservice/model/UserDb.java" beforeDir="false" afterPath="$PROJECT_DIR$/../sdekapi/deliverypersonellreadservice/src/main/java/com/example/deliverypersonellreadservice/deliverypersonellreadservice/model/UserDb.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -134,7 +134,7 @@
       <workItem from="1747930869103" duration="12000" />
       <workItem from="1747931077835" duration="470000" />
       <workItem from="1747933522310" duration="1892000" />
-      <workItem from="1747954588526" duration="1367000" />
+      <workItem from="1747954588526" duration="2319000" />
     </task>
     <servers />
   </component>
