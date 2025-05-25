@@ -44,8 +44,6 @@ class ServiceApiImpl implements ServiceApi {
 
   @override
   Future<PackageServices> addPackageServices(PackageServices services) async {
-    var map = services.toMap();
-    var json = services.toRawJson();
     Response response = await client.post("$url/api/services", data: services.toRawJson());
     if (response.statusCode != 200) return PackageServices();
     return PackageServices.fromMap(response.data);

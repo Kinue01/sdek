@@ -39,6 +39,7 @@ android {
         buildConfigField("String", "DEV_API_URL", "${secretProperties["DEV_API_URL"]}")
         buildConfigField("String", "PROD_WS", "${secretProperties["PROD_WS"]}")
         buildConfigField("String", "DEV_WS", "${secretProperties["DEV_WS"]}")
+        buildConfigField("String", "ESDB_PROD_URL", "${secretProperties["ESDB_PROD_URL"]}")
     }
 
     compileOptions {
@@ -50,6 +51,8 @@ android {
         viewBinding = true
         buildConfig = true
     }
+
+    packaging { resources.excludes.add("META-INF/versions/9/OSGI-INF/MANIFEST.MF") }
 }
 
 dependencies {
@@ -67,6 +70,9 @@ dependencies {
     implementation(libs.jackson.databind)
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
+    implementation(libs.kurrentdb.client) {
+        exclude(group = "com.google.api.grpc", module = "proto-google-common-protos")
+    }
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)

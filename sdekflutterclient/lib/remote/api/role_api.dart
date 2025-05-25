@@ -19,7 +19,9 @@ class RoleApiImpl implements RoleApi {
 
   @override
   Future<Role> getRoleById(int id) async {
-    Response<Map<String, dynamic>> resp = await client.get("$readUrl/api/role", options: Options(extra: {'id': id}));
+    Response<Map<String, dynamic>> resp = await client.get("$readUrl/api/role", queryParameters: {
+      'id': id
+    });
     if (resp.statusCode == 200) {
       return Role.fromMap(resp.data!);
     }

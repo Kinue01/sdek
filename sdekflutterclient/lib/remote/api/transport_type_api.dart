@@ -56,7 +56,7 @@ class TransportTypeApiImpl implements TransportTypeApi {
 
   @override
   Future<List<TransportType>> getTransportTypes() async {
-    Response<List<Map<String, dynamic>>> resp = await client.get("$readUrl/api/types");
+    Response<List<dynamic>> resp = await client.get("$readUrl/api/transport_types");
     switch (resp.statusCode) {
       case 200:
         return resp.data!.map((e) => TransportType.fromMap(e)).toList();

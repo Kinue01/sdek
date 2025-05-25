@@ -5,68 +5,21 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8150d90f-2e70-4c11-baaa-2d9bf53faa8e" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/lib/data/repository/WarehouseTypeDataRepository.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/data/repositoryimpl/WarehouseTypeRepositoryImpl.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/domain/repository/WarehouseTypeRepository.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/domain/usecase/delivery_person/AddDeliveryPersonUseCase.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/domain/usecase/delivery_person/DeleteDeliveryPersonUseCase.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/domain/usecase/delivery_person/UpdateDeliveryPersonUseCase.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/domain/usecase/warehouse/AddWarehouseUseCase.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/domain/usecase/warehouse/DeleteWarehouseUseCase.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/domain/usecase/warehouse/UpdateWarehouseUseCase.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/domain/usecase/warehouse_type/GetWarehouseTypesUseCase.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/remote/repositoryimpl/WarehouseTypeDataRepositoryImpl.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../sdekapi/warehouseservice/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../sdekapi/warehouseservice/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../sdekapi/warehouseservice/src/main/java/com/example/warehouseservice/warehouseservice/AppConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/../sdekapi/warehouseservice/src/main/java/com/example/warehouseservice/warehouseservice/AppConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../sdekapi/warehouseservice/src/main/java/com/example/warehouseservice/warehouseservice/model/Warehouse.java" beforeDir="false" afterPath="$PROJECT_DIR$/../sdekapi/warehouseservice/src/main/java/com/example/warehouseservice/warehouseservice/model/Warehouse.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../sdekapi/warehouseservice/src/main/java/com/example/warehouseservice/warehouseservice/model/WarehouseLocation.java" beforeDir="false" afterPath="$PROJECT_DIR$/../sdekapi/warehouseservice/src/main/java/com/example/warehouseservice/warehouseservice/model/WarehouseLocation.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../sdekapi/warehouseservice/src/main/java/com/example/warehouseservice/warehouseservice/model/WarehouseType.java" beforeDir="false" afterPath="$PROJECT_DIR$/../sdekapi/warehouseservice/src/main/java/com/example/warehouseservice/warehouseservice/model/WarehouseType.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../sdekapi/warehouseservice/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/../sdekapi/warehouseservice/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../sdekapi/warehouseservice/src/test/java/com/example/warehouseservice/warehouseservice/WarehouseserviceApplicationTests.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sdekdeliveryclient/app/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/../sdekdeliveryclient/app/build.gradle.kts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../sdekdeliveryclient/app/src/main/java/com/example/myapplication/HomeFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/../sdekdeliveryclient/app/src/main/java/com/example/myapplication/HomeFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sdekdeliveryclient/app/src/main/res/navigation/mobile_navigation.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../sdekdeliveryclient/app/src/main/res/navigation/mobile_navigation.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sdekdeliveryclient/gradle/libs.versions.toml" beforeDir="false" afterPath="$PROJECT_DIR$/../sdekdeliveryclient/gradle/libs.versions.toml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/data/repository/delivery_person_data_repository.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/data/repository/delivery_person_data_repository.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/data/repository/warehouse_data_repository.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/data/repository/warehouse_data_repository.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/data/repositoryimpl/client_repositoryimpl.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/data/repositoryimpl/client_repositoryimpl.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/data/repositoryimpl/delivery_person_repository_impl.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/data/repositoryimpl/delivery_person_repository_impl.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/data/repositoryimpl/employee_repositoryimpl.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/data/repositoryimpl/employee_repositoryimpl.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/data/repositoryimpl/transport_repositoryimpl.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/data/repositoryimpl/transport_repositoryimpl.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/data/repositoryimpl/user_repositoryimpl.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/data/repositoryimpl/user_repositoryimpl.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/data/repositoryimpl/warehouse_repository_impl.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/data/repositoryimpl/warehouse_repository_impl.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/domain/model/DeliveryPerson.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/domain/model/DeliveryPerson.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/domain/model/Employee.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/domain/model/Employee.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/domain/model/Message.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/domain/model/Message.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/domain/model/Package.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/domain/model/Package.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/domain/model/PackageItem.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/domain/model/PackageItem.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/domain/model/Transport.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/domain/model/Transport.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/domain/model/User.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/domain/model/User.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/domain/model/Warehouse.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/domain/model/Warehouse.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/domain/repository/delivery_person_repository.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/domain/repository/delivery_person_repository.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/domain/repository/warehouse_repository.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/domain/repository/warehouse_repository.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/domain/usecase/client/GetClientByIdUseCase.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/domain/usecase/client/GetClientByIdUseCase.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/domain/usecase/user/DeleteUserUseCase.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/domain/usecase/user/DeleteUserUseCase.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/inject.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/inject.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/local/local_storage/role_local_storage.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/local/local_storage/role_local_storage.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/local/local_storage/transport_local_storage.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/local/local_storage/transport_local_storage.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/remote/api/authorisation_api.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/remote/api/authorisation_api.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/remote/api/ServiceApi.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/remote/api/ServiceApi.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/remote/api/client_api.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/remote/api/client_api.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/remote/api/delivery_person_api.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/remote/api/delivery_person_api.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/remote/api/employee_api.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/remote/api/employee_api.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/remote/api/transport_api.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/remote/api/transport_api.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/remote/api/warehouse_api.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/remote/api/warehouse_api.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/remote/repositoryimpl/delivery_person_data_repository_impl.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/remote/repositoryimpl/delivery_person_data_repository_impl.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/remote/repositoryimpl/warehouse_data_repository_impl.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/remote/repositoryimpl/warehouse_data_repository_impl.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/view/account_page/account_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/view/account_page/account_page.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/view/client_packages_page/client_packages_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/view/client_packages_page/client_packages_page.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/view/client_packages_page/client_packages_page_controller.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/view/client_packages_page/client_packages_page_controller.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/remote/api/package_api.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/remote/api/package_api.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/remote/api/package_status_api.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/remote/api/package_status_api.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/remote/api/package_type_api.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/remote/api/package_type_api.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/remote/api/position_api.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/remote/api/position_api.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/remote/api/role_api.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/remote/api/role_api.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/remote/api/transport_type_api.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/remote/api/transport_type_api.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/view/employees_page/employees_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/view/employees_page/employees_page.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/view/employees_page/employees_page_controller.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/view/employees_page/employees_page_controller.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/view/packages_page/packages_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/view/packages_page/packages_page.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/view/send_package_page/controller/send_package_controller.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/view/send_package_page/controller/send_package_controller.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/view/warehouses_page/warehouses_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/view/warehouses_page/warehouses_page.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/view/warehouses_page/warehouses_page_controller.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/view/warehouses_page/warehouses_page_controller.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -95,10 +48,10 @@
     &quot;accountId&quot;: &quot;00ecd793-8070-4661-bf94-67d9de8ebf20&quot;
   }
 }</component>
-  <component name="KubernetesApiPersistence"><![CDATA[{}]]></component>
-  <component name="KubernetesApiProvider"><![CDATA[{
-  "isMigrated": true
-}]]></component>
+  <component name="KubernetesApiPersistence">{}</component>
+  <component name="KubernetesApiProvider">{
+  &quot;isMigrated&quot;: true
+}</component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 4
 }</component>
@@ -109,7 +62,7 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
-    "Flutter.main.dart.executor": "Run",
+    "Flutter.main.dart.executor": "Debug",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
     "dart.analysis.tool.window.visible": "false",
@@ -205,6 +158,8 @@
       <workItem from="1747933522310" duration="1892000" />
       <workItem from="1747954588526" duration="3434000" />
       <workItem from="1747961367580" duration="33662000" />
+      <workItem from="1748095449247" duration="4937000" />
+      <workItem from="1748167873186" duration="7361000" />
     </task>
     <servers />
   </component>

@@ -540,7 +540,7 @@ class EmployeesState extends State<EmployeesComponent> with GetItStateMixin {
                                 Text(list[index].employee_user.user_email!)
                             ),
                             DataCell(
-                                Text(list[index].delivery_transport!.transport_name!)
+                                Text(list[index].delivery_transport != null ? list[index].delivery_transport!.transport_name! : "No transport")
                             ),
                           ]
                       )

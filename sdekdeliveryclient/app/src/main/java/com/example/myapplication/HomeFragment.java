@@ -23,6 +23,7 @@ import com.example.myapplication.model.PackageResponse;
 import com.example.myapplication.model.PackageStatus;
 import com.google.android.gms.location.*;
 import com.google.gson.Gson;
+import io.kurrent.dbclient.*;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.ResponseBody;
@@ -56,13 +57,12 @@ public class HomeFragment extends Fragment {
     private static final int PERMISSION_ID = 44;
     private final Handler handler = new Handler(Looper.myLooper());
     private Runnable task, mainTask;
-    private final OkHttpClient httpClient = new OkHttpClient.Builder().build();
-    private WebSocket webSocket;
     private SdekPackageApi sdekPackageApi;
     private final List<PackageResponse> packages = new ArrayList<>();
     private final Handler mainHandler = new Handler(Looper.myLooper());
     private ArrayAdapter<String> packagesAdapter;
     private PackageResponse currentPackage;
+    private KurrentDBClient client;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -78,10 +78,8 @@ public class HomeFragment extends Fragment {
 
         sdekPackageApi = retrofit.create(SdekPackageApi.class);
 
-        final Request request = new Request.Builder().url(BuildConfig.PROD_WS + "/transportservice/api/track_transport").build();
-        final WS listener = new WS();
-
-        webSocket = httpClient.newWebSocket(request, listener);
+        KurrentDBClientSettings settings = KurrentDBConnectionString.parseOrThrow(BuildConfig.ESDB_PROD_URL);
+        client = KurrentDBClient.create(settings);
     }
 
     @Override
@@ -284,7 +282,12 @@ public class HomeFragment extends Fragment {
         @Override
         public void onLocationResult(LocationResult locationResult) {
             Location mLastLocation = locationResult.getLastLocation();
-            webSocket.send(gson.toJson(new TransportState(String.valueOf(UserContext.currentDeliveryPerson.person_transport().transport_id()), mLastLocation.getLatitude(), mLastLocation.getLongitude())));
+            EventData eventData = EventData.builderAsJson(
+                    "transport_geo_changed",
+                    gson.toJson(new TransportState(String.valueOf(UserContext.currentDeliveryPerson.person_transport().transport_id()), mLastLocation.getLatitude(), mLastLocation.getLongitude())).getBytes()
+            ).build();
+            AppendToStreamOptions options = AppendToStreamOptions.get().streamState(StreamState.any());
+            client.appendToStream("transport_geo", options, eventData);
         }
     };
 
@@ -318,6 +321,5 @@ public class HomeFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
-        webSocket.cancel();
     }
 }

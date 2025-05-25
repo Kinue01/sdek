@@ -45,7 +45,9 @@ class PackageTypeApiImpl implements PackageTypeApi {
 
   @override
   Future<PackageType> getTypeById(int id) async {
-    Response<Map<String, dynamic>> response = await client.get("$readUrl/api/type", options: Options(extra: {'id': id}));
+    Response<Map<String, dynamic>> response = await client.get("$readUrl/api/type", queryParameters: {
+      'id': id
+    });
     switch (response.statusCode) {
       case 200:
         return PackageType.fromMap(response.data!);

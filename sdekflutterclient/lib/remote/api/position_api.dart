@@ -45,7 +45,9 @@ class PositionApiImpl implements PositionApi {
 
   @override
   Future<Position> getPositionById(int id) async {
-    Response<Map<String, dynamic>> response = await client.get("$readUrl/api/position", options: Options(extra: {'id': id}));
+    Response<Map<String, dynamic>> response = await client.get("$readUrl/api/position", queryParameters: {
+      'id': id
+    });
     switch (response.statusCode) {
       case 200:
         return Position.fromMap(response.data!);

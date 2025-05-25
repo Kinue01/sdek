@@ -48,7 +48,9 @@ class PackageApiImpl implements PackageApi {
 
   @override
   Future<Package> getPackageById(String uuid) async {
-    Response<Map<String, dynamic>> response = await client.get("$readUrl/api/package", options: Options(extra: {'uuid': uuid}));
+    Response<Map<String, dynamic>> response = await client.get("$readUrl/api/package", queryParameters: {
+      'uuid': uuid
+    });
     switch (response.statusCode) {
       case 200:
         return Package.fromMap(response.data!);
@@ -70,7 +72,9 @@ class PackageApiImpl implements PackageApi {
 
   @override
   Future<List<Package>> getPackagesByClientId(int id) async {
-    Response<List<dynamic>> response = await client.get("$readUrl/api/client_packages?id=$id");
+    Response<List<dynamic>> response = await client.get("$readUrl/api/client_packages", queryParameters: {
+      'id': id
+    });
     switch (response.statusCode) {
       case 200:
         return response.data!.map((e) => Package.fromMap(e)).toList();
