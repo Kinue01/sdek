@@ -5,6 +5,7 @@ import com.example.warehouseservice.warehouseservice.service.WarehouseTypeServic
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping(value = "/warehouseservice/api/warehouse_type", produces = "application/json")
 public class WarehouseTypeController {

@@ -15,12 +15,10 @@ public class DeliveryPersonService {
         this.repository = repository;
     }
 
-    @Cacheable("deliveryPersonal")
     public List<DeliveryPerson> getPersons() {
         return repository.findAll();
     }
 
-    @Cacheable("deliveryPerson")
     public DeliveryPerson getPersonById(int id) {
         var person = repository.findById(id).orElse(null);
         assert person != null;

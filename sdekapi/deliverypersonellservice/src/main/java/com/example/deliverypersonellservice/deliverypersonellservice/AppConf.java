@@ -1,8 +1,8 @@
 package com.example.deliverypersonellservice.deliverypersonellservice;
 
-import com.eventstore.dbclient.EventStoreDBClient;
-import com.eventstore.dbclient.EventStoreDBClientSettings;
-import com.eventstore.dbclient.EventStoreDBConnectionString;
+import io.kurrent.dbclient.KurrentDBClient;
+import io.kurrent.dbclient.KurrentDBClientSettings;
+import io.kurrent.dbclient.KurrentDBConnectionString;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,8 +13,8 @@ public class AppConf {
     private String eventStoreUri;
 
     @Bean
-    public EventStoreDBClient eventStoreDBClient() {
-        final EventStoreDBClientSettings settings = EventStoreDBConnectionString.parseOrThrow(eventStoreUri);
-        return EventStoreDBClient.create(settings);
+    public KurrentDBClient eventStoreDBClient() {
+        final KurrentDBClientSettings settings = KurrentDBConnectionString.parseOrThrow(eventStoreUri);
+        return KurrentDBClient.create(settings);
     }
 }

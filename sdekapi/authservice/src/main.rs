@@ -29,7 +29,6 @@ struct ApiDoc;
 #[derive(Clone)]
 struct AppState {
     postgres: PgPool,
-    redis: MultiplexedConnection,
 }
 
 #[tokio::main]
@@ -51,24 +50,17 @@ async fn main() {
     dotenv().ok();
 
     let pg_url = std::env::var("DATABASE_URL").unwrap_or_default();
-    let redis_url = std::env::var("REDIS_URL").unwrap_or_default();
 
     let pool = PgPoolOptions::new()
         .max_connections(5)
+        .min_connections(1)
         .acquire_timeout(Duration::from_secs(120))
-        .connect(&pg_url)
-        .await
-        .unwrap();
-
-    let redis = redis::Client::open(redis_url)
-        .unwrap()
-        .get_multiplexed_async_connection()
-        .await
+        .idle_timeout(Duration::from_secs(10))
+        .connect_lazy(&pg_url)
         .unwrap();
 
     let state = AppState {
-        postgres: pool,
-        redis
+        postgres: pool
     };
 
     let conf = SessionConfig::default().with_table_name("auth_table");

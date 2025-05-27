@@ -28,7 +28,6 @@
 	</scm>
 	<properties>
 		<java.version>21</java.version>
-		<tomcat.version>11.0.5</tomcat.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -49,11 +48,12 @@
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
+			<version>1.18.38</version>
 		</dependency>
 		<dependency>
-			<groupId>com.eventstore</groupId>
-			<artifactId>db-client-java</artifactId>
-			<version>5.4.5</version>
+			<groupId>io.kurrent</groupId>
+			<artifactId>kurrentdb-client</artifactId>
+			<version>1.0.1</version>
 		</dependency>
 		<dependency>
     		<groupId>org.springdoc</groupId>
@@ -71,6 +71,15 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<excludes>
+						<exclude>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+						</exclude>
+					</excludes>
+					<mainClass>com.example.warehouseservice.warehouseservice.WarehouseserviceApplication</mainClass>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

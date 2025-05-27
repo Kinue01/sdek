@@ -16,11 +16,3 @@ tracing-subscriber = { version = "0.3.19", features = ["env-filter"] }
 utoipa = { version = "5.3.1", features = ["axum_extras", "uuid"] }
 utoipa-swagger-ui = { version = "9.0.0", features = ["axum"] }
 eventstore = "4.0.0"
-
-[dependencies.uuid]
-version = "1.16.0"
-features = [
-    "v7", # Lets you generate random UUIDs
-    "serde", # Use _a faster (but still sufficiently random) RNG
-    "macro-diagnostics", # Enable better diagnostics for compile-time UUIDs
-]

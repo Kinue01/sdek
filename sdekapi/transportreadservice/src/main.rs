@@ -33,7 +33,6 @@ struct ApiDoc;
 #[derive(Clone)]
 struct AppState {
     postgres: Pool<Postgres>,
-    redis: MultiplexedConnection,
     mongo: Client,
     event_client: eventstore::Client,
 }
@@ -57,30 +56,21 @@ async fn main() {
     dotenv().ok();
 
     let pg_url = std::env::var("DATABASE_URL").unwrap_or_default();
-    let redis_url = std::env::var("REDIS_URL").unwrap_or_default();
     let mongo_url = std::env::var("MONGO_URL").unwrap_or_default();
     let es_url = std::env::var("EVENTSTORE_URL").unwrap_or_default();
 
     let postgres = PgPoolOptions::new()
         .max_connections(5)
+        .min_connections(1)
         .acquire_timeout(Duration::from_secs(120))
-        .connect(&pg_url)
-        .await
+        .idle_timeout(Duration::from_secs(10))
+        .connect_lazy(&pg_url)
         .unwrap();
-
-    let redis = redis::Client::open(redis_url)
-        .unwrap()
-        .get_multiplexed_async_connection()
-        .await
-        .unwrap();
-
     let mongo = Client::with_uri_str(mongo_url).await.unwrap();
-
     let event_client = eventstore::Client::new(es_url.parse().unwrap_or_default()).unwrap();
 
     let state = AppState {
         postgres,
-        redis,
         mongo,
         event_client,
     };

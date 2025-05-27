@@ -20,68 +20,59 @@ use crate::AppState;
     )
 )]
 pub async fn get_employees(
-    State(mut state): State<AppState>,
+    State(state): State<AppState>,
 ) -> Result<Json<Vec<Employee>>, MyError> {
-    let emps_redis: Vec<Employee> = state.redis.json_get("emps", "$").await.unwrap_or_default();
+    let emps = sqlx::query_as!(EmployeeResponse, "select * from tb_employee")
+        .fetch_all(&state.postgres)
+        .await
+        .map_err(MyError::DBError)?;
 
-    match emps_redis.is_empty() {
-        true => {
-            let emps = sqlx::query_as!(EmployeeResponse, "select * from tb_employee")
-                .fetch_all(&state.postgres)
-                .await
-                .map_err(MyError::DBError)?;
-            
-            let res = futures::stream::iter(emps)
-                .map(|x| async {
-                    let postgres = state.clone().postgres.clone();
+    let res = futures::stream::iter(emps)
+        .map(|x| async {
+            let postgres = state.postgres.clone();
 
-                    tokio::spawn(async move {
-                        let user = sqlx::query_as!(UserResponse, "select * from tb_fuser where user_id = $1", &x.clone().employee_user_id)
-                            .fetch_one(&postgres)
-                            .await
-                            .map_err(MyError::DBError).unwrap();
+            tokio::spawn(async move {
+                let user = sqlx::query_as!(UserResponse, "select * from tb_fuser where user_id = $1", &x.clone().employee_user_id)
+                    .fetch_one(&postgres)
+                    .await
+                    .map_err(MyError::DBError).unwrap();
 
-                        Employee {
-                            employee_id: x.employee_id,
-                            employee_lastname: x.employee_lastname,
-                            employee_firstname: x.employee_firstname,
-                            employee_middlename: x.employee_middlename,
-                            employee_position: sqlx::query_as!(
+                Employee {
+                    employee_id: x.employee_id,
+                    employee_lastname: x.employee_lastname,
+                    employee_firstname: x.employee_firstname,
+                    employee_middlename: x.employee_middlename,
+                    employee_position: sqlx::query_as!(
                                 PositionResponse,
                                 "select * from tb_position where position_id = $1",
                                 &x.employee_position_id
                             )
+                        .fetch_one(&postgres)
+                        .await
+                        .map_err(MyError::DBError)
+                        .unwrap(),
+                    employee_user: User {
+                        user_id: user.user_id,
+                        user_login: user.user_login,
+                        user_password: user.user_password,
+                        user_email: user.user_email.expect("REASON"),
+                        user_phone: user.user_phone,
+                        user_access_token: user.user_access_token.expect("REASON"),
+                        user_role: sqlx::query_as!(RoleResponse, "select * from tb_fuser_role where role_id = $1", user.user_role_id)
                             .fetch_one(&postgres)
                             .await
-                            .map_err(MyError::DBError)
-                            .unwrap(),
-                            employee_user: User {
-                                user_id: user.user_id,
-                                user_login: user.user_login,
-                                user_password: user.user_password,
-                                user_email: user.user_email.expect("REASON"),
-                                user_phone: user.user_phone,
-                                user_access_token: user.user_access_token.expect("REASON"),
-                                user_role: sqlx::query_as!(RoleResponse, "select * from tb_fuser_role where role_id = $1", user.user_role_id)
-                                    .fetch_one(&postgres)
-                                    .await
-                                    .map_err(MyError::DBError).expect("REASON"),
-                            },
-                        }
-                    })
-                    .await
-                    .unwrap_or_default()
-                })
-                .buffer_unordered(10)
-                .collect::<Vec<_>>()
-                .await;
+                            .map_err(MyError::DBError).expect("REASON"),
+                    },
+                }
+            })
+                .await
+                .unwrap_or_default()
+        })
+        .buffer_unordered(24)
+        .collect::<Vec<_>>()
+        .await;
 
-            let _: () = state.redis.json_set("emps", "$", &res).await.unwrap();
-
-            Ok(Json(res))
-        }
-        false => Ok(Json(emps_redis)),
-    }
+    Ok(Json(res))
 }
 
 #[derive(Deserialize, IntoParams)]
@@ -101,32 +92,26 @@ pub struct EmpSearchQuery {
     )
 )]
 pub async fn get_employee_by_id(
-    State(mut state): State<AppState>,
+    State(state): State<AppState>,
     uuid: Query<EmpSearchQuery>,
 ) -> Result<Json<Employee>, MyError> {
-    let emp_redis: Employee = state
-        .redis
-        .json_get("emp".to_owned() + &*uuid.0.uuid.to_string(), "$")
-        .await
-        .unwrap_or_default();
-
-    match emp_redis.employee_id {
-        u if u == Uuid::default() => {
-            let emp = sqlx::query_as!(
+    let emp = sqlx::query_as!(
                 EmployeeResponse,
                 "select * from tb_employee where employee_id = $1",
                 &uuid.0.uuid
             )
-            .fetch_one(&state.postgres)
-            .await
-            .map_err(MyError::DBError)?;
+        .fetch_one(&state.postgres)
+        .await
+        .map_err(MyError::DBError)?;
 
-            let user = sqlx::query_as!(UserResponse, "select * from tb_fuser where user_id = $1", &emp.employee_user_id)
-                .fetch_one(&state.postgres)
-                .await
-                .map_err(MyError::DBError)?;
+    let user = sqlx::query_as!(UserResponse, "select * from tb_fuser where user_id = $1", &emp.employee_user_id)
+        .fetch_one(&state.postgres)
+        .await
+        .map_err(MyError::DBError)?;
 
-            let res = Employee {
+    Ok(
+        Json(
+            Employee {
                 employee_id: emp.employee_id,
                 employee_lastname: emp.employee_lastname,
                 employee_firstname: emp.employee_firstname,
@@ -136,9 +121,9 @@ pub async fn get_employee_by_id(
                     "select * from tb_position where position_id = $1",
                     &emp.employee_position_id
                 )
-                .fetch_one(&state.postgres)
-                .await
-                .map_err(MyError::DBError)?,
+                    .fetch_one(&state.postgres)
+                    .await
+                    .map_err(MyError::DBError)?,
                 employee_user: User {
                     user_id: user.user_id,
                     user_login: user.user_login,
@@ -151,18 +136,9 @@ pub async fn get_employee_by_id(
                         .await
                         .map_err(MyError::DBError)?,
                 },
-            };
-
-            let _: () = state
-                .redis
-                .json_set("emp".to_owned() + &*uuid.0.uuid.to_string(), "$", &res)
-                .await
-                .unwrap();
-
-            Ok(Json(res))
-        }
-        _ => Ok(Json(emp_redis)),
-    }
+            }
+        )
+    )
 }
 
 #[derive(Deserialize, IntoParams)]
@@ -171,7 +147,7 @@ pub struct GetEmpByUuid {
 }
 
 pub async fn get_employee_by_user_id(
-    State(mut state): State<AppState>,
+    State(state): State<AppState>,
     uuid: Query<GetEmpByUuid>,
 ) -> Result<Json<Employee>, MyError> {
     let emp = sqlx::query!(
@@ -182,25 +158,19 @@ pub async fn get_employee_by_user_id(
     .await
     .map_err(MyError::DBError)?;
 
-    let emp_redis: Employee = state
-        .redis
-        .json_get("emp".to_owned() + &*emp.employee_id.to_string(), "$")
+    let emp = sqlx::query_as!(EmployeeResponse, "select * from tb_employee where employee_id = $1", &emp.employee_id)
+        .fetch_one(&state.postgres)
         .await
-        .unwrap_or_default();
+        .map_err(MyError::DBError)?;
 
-    match emp_redis.employee_id {
-        u if u == Uuid::default() => {
-            let emp = sqlx::query_as!(EmployeeResponse, "select * from tb_employee where employee_id = $1", &emp.employee_id)
-                .fetch_one(&state.postgres)
-                .await
-                .map_err(MyError::DBError)?;
-            
-            let user = sqlx::query_as!(UserResponse, "select * from tb_fuser where user_id = $1", emp.employee_user_id)
-                .fetch_one(&state.postgres)
-                .await
-                .map_err(MyError::DBError)?;
+    let user = sqlx::query_as!(UserResponse, "select * from tb_fuser where user_id = $1", emp.employee_user_id)
+        .fetch_one(&state.postgres)
+        .await
+        .map_err(MyError::DBError)?;
 
-            let res = Employee {
+    Ok(
+        Json(
+            Employee {
                 employee_id: emp.employee_id,
                 employee_lastname: emp.employee_lastname,
                 employee_firstname: emp.employee_firstname,
@@ -210,9 +180,9 @@ pub async fn get_employee_by_user_id(
                     "select * from tb_position where position_id = $1",
                     &emp.employee_position_id
                 )
-                .fetch_one(&state.postgres)
-                .await
-                .map_err(MyError::DBError)?,
+                    .fetch_one(&state.postgres)
+                    .await
+                    .map_err(MyError::DBError)?,
                 employee_user: User {
                     user_id: user.user_id,
                     user_login: user.user_login,
@@ -225,18 +195,9 @@ pub async fn get_employee_by_user_id(
                         .await
                         .map_err(MyError::DBError)?,
                 },
-            };
-
-            let _: () = state
-                .redis
-                .json_set("emp".to_owned() + &*emp.employee_id.to_string(), "$", &res)
-                .await
-                .unwrap();
-
-            Ok(Json(res))
-        }
-        _ => Ok(Json(emp_redis)),
-    }
+            }
+        )
+    )
 }
 
 #[utoipa::path(
@@ -275,36 +236,19 @@ pub struct PosSearchQuery {
     )
 )]
 pub async fn get_position_by_id(
-    State(mut state): State<AppState>,
+    State(state): State<AppState>,
     id: Query<PosSearchQuery>,
 ) -> Result<Json<PositionResponse>, MyError> {
-    let pos_redis: PositionResponse = state
-        .redis
-        .json_get("pos".to_string() + &*id.id.to_string(),"$")
-        .await
-        .map_err(MyError::RDbError)?;
-
-    match pos_redis.position_id == 0 {
-        true => {
-            let pos = sqlx::query_as!(
+    let pos = sqlx::query_as!(
                 PositionResponse,
                 "select * from tb_position where position_id = $1",
                 id.id
             )
-            .fetch_one(&state.postgres)
-            .await
-            .map_err(MyError::DBError)?;
+        .fetch_one(&state.postgres)
+        .await
+        .map_err(MyError::DBError)?;
 
-            let _: () = state
-                .redis
-                .json_set("pos".to_string() + &*id.id.to_string(), "$", &pos)
-                .await
-                .unwrap();
-
-            Ok(Json(pos))
-        }
-        false => Ok(Json(pos_redis)),
-    }
+    Ok(Json(pos))
 }
 
 pub async fn update_db_poses(State(mut state): State<AppState>) {
@@ -319,6 +263,7 @@ pub async fn update_db_poses(State(mut state): State<AppState>) {
             .get_original_event()
             .as_json::<PositionResponse>()
             .unwrap();
+        
         match event.event.unwrap().event_type.as_str() {
             "position_add" => {
                 let _ = sqlx::query!(
@@ -328,17 +273,14 @@ pub async fn update_db_poses(State(mut state): State<AppState>) {
                 )
                     .execute(&state.postgres)
                     .await
-                    .map_err(MyError::DBError).unwrap();
+                    .map_err(MyError::DBError)
+                    .unwrap();
             }
             "position_update" => {
                 let _ = sqlx::query!("update tb_position set position_name = $1, position_base_pay = $2 where position_id = $3", &ev.position_name, &ev.position_base_pay, &ev.position_id)
                     .execute(&state.postgres)
-                    .await.map_err(MyError::DBError).unwrap();
-
-                let _: () = state
-                    .redis
-                    .json_del("pos".to_string() + &*ev.position_id.to_string(), "$")
                     .await
+                    .map_err(MyError::DBError)
                     .unwrap();
             }
             "position_delete" => {
@@ -348,12 +290,7 @@ pub async fn update_db_poses(State(mut state): State<AppState>) {
                 )
                     .execute(&state.postgres)
                     .await
-                    .map_err(MyError::DBError).unwrap();
-                
-                let _: () = state
-                    .redis
-                    .json_del("pos".to_string() + &*ev.position_id.to_string(), "$")
-                    .await
+                    .map_err(MyError::DBError)
                     .unwrap();
             }
             _ => {}
@@ -370,22 +307,20 @@ pub async fn update_db_main(State(mut state): State<AppState>) {
     loop {
         let event = stream.next().await.unwrap();
         let ev = event.get_original_event().as_json::<Employee>().unwrap();
-        let _: () = state.redis.json_del("emps", "$").await.unwrap();
+        
         match event.event.unwrap().event_type.as_str() {
             "employee_add" => {
                 let _ = sqlx::query!("insert into tb_employee (employee_lastname, employee_firstname, employee_middlename, employee_position_id, employee_user_id) values ($1, $2, $3, $4, $5)", &ev.employee_lastname, &ev.employee_firstname, &ev.employee_middlename, &ev.employee_position.position_id, &ev.employee_user.user_id)
                     .execute(&state.postgres)
-                    .await.map_err(MyError::DBError).unwrap();
+                    .await
+                    .map_err(MyError::DBError)
+                    .unwrap();
             }
             "employee_update" => {
                 let _ = sqlx::query!("update tb_employee set employee_lastname = $1, employee_firstname = $2, employee_middlename = $3, employee_position_id = $4, employee_user_id = $5 where employee_id = $6", &ev.employee_lastname, &ev.employee_firstname, &ev.employee_middlename, &ev.employee_position.position_id, &ev.employee_user.user_id, &ev.employee_id)
                     .execute(&state.postgres)
-                    .await.map_err(MyError::DBError).unwrap();
-
-                let _: () = state
-                    .redis
-                    .json_del("emp".to_owned() + &*ev.employee_id.to_string(), "$")
                     .await
+                    .map_err(MyError::DBError)
                     .unwrap();
             }
             "employee_delete" => {
@@ -395,12 +330,7 @@ pub async fn update_db_main(State(mut state): State<AppState>) {
                 )
                     .execute(&state.postgres)
                     .await
-                    .map_err(MyError::DBError).unwrap();
-
-                let _: () = state
-                    .redis
-                    .json_del("emp".to_owned() + &*ev.employee_id.to_string(), "$")
-                    .await
+                    .map_err(MyError::DBError)
                     .unwrap();
             }
             _ => {}

@@ -9,11 +9,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import java.util.concurrent.ExecutionException;
 
+@CrossOrigin(origins = "*")
 @Tag(name = "Warehouse", description = "Warehouse controller")
 @RestController
 @RequestMapping(path = "/warehouseservice/api/warehouse", produces = "application/json")

@@ -3,7 +3,6 @@ package com.example.servicesreadservice.service;
 import com.example.servicesreadservice.model.DbPackage;
 import com.example.servicesreadservice.model.DbService;
 import com.example.servicesreadservice.repository.PackageRepository;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,7 +16,6 @@ public class PackageServicesService {
         this.packageRepository = packageRepository;
     }
 
-    @Cacheable("package_services")
     public List<DbService> getPackageServiceById(UUID id) {
         DbPackage dbPackage = packageRepository.findById(id).orElse(null);
         assert dbPackage != null;

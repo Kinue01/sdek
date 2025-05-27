@@ -4,6 +4,7 @@ import com.example.servicesservice.model.DbService;
 import com.example.servicesservice.service.DbServiceService;
 import org.springframework.web.bind.annotation.*;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/servicesservice/api/service")
 public class ServiceController {

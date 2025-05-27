@@ -87,7 +87,7 @@ class WarehouseState extends State<WarehouseComponent> with GetItStateMixin {
                               controller: _addressController,
                             ),
                             DropdownMenu<WarehouseType>(
-                                label: Text("Position"),
+                                label: Text("Тип"),
                                 onSelected: (WarehouseType? pos) {
                                   selectedWarehouse.warehouse_type = pos;
                                 },

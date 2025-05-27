@@ -5,7 +5,7 @@ import com.example.deliverypersonellservice.deliverypersonellservice.service.Del
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping(value = "/deliverypersonellservice/api/delivery_person", produces = "application/json")
 public class DeliveryPersonController {

@@ -1,7 +1,6 @@
 package com.example.warehousereadservice.warehousereadservice.controller;
 
 import com.example.warehousereadservice.warehousereadservice.model.WarehouseType;
-import com.example.warehousereadservice.warehousereadservice.service.UpdateWarehouseTypeDbService;
 import com.example.warehousereadservice.warehousereadservice.service.WarehouseTypeService;
 import org.springframework.web.bind.annotation.*;
 

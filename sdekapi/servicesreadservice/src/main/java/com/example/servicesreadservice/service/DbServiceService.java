@@ -2,7 +2,6 @@ package com.example.servicesreadservice.service;
 
 import com.example.servicesreadservice.model.DbService;
 import com.example.servicesreadservice.repository.ServiceRepository;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,12 +14,10 @@ public class DbServiceService {
         this.repository = repository;
     }
 
-    @Cacheable("service")
     public DbService getServiceById(short id) {
         return repository.findById(id).orElse(null);
     }
 
-    @Cacheable("services")
     public List<DbService> getAllServices() {
         return repository.findAll();
     }

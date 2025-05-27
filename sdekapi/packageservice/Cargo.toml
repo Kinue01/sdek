@@ -20,7 +20,7 @@ bigdecimal = { version = "0.4.8", features = ["serde"] }
 chrono = "0.4.41"
 
 [dependencies.uuid]
-version = "1.16.0"
+version = "1.17.0"
 features = [
     "v7", # Lets you generate random UUIDs
     "serde", # Use _a faster (but still sufficiently random) RNG

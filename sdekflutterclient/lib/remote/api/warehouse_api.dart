@@ -40,7 +40,8 @@ class WarehouseApiImpl implements WarehouseApi {
 
   @override
   Future<void> addWarehouse(Warehouse warehouse) async {
-    await client.post("$url/api/warehouse", data: warehouse.toRawJson());
+    Response response = await client.post("$url/api/warehouse", data: warehouse.toMap());
+    print(response);
   }
 
   @override

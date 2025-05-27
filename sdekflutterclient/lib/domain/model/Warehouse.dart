@@ -5,9 +5,9 @@ import 'package:equatable/equatable.dart';
 
 class Warehouse with EquatableMixin {
   final int? warehouse_id;
-  late final String? warehouse_name;
-  late final String? warehouse_address;
-  late final WarehouseType? warehouse_type;
+  late String? warehouse_name;
+  late String? warehouse_address;
+  late WarehouseType? warehouse_type;
 
   Warehouse({
     this.warehouse_id,

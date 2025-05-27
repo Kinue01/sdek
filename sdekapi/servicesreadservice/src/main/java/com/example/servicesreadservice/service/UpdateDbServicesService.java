@@ -1,20 +1,29 @@
 package com.example.servicesreadservice.service;
 
-import com.eventstore.dbclient.*;
 import com.example.servicesreadservice.model.DbService;
 import com.example.servicesreadservice.repository.ServiceRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.kurrent.dbclient.KurrentDBClient;
+import io.kurrent.dbclient.ReadMessage;
+import io.kurrent.dbclient.RecordedEvent;
 import jakarta.annotation.PostConstruct;
 import lombok.SneakyThrows;
+import org.reactivestreams.Publisher;
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UpdateDbServicesService {
-    private final EventStoreDBClient eventStoreDBClient;
+    private static final Logger logger = LoggerFactory.getLogger(UpdateDbServicesService.class);
+
+    private final KurrentDBClient eventStoreDBClient;
     private final ServiceRepository dbServiceRepository;
     private final ObjectMapper objectMapper;
 
-    public UpdateDbServicesService(EventStoreDBClient eventStoreDBClient, ServiceRepository dbServiceRepository, ObjectMapper objectMapper) {
+    public UpdateDbServicesService(KurrentDBClient eventStoreDBClient, ServiceRepository dbServiceRepository, ObjectMapper objectMapper) {
         this.eventStoreDBClient = eventStoreDBClient;
         this.dbServiceRepository = dbServiceRepository;
         this.objectMapper = objectMapper;
@@ -22,25 +31,30 @@ public class UpdateDbServicesService {
 
     @PostConstruct
     public void init() {
-        final SubscriptionListener listener = new SubscriptionListener() {
+        Publisher<ReadMessage> publisher = eventStoreDBClient.readStreamReactive("service");
+        publisher.subscribe(new Subscriber<>() {
             @Override
+            public void onSubscribe(Subscription s) {
+                logger.info("Subscribed to eventstore");
+            }
+
             @SneakyThrows
-            public void onEvent(Subscription subscription, ResolvedEvent event) {
-                final RecordedEvent ev = event.getOriginalEvent();
+            @Override
+            public void onNext(ReadMessage readMessage) {
+                final RecordedEvent ev = readMessage.getEvent().getOriginalEvent();
                 switch (ev.getEventType()) {
                     case "service_add", "service_update" -> dbServiceRepository.save(objectMapper.readValue(ev.getEventData(), DbService.class));
                     case "service_delete" -> dbServiceRepository.delete(objectMapper.readValue(ev.getEventData(), DbService.class));
                 }
-                super.onEvent(subscription, event);
             }
 
             @Override
-            public void onCancelled(Subscription subscription, Throwable exception) {
-                if (exception == null) return;
-                super.onCancelled(subscription, exception);
+            public void onError(Throwable t) {
+                logger.error(t.getMessage(), t);
             }
-        };
 
-        eventStoreDBClient.subscribeToStream("service", listener);
+            @Override
+            public void onComplete() {}
+        });
     }
 }

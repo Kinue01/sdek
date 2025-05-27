@@ -13,24 +13,14 @@ use serde::{Deserialize, Serialize};
 use std::time::Duration;
 
 pub async fn get_transport_types(
-    State(mut state): State<AppState>,
+    State(state): State<AppState>,
 ) -> Result<Json<Vec<TransportTypeResponse>>, MyError> {
-    let types_redis: Vec<TransportTypeResponse> =
-        state.redis.json_get("trans_types", "$").await.unwrap_or_default();
+    let res = sqlx::query_as!(TransportTypeResponse, "select * from tb_transport_type")
+        .fetch_all(&state.postgres)
+        .await
+        .map_err(MyError::DBError)?;
 
-    match types_redis.is_empty() {
-        true => {
-            let res = sqlx::query_as!(TransportTypeResponse, "select * from tb_transport_type")
-                .fetch_all(&state.postgres)
-                .await
-                .map_err(MyError::DBError)?;
-
-            let _: () = state.redis.json_set("trans_types", "$", &res).await.unwrap();
-
-            Ok(Json(res))
-        }
-        false => Ok(Json(types_redis)),
-    }
+    Ok(Json(res))
 }
 
 #[derive(Deserialize, Serialize)]
@@ -39,86 +29,60 @@ pub struct TransTypeQuery {
 }
 
 pub async fn get_transport_type_by_id(
-    State(mut state): State<AppState>,
+    State(state): State<AppState>,
     id: Query<TransTypeQuery>,
 ) -> Result<Json<TransportTypeResponse>, MyError> {
-    let type_redis: TransportTypeResponse = state
-        .redis
-        .json_get("trans_type".to_string() + &*id.id.to_string(), "$")
-        .await
-        .unwrap_or_default();
-
-    match type_redis.type_id == 0 {
-        true => {
-            let res = sqlx::query_as!(
+    let res = sqlx::query_as!(
                 TransportTypeResponse,
                 "select * from tb_transport_type where type_id = $1",
                 id.id
             )
-            .fetch_one(&state.postgres)
-            .await
-            .map_err(MyError::DBError)?;
+        .fetch_one(&state.postgres)
+        .await
+        .map_err(MyError::DBError)?;
 
-            let _: () = state
-                .redis
-                .json_set("trans_type".to_string() + &*id.id.to_string(), "$", &res)
-                .await
-                .unwrap();
-
-            Ok(Json(res))
-        }
-        false => Ok(Json(type_redis)),
-    }
+    Ok(Json(res))
 }
 
 pub async fn get_transport(
-    State(mut state): State<AppState>,
+    State(state): State<AppState>,
 ) -> Result<Json<Vec<Transport>>, MyError> {
-    let trans_redis: Vec<Transport> = state.redis.json_get("trans", "$").await.unwrap_or_default();
+    let trans = sqlx::query_as!(TransportResponse, "select * from tb_transport")
+        .fetch_all(&state.postgres)
+        .await
+        .map_err(MyError::DBError)?;
 
-    match trans_redis.is_empty() {
-        true => {
-            let trans = sqlx::query_as!(TransportResponse, "select * from tb_transport")
-                .fetch_all(&state.postgres)
-                .await
-                .map_err(MyError::DBError)?;
+    let stream = futures::stream::iter(trans)
+        .map(|x| async {
+            let postgres = state.postgres.clone();
 
-            let stream = futures::stream::iter(trans)
-                .map(|x| async {
-                    let postgres = state.postgres.clone();
-
-                    tokio::spawn(async move {
-                        Transport {
-                            transport_id: x.transport_id,
-                            transport_name: x.clone().transport_name,
-                            transport_reg_number: x.transport_reg_number,
-                            transport_type: sqlx::query_as!(
+            tokio::spawn(async move {
+                Transport {
+                    transport_id: x.transport_id,
+                    transport_name: x.clone().transport_name,
+                    transport_reg_number: x.transport_reg_number,
+                    transport_type: sqlx::query_as!(
                                 TransportTypeResponse,
                                 "select * from tb_transport_type where type_id = $1",
                                 x.transport_type_id
                             )
-                            .fetch_one(&postgres)
-                            .await
-                            .unwrap_or_default(),
-                            transport_status: sqlx::query_as!(TransportStatusResponse, "select * from tb_transport_status where status_id = $1", &x.transport_status_id)
-                                .fetch_one(&postgres)
-                                .await
-                                .map_err(MyError::DBError).unwrap(),
-                        }
-                    })
-                    .await
-                    .unwrap_or_default()
-                })
-                .buffer_unordered(10)
-                .collect::<Vec<_>>()
-                .await;
+                        .fetch_one(&postgres)
+                        .await
+                        .unwrap_or_default(),
+                    transport_status: sqlx::query_as!(TransportStatusResponse, "select * from tb_transport_status where status_id = $1", &x.transport_status_id)
+                        .fetch_one(&postgres)
+                        .await
+                        .map_err(MyError::DBError).unwrap(),
+                }
+            })
+                .await
+                .unwrap_or_default()
+        })
+        .buffer_unordered(24)
+        .collect::<Vec<_>>()
+        .await;
 
-            let _: () = state.redis.json_set("trans", "$", &stream).await.unwrap();
-
-            Ok(Json(stream))
-        }
-        false => Ok(Json(trans_redis)),
-    }
+    Ok(Json(stream))
 }
 
 #[derive(Deserialize, Serialize)]
@@ -127,27 +91,21 @@ pub struct TransQuery {
 }
 
 pub async fn get_transport_by_id(
-    State(mut state): State<AppState>,
+    State(state): State<AppState>,
     id: Query<TransQuery>,
 ) -> Result<Json<Transport>, MyError> {
-    let trans_redis: Transport = state
-        .redis
-        .json_get("trans".to_owned() + &*id.id.to_string(), "$")
-        .await
-        .unwrap_or_default();
-
-    match trans_redis.transport_id == 0 {
-        true => {
-            let trans = sqlx::query_as!(
+    let trans = sqlx::query_as!(
                 TransportResponse,
                 "select * from tb_transport where transport_id = $1",
                 id.id
             )
-            .fetch_one(&state.postgres)
-            .await
-            .map_err(MyError::DBError)?;
+        .fetch_one(&state.postgres)
+        .await
+        .map_err(MyError::DBError)?;
 
-            let res = Transport {
+    Ok(
+        Json(
+            Transport {
                 transport_id: trans.transport_id,
                 transport_name: trans.transport_name,
                 transport_reg_number: trans.transport_reg_number,
@@ -156,25 +114,16 @@ pub async fn get_transport_by_id(
                     "select * from tb_transport_type where type_id = $1",
                     trans.transport_type_id
                 )
-                .fetch_one(&state.postgres)
-                .await
-                .map_err(MyError::DBError)?,
+                    .fetch_one(&state.postgres)
+                    .await
+                    .map_err(MyError::DBError)?,
                 transport_status: sqlx::query_as!(TransportStatusResponse, "select * from tb_transport_status where status_id = $1", &trans.transport_status_id)
                     .fetch_one(&state.postgres)
                     .await
                     .map_err(MyError::DBError)?,
-            };
-
-            let _: () = state
-                .redis
-                .json_set("trans".to_owned() + &*id.id.to_string(), "$", &res)
-                .await
-                .unwrap();
-
-            Ok(Json(res))
-        }
-        false => Ok(Json(trans_redis)),
-    }
+            }
+        )
+    )
 }
 
 #[derive(Deserialize, Serialize)]
@@ -211,18 +160,16 @@ pub async fn update_db_types(State(mut state): State<AppState>) {
 
     loop {
         let event = stream.next().await.unwrap();
-        let ev = event
-            .get_original_event()
-            .as_json::<TransportTypeResponse>()
-            .unwrap();
-        let _: () = state.redis.json_del("trans_types", "$").await.unwrap();
+        let ev = event.get_original_event().as_json::<TransportTypeResponse>().unwrap();
+        
         match event.event.unwrap().event_type.as_str() {
             "transport_type_add" => {
                 let _ = sqlx::query!(
                     "insert into tb_transport_type (type_name) values ($1)", &ev.type_name)
                     .execute(&state.postgres)
                     .await
-                    .map_err(MyError::DBError).unwrap();
+                    .map_err(MyError::DBError)
+                    .unwrap();
             }
             "transport_type_update" => {
                 let _ = sqlx::query!(
@@ -232,12 +179,7 @@ pub async fn update_db_types(State(mut state): State<AppState>) {
                 )
                     .execute(&state.postgres)
                     .await
-                    .map_err(MyError::DBError).unwrap();
-
-                let _: () = state
-                    .redis
-                    .json_del("trans_type".to_string() + &*ev.type_id.to_string(), "$")
-                    .await
+                    .map_err(MyError::DBError)
                     .unwrap();
             }
             "transport_type_delete" => {
@@ -247,12 +189,7 @@ pub async fn update_db_types(State(mut state): State<AppState>) {
                 )
                     .execute(&state.postgres)
                     .await
-                    .map_err(MyError::DBError).unwrap();
-
-                let _: () = state
-                    .redis
-                    .json_del("trans_type".to_string() + &*ev.type_id.to_string(), "$")
-                    .await
+                    .map_err(MyError::DBError)
                     .unwrap();
             }
             _ => {}
@@ -269,24 +206,20 @@ pub async fn update_db_main(State(mut state): State<AppState>) {
     loop {
         let event = stream.next().await.unwrap();
         let ev = event.get_original_event().as_json::<Transport>().unwrap();
-        let _: () = state.redis.json_del("trans", "$").await.map_err(MyError::RDbError).unwrap();
+        
         match event.event.unwrap().event_type.as_str() {
             "transport_add" => {
                 let _ = sqlx::query!("insert into tb_transport (transport_name, transport_reg_number, transport_type_id, transport_status_id) values ($1, $2, $3, $4)", &ev.transport_name, &ev.transport_reg_number, &ev.transport_type.type_id, &ev.transport_status.status_id)
                     .execute(&state.postgres)
                     .await
-                    .map_err(MyError::DBError).unwrap();
+                    .map_err(MyError::DBError)
+                    .unwrap();
             }
             "transport_update" => {
                 let _ = sqlx::query!("update tb_transport set transport_name = $1, transport_reg_number = $2, transport_type_id = $3, transport_status_id = $4 where transport_id = $5", &ev.transport_name, &ev.transport_reg_number, &ev.transport_type.type_id, &ev.transport_status.status_id, &ev.transport_id)
                     .execute(&state.postgres)
                     .await
-                    .map_err(MyError::DBError).unwrap();
-
-                let _: () = state
-                    .redis
-                    .json_del("user".to_string() + &*ev.transport_id.to_string(), "$")
-                    .await
+                    .map_err(MyError::DBError)
                     .unwrap();
             }
             "transport_delete" => {
@@ -296,12 +229,7 @@ pub async fn update_db_main(State(mut state): State<AppState>) {
                 )
                     .execute(&state.postgres)
                     .await
-                    .map_err(MyError::DBError).unwrap();
-
-                let _: () = state
-                    .redis
-                    .json_del("user".to_string() + &*ev.transport_id.to_string(), "$")
-                    .await
+                    .map_err(MyError::DBError)
                     .unwrap();
             }
             _ => {}

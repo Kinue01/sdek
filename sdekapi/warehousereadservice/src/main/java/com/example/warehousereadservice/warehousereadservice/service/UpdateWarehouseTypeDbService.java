@@ -1,20 +1,29 @@
 package com.example.warehousereadservice.warehousereadservice.service;
 
-import com.eventstore.dbclient.*;
 import com.example.warehousereadservice.warehousereadservice.model.WarehouseType;
 import com.example.warehousereadservice.warehousereadservice.repository.WarehouseTypeRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.kurrent.dbclient.KurrentDBClient;
+import io.kurrent.dbclient.ReadMessage;
+import io.kurrent.dbclient.RecordedEvent;
 import jakarta.annotation.PostConstruct;
 import lombok.SneakyThrows;
+import org.reactivestreams.Publisher;
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UpdateWarehouseTypeDbService {
-    private final EventStoreDBClient client;
+    private static final Logger logger = LoggerFactory.getLogger(UpdateWarehouseTypeDbService.class);
+
+    private final KurrentDBClient client;
     private final WarehouseTypeRepository repository;
     private final ObjectMapper mapper;
 
-    public UpdateWarehouseTypeDbService(EventStoreDBClient client, WarehouseTypeRepository repository, ObjectMapper mapper) {
+    public UpdateWarehouseTypeDbService(KurrentDBClient client, WarehouseTypeRepository repository, ObjectMapper mapper) {
         this.client = client;
         this.repository = repository;
         this.mapper = mapper;
@@ -22,11 +31,17 @@ public class UpdateWarehouseTypeDbService {
 
     @PostConstruct
     public void init() {
-        final SubscriptionListener listener = new SubscriptionListener() {
+        Publisher<ReadMessage> publisher = client.readStreamReactive("warehouse_type");
+        publisher.subscribe(new Subscriber<>() {
             @Override
+            public void onSubscribe(Subscription s) {
+                logger.info("Subscribed on eventstore");
+            }
+
             @SneakyThrows
-            public void onEvent(Subscription subscription, ResolvedEvent ev) {
-                final RecordedEvent event = ev.getOriginalEvent();
+            @Override
+            public void onNext(ReadMessage readMessage) {
+                final RecordedEvent event = readMessage.getEvent().getOriginalEvent();
                 switch (event.getEventType()) {
                     case "warehouse_type_add", "warehouse_type_update" -> repository.save(mapper.readValue(event.getEventData(), WarehouseType.class));
                     case "warehouse_type_delete" -> repository.delete(mapper.readValue(event.getEventData(), WarehouseType.class));
@@ -34,12 +49,12 @@ public class UpdateWarehouseTypeDbService {
             }
 
             @Override
-            public void onCancelled(Subscription subscription, Throwable exception) {
-                if (exception == null) return;
-                super.onCancelled(subscription, exception);
+            public void onError(Throwable t) {
+                logger.error(t.getMessage(), t);
             }
-        };
 
-        client.subscribeToStream("warehouse_type", listener);
+            @Override
+            public void onComplete() {}
+        });
     }
 }

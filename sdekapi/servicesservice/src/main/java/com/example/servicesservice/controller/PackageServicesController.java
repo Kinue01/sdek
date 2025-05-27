@@ -4,6 +4,7 @@ import com.example.servicesservice.model.PackageServices;
 import com.example.servicesservice.service.PackageServicesService;
 import org.springframework.web.bind.annotation.*;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/servicesservice/api/services")
 public class PackageServicesController {

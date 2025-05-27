@@ -14,27 +14,21 @@ use crate::{model::*, AppState};
     )
 )]
 pub async fn get_user_by_login_pass(
-    State(mut state): State<AppState>,
+    State(state): State<AppState>,
     Json(usr): Json<UserRequest>,
 ) -> Result<Json<User>, MyError> {
-    let user_redis: User = state
-        .redis
-        .json_get("user".to_owned() + &*usr.user_login.to_string(), "$")
-        .await
-        .unwrap_or_default();
-
-    match user_redis.user_id {
-        u if u == Uuid::default() => {
-            let user = sqlx::query_as!(
+    let user = sqlx::query_as!(
                 UserResponse,
                 "select * from tb_user where user_login = $1",
                 &usr.user_login
             )
-                .fetch_one(&state.postgres)
-                .await
-                .unwrap();
+        .fetch_one(&state.postgres)
+        .await
+        .unwrap();
 
-            let res = User {
+    Ok(
+        Json(
+            User {
                 user_id: user.user_id,
                 user_login: user.user_login,
                 user_password: user.user_password,
@@ -49,16 +43,7 @@ pub async fn get_user_by_login_pass(
                     .fetch_one(&state.postgres)
                     .await
                     .unwrap(),
-            };
-
-            let _: () = state
-                .redis
-                .json_set("user".to_owned() + &*res.user_login.to_string(), "$", &res)
-                .await
-                .unwrap();
-
-            Ok(Json(res))
-        }
-        _ => Ok(Json(user_redis)),
-    }
+            }
+        )
+    )
 }
