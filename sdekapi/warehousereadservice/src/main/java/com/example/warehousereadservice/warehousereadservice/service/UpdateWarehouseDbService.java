@@ -3,14 +3,9 @@ package com.example.warehousereadservice.warehousereadservice.service;
 import com.example.warehousereadservice.warehousereadservice.model.WarehouseResponse;
 import com.example.warehousereadservice.warehousereadservice.repository.WarehouseRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.kurrent.dbclient.KurrentDBClient;
-import io.kurrent.dbclient.ReadMessage;
-import io.kurrent.dbclient.RecordedEvent;
+import io.kurrent.dbclient.*;
 import jakarta.annotation.PostConstruct;
 import lombok.SneakyThrows;
-import org.reactivestreams.Publisher;
-import org.reactivestreams.Subscriber;
-import org.reactivestreams.Subscription;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -31,17 +26,12 @@ public class UpdateWarehouseDbService {
 
     @PostConstruct
     public void init() {
-        Publisher<ReadMessage> publisher = client.readStreamReactive("warehouse");
-        publisher.subscribe(new Subscriber<>() {
+        SubscribeToStreamOptions options = SubscribeToStreamOptions.get().batchSize(1024).fromStart();
+        client.subscribeToStream("warehouse", new SubscriptionListener() {
             @Override
-            public void onSubscribe(Subscription s) {
-                logger.info("Subscribed on eventstore");
-            }
-
             @SneakyThrows
-            @Override
-            public void onNext(ReadMessage readMessage) {
-                final RecordedEvent ev = readMessage.getEvent().getOriginalEvent();
+            public void onEvent(io.kurrent.dbclient.Subscription subscription, ResolvedEvent event) {
+                final RecordedEvent ev = event.getOriginalEvent();
                 switch (ev.getEventType()) {
                     case "warehouse_add", "warehouse_update" -> repository.save(objectMapper.readValue(ev.getEventData(), WarehouseResponse.class));
                     case "warehouse_delete" -> repository.delete(objectMapper.readValue(ev.getEventData(), WarehouseResponse.class));
@@ -49,12 +39,9 @@ public class UpdateWarehouseDbService {
             }
 
             @Override
-            public void onError(Throwable t) {
-                logger.error(t.getMessage(), t);
+            public void onCancelled(io.kurrent.dbclient.Subscription subscription, Throwable exception) {
+                logger.error(exception.getMessage(), exception);
             }
-
-            @Override
-            public void onComplete() {}
-        });
+        }, options);
     }
 }

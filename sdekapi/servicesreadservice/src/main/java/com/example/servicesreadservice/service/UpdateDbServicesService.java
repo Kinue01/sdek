@@ -3,14 +3,9 @@ package com.example.servicesreadservice.service;
 import com.example.servicesreadservice.model.DbService;
 import com.example.servicesreadservice.repository.ServiceRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.kurrent.dbclient.KurrentDBClient;
-import io.kurrent.dbclient.ReadMessage;
-import io.kurrent.dbclient.RecordedEvent;
+import io.kurrent.dbclient.*;
 import jakarta.annotation.PostConstruct;
 import lombok.SneakyThrows;
-import org.reactivestreams.Publisher;
-import org.reactivestreams.Subscriber;
-import org.reactivestreams.Subscription;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -31,17 +26,12 @@ public class UpdateDbServicesService {
 
     @PostConstruct
     public void init() {
-        Publisher<ReadMessage> publisher = eventStoreDBClient.readStreamReactive("service");
-        publisher.subscribe(new Subscriber<>() {
+        SubscribeToStreamOptions options = SubscribeToStreamOptions.get().fromStart().batchSize(1024);
+        eventStoreDBClient.subscribeToStream("service", new SubscriptionListener() {
             @Override
-            public void onSubscribe(Subscription s) {
-                logger.info("Subscribed to eventstore");
-            }
-
             @SneakyThrows
-            @Override
-            public void onNext(ReadMessage readMessage) {
-                final RecordedEvent ev = readMessage.getEvent().getOriginalEvent();
+            public void onEvent(io.kurrent.dbclient.Subscription subscription, ResolvedEvent event) {
+                final RecordedEvent ev = event.getOriginalEvent();
                 switch (ev.getEventType()) {
                     case "service_add", "service_update" -> dbServiceRepository.save(objectMapper.readValue(ev.getEventData(), DbService.class));
                     case "service_delete" -> dbServiceRepository.delete(objectMapper.readValue(ev.getEventData(), DbService.class));
@@ -49,12 +39,9 @@ public class UpdateDbServicesService {
             }
 
             @Override
-            public void onError(Throwable t) {
-                logger.error(t.getMessage(), t);
+            public void onCancelled(io.kurrent.dbclient.Subscription subscription, Throwable exception) {
+                logger.error(exception.getMessage(), exception);
             }
-
-            @Override
-            public void onComplete() {}
-        });
+        }, options);
     }
 }

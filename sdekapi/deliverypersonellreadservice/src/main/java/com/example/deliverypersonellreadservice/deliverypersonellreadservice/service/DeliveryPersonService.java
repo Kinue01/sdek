@@ -2,7 +2,6 @@ package com.example.deliverypersonellreadservice.deliverypersonellreadservice.se
 
 import com.example.deliverypersonellreadservice.deliverypersonellreadservice.model.DeliveryPerson;
 import com.example.deliverypersonellreadservice.deliverypersonellreadservice.repository.DeliveryPersonRepository;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

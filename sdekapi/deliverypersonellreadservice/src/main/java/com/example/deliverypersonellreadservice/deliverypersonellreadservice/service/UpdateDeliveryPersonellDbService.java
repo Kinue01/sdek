@@ -3,15 +3,9 @@ package com.example.deliverypersonellreadservice.deliverypersonellreadservice.se
 import com.example.deliverypersonellreadservice.deliverypersonellreadservice.model.DeliveryPerson;
 import com.example.deliverypersonellreadservice.deliverypersonellreadservice.repository.DeliveryPersonRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.kurrent.dbclient.KurrentDBClient;
-import io.kurrent.dbclient.ReadMessage;
-import io.kurrent.dbclient.ReadStreamOptions;
-import io.kurrent.dbclient.RecordedEvent;
+import io.kurrent.dbclient.*;
 import jakarta.annotation.PostConstruct;
 import lombok.SneakyThrows;
-import org.reactivestreams.Publisher;
-import org.reactivestreams.Subscriber;
-import org.reactivestreams.Subscription;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -32,18 +26,12 @@ public class UpdateDeliveryPersonellDbService {
 
     @PostConstruct
     public void init() {
-        ReadStreamOptions options = ReadStreamOptions.get().forwards().fromStart();
-        Publisher<ReadMessage> publisher = client.readStreamReactive("delivery_person", options);
-        publisher.subscribe(new Subscriber<>() {
+        SubscribeToStreamOptions options = SubscribeToStreamOptions.get().fromStart().batchSize(1024);
+        client.subscribeToStream("delivery_person", new SubscriptionListener() {
             @Override
-            public void onSubscribe(Subscription s) {
-                logger.info("Subscribed to event stream");
-            }
-
             @SneakyThrows
-            @Override
-            public void onNext(ReadMessage readMessage) {
-                RecordedEvent ev = readMessage.getEvent().getOriginalEvent();
+            public void onEvent(io.kurrent.dbclient.Subscription subscription, ResolvedEvent event) {
+                RecordedEvent ev = event.getOriginalEvent();
                 switch (ev.getEventType()) {
                     case "delivery_person_add", "delivery_person_update" -> {
                         DeliveryPerson response = objectMapper.readValue(ev.getEventData(), DeliveryPerson.class);
@@ -57,12 +45,9 @@ public class UpdateDeliveryPersonellDbService {
             }
 
             @Override
-            public void onError(Throwable t) {
-                logger.error(t.getMessage(), t);
+            public void onCancelled(io.kurrent.dbclient.Subscription subscription, Throwable exception) {
+                logger.error(exception.getMessage(), exception);
             }
-
-            @Override
-            public void onComplete() {}
-        });
+        }, options);
     }
 }
