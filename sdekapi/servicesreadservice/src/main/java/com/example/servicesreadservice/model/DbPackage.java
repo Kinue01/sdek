@@ -18,6 +18,7 @@ import java.util.UUID;
 @Table(name = "tb_fpackage")
 public class DbPackage {
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID package_uuid;
     @Nullable
     private LocalDate package_send_date;

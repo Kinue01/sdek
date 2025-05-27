@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "tb_delivery_person")
 public class DeliveryPerson {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int person_id;
     private String person_lastname;
     private String person_firstname;

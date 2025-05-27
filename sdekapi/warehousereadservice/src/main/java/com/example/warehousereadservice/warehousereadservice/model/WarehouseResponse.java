@@ -14,6 +14,7 @@ import java.io.Serializable;
 @Table(name = "tb_warehouse")
 public class WarehouseResponse implements Serializable {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int warehouse_id;
     private String warehouse_name;
     private String warehouse_address;

@@ -101,7 +101,6 @@ class WarehouseState extends State<WarehouseComponent> with GetItStateMixin {
                           warehouse_name: _nameController.text,
                           warehouse_type: selectedWarehouse.warehouse_type,
                           warehouse_address: _addressController.text,
-                          warehouse_id: 0
                         );
 
                         _controller.addWarehouse(warehouse);
@@ -119,6 +118,7 @@ class WarehouseState extends State<WarehouseComponent> with GetItStateMixin {
                         desc: "Warehouse not selected",
                         dialogType: DialogType.error,
                       ).show();
+                      return;
                     }
 
                     _nameController.text = selectedWarehouse.warehouse_name!;
@@ -183,6 +183,7 @@ class WarehouseState extends State<WarehouseComponent> with GetItStateMixin {
                         desc: "Warehouse not selected",
                         dialogType: DialogType.error,
                       ).show();
+                      return;
                     }
 
                     AwesomeDialog(
