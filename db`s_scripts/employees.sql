@@ -1,4 +1,5 @@
 create extension postgres_fdw;
+create extension pgcrypto;
 
 create table if not exists tb_position
 (
@@ -9,7 +10,7 @@ create table if not exists tb_position
 
 create table if not exists tb_employee
 (
-	employee_id uuid primary key,
+	employee_id uuid primary key default gen_random_uuid(),
 	employee_lastname varchar(40) not null,
 	employee_firstname varchar(30) not null,
 	employee_middlename varchar(50) not null,

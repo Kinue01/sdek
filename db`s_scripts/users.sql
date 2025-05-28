@@ -1,3 +1,5 @@
+create extension pgcrypto;
+
 create table if not exists tb_role
 (
 	role_id smallserial primary key,
@@ -6,7 +8,7 @@ create table if not exists tb_role
 
 create table if not exists tb_user
 (
-	user_id uuid primary key,
+	user_id uuid primary key default gen_random_uuid(),
 	user_login varchar(30) not null,
 	user_password text not null,
 	user_email varchar(320),

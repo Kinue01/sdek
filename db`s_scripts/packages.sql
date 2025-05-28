@@ -1,4 +1,5 @@
 create extension postgres_fdw;
+create extension pgcrypto;
 
 create table if not exists tb_package_type
 (
@@ -23,7 +24,7 @@ create table if not exists tb_package_paytype
 
 create table if not exists tb_package
 (
-	package_uuid uuid primary key,
+	package_uuid uuid primary key default gen_random_uuid(),
 	package_send_date date,
 	package_receive_date date,
 	package_weight decimal(7, 3),

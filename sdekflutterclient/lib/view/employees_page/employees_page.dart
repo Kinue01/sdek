@@ -192,7 +192,7 @@ class EmployeesState extends State<EmployeesComponent> with GetItStateMixin {
                       btnOkOnPress: () {
                         if (selectedEmp.employee_position.position_id == 4) {
                           User empUser = User(
-                            user_id: "",
+                            user_id: Uuid().v4(),
                               user_login: _loginController.text,
                               user_email: _emailController.text,
                               user_phone: _phoneController.text,
