@@ -1,17 +1,15 @@
 use axum::extract::{Query, State};
 use axum::Json;
 use derive_more::Display;
+use eventstore::{RetryOptions, SubscribeToStreamOptions};
 use futures::StreamExt;
-use redis::{AsyncCommands, JsonAsyncCommands};
 use serde::Deserialize;
+use sqlx::types::Uuid;
 use std::clone::Clone;
 use std::time::Duration;
-use eventstore::{RetryOptions, SubscribeToStreamOptions};
 use utoipa::IntoParams;
-use uuid::Uuid;
 
 use crate::error::MyError;
-use crate::error::MyError::RDbError;
 use crate::model::*;
 use crate::AppState;
 
@@ -178,16 +176,9 @@ pub async fn update_db(State(state): State<AppState>) {
         .subscribe_to_stream("client", &opts)
         .await;
     
-    loop {
-        let e = stream.next().await;
-        
-        let event = match e {
-            Ok(e) => e,
-            Err(_e) => {continue;}
-        };
-        
+    while let Ok(event) = stream.next().await {
         let ev = event.get_original_event().as_json::<Client>().unwrap();
-        
+
         match event.event.unwrap().event_type.as_str() {
             "client_add" => {
                 let _ = sqlx::query!("insert into tb_client (client_lastname, client_firstname, client_middlename, client_user_id) values ($1, $2, $3, $4)", &ev.client_lastname, &ev.client_firstname, &ev.client_middlename, &ev.client_user.user_id)
@@ -213,4 +204,40 @@ pub async fn update_db(State(state): State<AppState>) {
             _ => {}
         }
     }
+    
+    // loop {
+    //     let e = stream.next().await;
+    //     
+    //     let event = match e {
+    //         Ok(e) => e,
+    //         Err(_e) => continue
+    //     };
+    //     
+    //     let ev = event.get_original_event().as_json::<Client>().unwrap();
+    //     
+    //     match event.event.unwrap().event_type.as_str() {
+    //         "client_add" => {
+    //             let _ = sqlx::query!("insert into tb_client (client_lastname, client_firstname, client_middlename, client_user_id) values ($1, $2, $3, $4)", &ev.client_lastname, &ev.client_firstname, &ev.client_middlename, &ev.client_user.user_id)
+    //                 .execute(&state.postgres)
+    //                 .await
+    //                 .map_err(MyError::DBError)
+    //                 .unwrap();
+    //         }
+    //         "client_update" => {
+    //             let _ = sqlx::query!("update tb_client set client_lastname = $1, client_firstname = $2, client_middlename = $3 where client_id = $4", &ev.client_lastname, &ev.client_firstname, &ev.client_middlename, &ev.client_id)
+    //                 .execute(&state.postgres)
+    //                 .await
+    //                 .map_err(MyError::DBError)
+    //                 .unwrap();
+    //         }
+    //         "client_delete" => {
+    //             let _ = sqlx::query!("delete from tb_client where client_id = $1", &ev.client_id)
+    //                 .execute(&state.postgres)
+    //                 .await
+    //                 .map_err(MyError::DBError)
+    //                 .unwrap();
+    //         }
+    //         _ => {}
+    //     }
+    // }
 }

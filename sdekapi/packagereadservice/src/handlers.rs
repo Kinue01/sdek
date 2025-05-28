@@ -1,9 +1,11 @@
+use std::time::Duration;
 use crate::error::MyError;
 use crate::model::*;
 use crate::AppState;
 use axum::extract::{Query, State};
 use axum::Json;
 use derive_more::Display;
+use eventstore::{RetryOptions, SubscribeToStreamOptions};
 use futures::StreamExt;
 use itertools::Itertools;
 use redis::AsyncCommands;
@@ -817,21 +819,17 @@ pub async fn get_client_packages_by_id(
 }
 
 pub async fn update_db_types(State(state): State<AppState>) {
+    let retry_opts = RetryOptions::default().retry_forever().retry_delay(Duration::from_secs(5));
+    let opts = SubscribeToStreamOptions::default().retry_options(retry_opts);
+    
     let mut stream = state
         .event_client
-        .subscribe_to_stream("package_type", &Default::default())
+        .subscribe_to_stream("package_type", &opts)
         .await;
 
-    loop {
-        let e = stream.next().await;
-        
-        let event = match e {
-            Ok(e) => e,
-            Err(_e) => continue
-        };
-        
+    while let Ok(event) = stream.next().await {
         let ev = event.get_original_event().as_json::<PackageType>().unwrap();
-        
+
         match event.event.unwrap().event_type.as_str() {
             "package_type_add" => {
                 let _ = sqlx::query!("insert into tb_package_type (type_name, type_length, type_width, type_height) values ($1, $2, $3, $4)", &ev.type_name, &ev.type_length, &ev.type_width, &ev.type_height)
@@ -860,24 +858,59 @@ pub async fn update_db_types(State(state): State<AppState>) {
             _ => {}
         }
     }
+    
+    // loop {
+    //     let e = stream.next().await;
+    //     
+    //     let event = match e {
+    //         Ok(e) => e,
+    //         Err(_e) => continue
+    //     };
+    //     
+    //     let ev = event.get_original_event().as_json::<PackageType>().unwrap();
+    //     
+    //     match event.event.unwrap().event_type.as_str() {
+    //         "package_type_add" => {
+    //             let _ = sqlx::query!("insert into tb_package_type (type_name, type_length, type_width, type_height) values ($1, $2, $3, $4)", &ev.type_name, &ev.type_length, &ev.type_width, &ev.type_height)
+    //                 .execute(&state.postgres)
+    //                 .await
+    //                 .map_err(MyError::DBError)
+    //                 .unwrap();
+    //         }
+    //         "package_type_update" => {
+    //             let _ = sqlx::query!("update tb_package_type set type_name = $1, type_length = $2, type_width = $3, type_height = $4 where type_id = $5", &ev.type_name, &ev.type_length, &ev.type_width, &ev.type_height, &ev.type_id)
+    //                 .execute(&state.postgres)
+    //                 .await
+    //                 .map_err(MyError::DBError)
+    //                 .unwrap();
+    //         }
+    //         "package_type_delete" => {
+    //             let _ = sqlx::query!(
+    //                 "delete from tb_package_type where type_id = $1",
+    //                 &ev.type_id
+    //             )
+    //                 .execute(&state.postgres)
+    //                 .await
+    //                 .map_err(MyError::DBError)
+    //                 .unwrap();
+    //         }
+    //         _ => {}
+    //     }
+    // }
 }
 
-pub async fn update_db_statuses(State(mut state): State<AppState>) {
+pub async fn update_db_statuses(State(state): State<AppState>) {
+    let retry_opts = RetryOptions::default().retry_forever().retry_delay(Duration::from_secs(5));
+    let opts = SubscribeToStreamOptions::default().retry_options(retry_opts);
+    
     let mut stream = state
         .event_client
-        .subscribe_to_stream("package_status", &Default::default())
+        .subscribe_to_stream("package_status", &opts)
         .await;
 
-    loop {
-        let e = stream.next().await;
-        
-        let event = match e {
-            Ok(e) => e,
-            Err(_e) => continue
-        };
-        
+    while let Ok(event) = stream.next().await {
         let ev = event.get_original_event().as_json::<PackageStatus>().unwrap();
-        
+
         match event.event.unwrap().event_type.as_str() {
             "package_status_add" => {
                 let _ = sqlx::query!(
@@ -913,31 +946,73 @@ pub async fn update_db_statuses(State(mut state): State<AppState>) {
             _ => {}
         }
     }
+    
+    // loop {
+    //     let e = stream.next().await;
+    //     
+    //     let event = match e {
+    //         Ok(e) => e,
+    //         Err(_e) => continue
+    //     };
+    //     
+    //     let ev = event.get_original_event().as_json::<PackageStatus>().unwrap();
+    //     
+    //     match event.event.unwrap().event_type.as_str() {
+    //         "package_status_add" => {
+    //             let _ = sqlx::query!(
+    //                 "insert into tb_package_status (status_name) values ($1)",
+    //                 &ev.status_name
+    //             )
+    //                 .execute(&state.postgres)
+    //                 .await
+    //                 .map_err(MyError::DBError)
+    //                 .unwrap();
+    //         }
+    //         "package_status_update" => {
+    //             let _ = sqlx::query!(
+    //                 "update tb_package_status set status_name = $1 where status_id = $2",
+    //                 &ev.status_name,
+    //                 &ev.status_id
+    //             )
+    //                 .execute(&state.postgres)
+    //                 .await
+    //                 .map_err(MyError::DBError)
+    //                 .unwrap();
+    //         }
+    //         "package_status_delete" => {
+    //             let _ = sqlx::query!(
+    //                 "delete from tb_package_status where status_id = $1",
+    //                 &ev.status_id
+    //             )
+    //                 .execute(&state.postgres)
+    //                 .await
+    //                 .map_err(MyError::DBError)
+    //                 .unwrap();
+    //         }
+    //         _ => {}
+    //     }
+    // }
 }
 
-pub async fn update_db_main(State(mut state): State<AppState>) {
+pub async fn update_db_main(State(state): State<AppState>) {
+    let retry_opts = RetryOptions::default().retry_forever().retry_delay(Duration::from_secs(5));
+    let opts = SubscribeToStreamOptions::default().retry_options(retry_opts);
+    
     let mut stream = state
         .event_client
-        .subscribe_to_stream("package", &Default::default())
+        .subscribe_to_stream("package", &opts)
         .await;
 
-    loop {
-        let e = stream.next().await;
-        
-        let event = match e {
-            Ok(e) => e,
-            Err(_e) => continue
-        };
-        
+    while let Ok(event) = stream.next().await {
         let ev = event.get_original_event().as_json::<Package>().unwrap();
-        
+
         match event.event.unwrap().event_type.as_str() {
             "package_add" => {
                 let _ = sqlx::query!("insert into tb_package (package_uuid, package_send_date, package_receive_date, package_weight, package_deliveryperson_id, package_type_id, package_status_id, package_sender_id, package_receiver_id, package_warehouse_id, package_paytype_id, package_payer_id) values (gen_random_uuid(), $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)", &ev.package_send_date, &ev.package_receive_date, &ev.package_weight, &ev.package_deliveryperson.unwrap().person_id, &ev.package_type.type_id, &ev.package_status.status_id, &ev.package_sender.client_id, &ev.package_receiver.client_id, &ev.package_warehouse.warehouse_id, &ev.package_paytype.type_id, &ev.package_payer.client_id)
                     .execute(&state.postgres)
                     .await
                     .map_err(MyError::DBError).unwrap();
-                
+
                 for x in ev.package_items.iter().unique() {
                     let _ = sqlx::query!("insert into tb_fitem (item_id, item_name, item_description, item_length, item_width, item_heigth, item_weight) values ((select max(item_id) from tb_fitem) + 1, $1, $2, $3, $4, $5, $6)", &x.item_name, &x.item_description, &x.item_length, &x.item_width, &x.item_heigth, &x.item_weight)
                         .execute(&state.postgres)
@@ -950,9 +1025,9 @@ pub async fn update_db_main(State(mut state): State<AppState>) {
                         .fetch_one(&state.postgres)
                         .await
                         .map_err(MyError::DBError).unwrap();
-                    
+
                     let c = ev.package_items.iter().counts();
-                    
+
                     let _ = sqlx::query!(
                         "insert into tb_fpackage_items values ($1, $2, $3)",
                         package.package_uuid,
@@ -974,17 +1049,17 @@ pub async fn update_db_main(State(mut state): State<AppState>) {
                     .await
                     .map_err(MyError::DBError)
                     .unwrap();
-                
+
                 for x in ev.package_items.iter().unique() {
                     let _ = sqlx::query!("update tb_fitem set item_name = $1, item_description = $2, item_length = $3, item_width = $4, item_heigth = $5, item_weight = $6 where item_id = $7", &x.item_name, &x.item_description, &x.item_length, &x.item_width, &x.item_heigth, &x.item_weight, &x.item_id)
                         .execute(&state.postgres)
                         .await
                         .map_err(MyError::DBError).unwrap();
                 }
-                
+
                 for x in ev.package_items.iter().unique() {
                     let c = ev.package_items.iter().counts();
-                    
+
                     let _ = sqlx::query!(
                         "insert into tb_fpackage_items values ($1, $2, $3)",
                         &ev.package_uuid,
@@ -1013,4 +1088,97 @@ pub async fn update_db_main(State(mut state): State<AppState>) {
             _ => {}
         }
     }
+
+    // loop {
+    //     let e = stream.next().await;
+    //
+    //     let event = match e {
+    //         Ok(e) => e,
+    //         Err(_e) => continue
+    //     };
+    //
+    //     let ev = event.get_original_event().as_json::<Package>().unwrap();
+    //
+    //     match event.event.unwrap().event_type.as_str() {
+    //         "package_add" => {
+    //             let _ = sqlx::query!("insert into tb_package (package_uuid, package_send_date, package_receive_date, package_weight, package_deliveryperson_id, package_type_id, package_status_id, package_sender_id, package_receiver_id, package_warehouse_id, package_paytype_id, package_payer_id) values (gen_random_uuid(), $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)", &ev.package_send_date, &ev.package_receive_date, &ev.package_weight, &ev.package_deliveryperson.unwrap().person_id, &ev.package_type.type_id, &ev.package_status.status_id, &ev.package_sender.client_id, &ev.package_receiver.client_id, &ev.package_warehouse.warehouse_id, &ev.package_paytype.type_id, &ev.package_payer.client_id)
+    //                 .execute(&state.postgres)
+    //                 .await
+    //                 .map_err(MyError::DBError).unwrap();
+    //
+    //             for x in ev.package_items.iter().unique() {
+    //                 let _ = sqlx::query!("insert into tb_fitem (item_id, item_name, item_description, item_length, item_width, item_heigth, item_weight) values ((select max(item_id) from tb_fitem) + 1, $1, $2, $3, $4, $5, $6)", &x.item_name, &x.item_description, &x.item_length, &x.item_width, &x.item_heigth, &x.item_weight)
+    //                     .execute(&state.postgres)
+    //                     .await
+    //                     .map_err(MyError::DBError).unwrap();
+    //             }
+    //
+    //             for x in ev.package_items.iter().unique() {
+    //                 let package = sqlx::query!("select package_uuid from tb_package offset ((select count(*) from tb_package) - 1)")
+    //                     .fetch_one(&state.postgres)
+    //                     .await
+    //                     .map_err(MyError::DBError).unwrap();
+    //
+    //                 let c = ev.package_items.iter().counts();
+    //
+    //                 let _ = sqlx::query!(
+    //                     "insert into tb_fpackage_items values ($1, $2, $3)",
+    //                     package.package_uuid,
+    //                     &x.item_id,
+    //                     c[x] as i32,
+    //                 )
+    //                     .execute(&state.postgres)
+    //                     .await
+    //                     .map_err(MyError::DBError).unwrap();
+    //             }
+    //         }
+    //         "package_update" => {
+    //             let _ = sqlx::query!("update tb_package set package_send_date = $1, package_receive_date = $2, package_weight = $3, package_deliveryperson_id = $4, package_type_id = $5, package_status_id = $6, package_sender_id = $7, package_receiver_id = $8, package_warehouse_id = $9, package_paytype_id = $10, package_payer_id = $11 where package_uuid = $12",  &ev.package_send_date, &ev.package_receive_date, &ev.package_weight, &ev.package_deliveryperson.unwrap().person_id, &ev.package_type.type_id, &ev.package_status.status_id, &ev.package_sender.client_id, &ev.package_receiver.client_id, &ev.package_warehouse.warehouse_id, &ev.package_paytype.type_id, &ev.package_payer.client_id, &ev.package_uuid)
+    //                 .execute(&state.postgres)
+    //                 .await.map_err(MyError::DBError).unwrap();
+    //
+    //             let _ = sqlx::query!("delete from tb_fpackage_items where package_id = $1", &ev.package_uuid)
+    //                 .execute(&state.postgres)
+    //                 .await
+    //                 .map_err(MyError::DBError)
+    //                 .unwrap();
+    //
+    //             for x in ev.package_items.iter().unique() {
+    //                 let _ = sqlx::query!("update tb_fitem set item_name = $1, item_description = $2, item_length = $3, item_width = $4, item_heigth = $5, item_weight = $6 where item_id = $7", &x.item_name, &x.item_description, &x.item_length, &x.item_width, &x.item_heigth, &x.item_weight, &x.item_id)
+    //                     .execute(&state.postgres)
+    //                     .await
+    //                     .map_err(MyError::DBError).unwrap();
+    //             }
+    //
+    //             for x in ev.package_items.iter().unique() {
+    //                 let c = ev.package_items.iter().counts();
+    //
+    //                 let _ = sqlx::query!(
+    //                     "insert into tb_fpackage_items values ($1, $2, $3)",
+    //                     &ev.package_uuid,
+    //                     x.item_id,
+    //                     c[x] as i32
+    //                 )
+    //                     .execute(&state.postgres)
+    //                     .await
+    //                     .map_err(MyError::DBError).unwrap();
+    //             }
+    //         }
+    //         "package_delete" => {
+    //             let _ = sqlx::query!(
+    //                 "delete from tb_fpackage_items where package_id = $1",
+    //                 &ev.package_uuid
+    //             )
+    //                 .execute(&state.postgres)
+    //                 .await
+    //                 .map_err(MyError::DBError)
+    //                 .unwrap();
+    //
+    //             let _ = sqlx::query!("delete from tb_package where package_uuid = $1", &ev.package_uuid)
+    //                 .execute(&state.postgres)
+    //                 .await.map_err(MyError::DBError).unwrap();
+    //         }
+    //         _ => {}
+    //     }
+    // }
 }

@@ -1,10 +1,11 @@
 use axum::extract::{Query, State};
 use axum::Json;
+use eventstore::{RetryOptions, SubscribeToStreamOptions};
 use futures::StreamExt;
-use redis::{AsyncCommands, JsonAsyncCommands};
 use serde::Deserialize;
+use sqlx::types::Uuid;
+use std::time::Duration;
 use utoipa::IntoParams;
-use uuid::Uuid;
 
 use crate::error::MyError;
 use crate::model::{RoleResponse, User, UserResponse};
@@ -160,21 +161,17 @@ pub async fn get_user_by_id(
 }
 
 pub async fn update_db(State(state): State<AppState>) {
+    let retry_opts = RetryOptions::default().retry_forever().retry_delay(Duration::from_secs(5));
+    let opts = SubscribeToStreamOptions::default().retry_options(retry_opts);
+    
     let mut stream = state
         .event_client
-        .subscribe_to_stream("user", &Default::default())
+        .subscribe_to_stream("user", &opts)
         .await;
     
-    loop {
-        let e = stream.next().await;
-        
-        let event = match e {
-            Ok(e) => e,
-            Err(_e) => continue,
-        };
-        
+    while let Ok(event) = stream.next().await {
         let ev = event.get_original_event().as_json::<User>().unwrap();
-        
+
         match event.event.unwrap().event_type.as_str() {
             "user_add" => {
                 let _ = sqlx::query!("insert into tb_user (user_id, user_login, user_password, user_email, user_phone, user_access_token, user_role_id) values ($1, $2, $3, $4, $5, $6, $7)", &ev.user_id, &ev.user_login, &ev.user_password, &ev.user_email, &ev.user_phone, &ev.user_access_token, &ev.user_role.role_id)
@@ -199,5 +196,41 @@ pub async fn update_db(State(state): State<AppState>) {
             }
             _ => {}
         }
-    }
+    } 
+    
+    // loop {
+    //     let e = stream.next().await;
+    //     
+    //     let event = match e {
+    //         Ok(e) => e,
+    //         Err(_e) => continue,
+    //     };
+    //     
+    //     let ev = event.get_original_event().as_json::<User>().unwrap();
+    //     
+    //     match event.event.unwrap().event_type.as_str() {
+    //         "user_add" => {
+    //             let _ = sqlx::query!("insert into tb_user (user_id, user_login, user_password, user_email, user_phone, user_access_token, user_role_id) values ($1, $2, $3, $4, $5, $6, $7)", &ev.user_id, &ev.user_login, &ev.user_password, &ev.user_email, &ev.user_phone, &ev.user_access_token, &ev.user_role.role_id)
+    //                 .execute(&state.postgres)
+    //                 .await
+    //                 .map_err(MyError::DBError)
+    //                 .unwrap();
+    //         }
+    //         "user_update" => {
+    //             let _ = sqlx::query!("update tb_user set user_login = $1, user_password = $2, user_email = $3, user_phone = $4, user_access_token = $5, user_role_id = $6 where user_id = $7", &ev.user_login, &ev.user_password, &ev.user_email, &ev.user_phone, &ev.user_access_token, &ev.user_role.role_id, &ev.user_id)
+    //                 .execute(&state.postgres)
+    //                 .await
+    //                 .map_err(MyError::DBError)
+    //                 .unwrap();
+    //         }
+    //         "user_delete" => {
+    //             let _ = sqlx::query!("delete from tb_user where user_id = $1", &ev.user_id)
+    //                 .execute(&state.postgres)
+    //                 .await
+    //                 .map_err(MyError::DBError)
+    //                 .unwrap();
+    //         }
+    //         _ => {}
+    //     }
+    // }
 }

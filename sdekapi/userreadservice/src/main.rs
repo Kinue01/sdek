@@ -19,7 +19,6 @@ use tower_http::trace;
 use tower_http::trace::TraceLayer;
 use utoipa::OpenApi;
 use utoipa_swagger_ui::SwaggerUi;
-use uuid::Variant::Future;
 
 mod error;
 mod handlers;

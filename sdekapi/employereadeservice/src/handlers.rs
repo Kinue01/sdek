@@ -4,6 +4,8 @@ use futures::StreamExt;
 use redis::{JsonAsyncCommands};
 use serde::Deserialize;
 use std::clone::Clone;
+use std::time::Duration;
+use eventstore::{RetryOptions, SubscribeToStreamOptions};
 use utoipa::IntoParams;
 use uuid::Uuid;
 
@@ -251,25 +253,18 @@ pub async fn get_position_by_id(
     Ok(Json(pos))
 }
 
-pub async fn update_db_poses(State(mut state): State<AppState>) {
+pub async fn update_db_poses(State(state): State<AppState>) {
+    let retry_opts = RetryOptions::default().retry_forever().retry_delay(Duration::from_secs(5));
+    let opts = SubscribeToStreamOptions::default().retry_options(retry_opts);
+    
     let mut stream = state
         .event_client
-        .subscribe_to_stream("position", &Default::default())
+        .subscribe_to_stream("position", &opts)
         .await;
 
-    loop {
-        let e = stream.next().await;
-        
-        let event = match e { 
-            Ok(e) => e,
-            Err(_e) => continue,
-        };
-        
-        let ev = event
-            .get_original_event()
-            .as_json::<PositionResponse>()
-            .unwrap();
-        
+    while let Ok(event) = stream.next().await {
+        let ev = event.get_original_event().as_json::<PositionResponse>().unwrap();
+
         match event.event.unwrap().event_type.as_str() {
             "position_add" => {
                 let _ = sqlx::query!(
@@ -302,24 +297,66 @@ pub async fn update_db_poses(State(mut state): State<AppState>) {
             _ => {}
         }
     }
+    
+    // loop {
+    //     let e = stream.next().await;
+    //     
+    //     let event = match e { 
+    //         Ok(e) => e,
+    //         Err(_e) => continue,
+    //     };
+    //     
+    //     let ev = event
+    //         .get_original_event()
+    //         .as_json::<PositionResponse>()
+    //         .unwrap();
+    //     
+    //     match event.event.unwrap().event_type.as_str() {
+    //         "position_add" => {
+    //             let _ = sqlx::query!(
+    //                 "insert into tb_position (position_name, position_base_pay) values ($1, $2)",
+    //                 &ev.position_name,
+    //                 &ev.position_base_pay
+    //             )
+    //                 .execute(&state.postgres)
+    //                 .await
+    //                 .map_err(MyError::DBError)
+    //                 .unwrap();
+    //         }
+    //         "position_update" => {
+    //             let _ = sqlx::query!("update tb_position set position_name = $1, position_base_pay = $2 where position_id = $3", &ev.position_name, &ev.position_base_pay, &ev.position_id)
+    //                 .execute(&state.postgres)
+    //                 .await
+    //                 .map_err(MyError::DBError)
+    //                 .unwrap();
+    //         }
+    //         "position_delete" => {
+    //             let _ = sqlx::query!(
+    //                 "delete from tb_position where position_id = $1",
+    //                 &ev.position_id
+    //             )
+    //                 .execute(&state.postgres)
+    //                 .await
+    //                 .map_err(MyError::DBError)
+    //                 .unwrap();
+    //         }
+    //         _ => {}
+    //     }
+    // }
 }
 
-pub async fn update_db_main(State(mut state): State<AppState>) {
+pub async fn update_db_main(State(state): State<AppState>) {
+    let retry_opts = RetryOptions::default().retry_forever().retry_delay(Duration::from_secs(5));
+    let opts = SubscribeToStreamOptions::default().retry_options(retry_opts);
+    
     let mut stream = state
         .event_client
-        .subscribe_to_stream("employee", &Default::default())
+        .subscribe_to_stream("employee", &opts)
         .await;
 
-    loop {
-        let e = stream.next().await;
-        
-        let event = match e { 
-            Ok(e) => e,
-            Err(_e) => continue
-        };
-        
+    while let Ok(event) = stream.next().await {
         let ev = event.get_original_event().as_json::<Employee>().unwrap();
-        
+
         match event.event.unwrap().event_type.as_str() {
             "employee_add" => {
                 let _ = sqlx::query!("insert into tb_employee (employee_lastname, employee_firstname, employee_middlename, employee_position_id, employee_user_id) values ($1, $2, $3, $4, $5)", &ev.employee_lastname, &ev.employee_firstname, &ev.employee_middlename, &ev.employee_position.position_id, &ev.employee_user.user_id)
@@ -348,4 +385,43 @@ pub async fn update_db_main(State(mut state): State<AppState>) {
             _ => {}
         }
     }
+    
+    // loop {
+    //     let e = stream.next().await;
+    //     
+    //     let event = match e { 
+    //         Ok(e) => e,
+    //         Err(_e) => continue
+    //     };
+    //     
+    //     let ev = event.get_original_event().as_json::<Employee>().unwrap();
+    //     
+    //     match event.event.unwrap().event_type.as_str() {
+    //         "employee_add" => {
+    //             let _ = sqlx::query!("insert into tb_employee (employee_lastname, employee_firstname, employee_middlename, employee_position_id, employee_user_id) values ($1, $2, $3, $4, $5)", &ev.employee_lastname, &ev.employee_firstname, &ev.employee_middlename, &ev.employee_position.position_id, &ev.employee_user.user_id)
+    //                 .execute(&state.postgres)
+    //                 .await
+    //                 .map_err(MyError::DBError)
+    //                 .unwrap();
+    //         }
+    //         "employee_update" => {
+    //             let _ = sqlx::query!("update tb_employee set employee_lastname = $1, employee_firstname = $2, employee_middlename = $3, employee_position_id = $4, employee_user_id = $5 where employee_id = $6", &ev.employee_lastname, &ev.employee_firstname, &ev.employee_middlename, &ev.employee_position.position_id, &ev.employee_user.user_id, &ev.employee_id)
+    //                 .execute(&state.postgres)
+    //                 .await
+    //                 .map_err(MyError::DBError)
+    //                 .unwrap();
+    //         }
+    //         "employee_delete" => {
+    //             let _ = sqlx::query!(
+    //                 "delete from tb_employee where employee_id = $1",
+    //                 &ev.employee_user.user_id
+    //             )
+    //                 .execute(&state.postgres)
+    //                 .await
+    //                 .map_err(MyError::DBError)
+    //                 .unwrap();
+    //         }
+    //         _ => {}
+    //     }
+    // }
 }

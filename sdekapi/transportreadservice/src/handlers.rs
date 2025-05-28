@@ -11,6 +11,7 @@ use mongodb::{Collection, Cursor};
 use redis::JsonAsyncCommands;
 use serde::{Deserialize, Serialize};
 use std::time::Duration;
+use eventstore::{RetryOptions, SubscribeToStreamOptions};
 
 pub async fn get_transport_types(
     State(state): State<AppState>,
@@ -152,22 +153,18 @@ pub async fn get_transport_by_driver_id(
     Ok(Json(res))
 }
 
-pub async fn update_db_types(State(mut state): State<AppState>) {
+pub async fn update_db_types(State(state): State<AppState>) {
+    let retry_opts = RetryOptions::default().retry_forever().retry_delay(Duration::from_secs(5));
+    let opts = SubscribeToStreamOptions::default().retry_options(retry_opts);
+    
     let mut stream = state
         .event_client
-        .subscribe_to_stream("transport_type", &Default::default())
+        .subscribe_to_stream("transport_type", &opts)
         .await;
 
-    loop {
-        let e = stream.next().await;
-        
-        let event = match e { 
-            Ok(e) => e,
-            Err(_e) => continue,
-        };
-        
+    while let Ok(event) = stream.next().await {
         let ev = event.get_original_event().as_json::<TransportTypeResponse>().unwrap();
-        
+
         match event.event.unwrap().event_type.as_str() {
             "transport_type_add" => {
                 let _ = sqlx::query!(
@@ -201,24 +198,64 @@ pub async fn update_db_types(State(mut state): State<AppState>) {
             _ => {}
         }
     }
+    
+    // loop {
+    //     let e = stream.next().await;
+    //     
+    //     let event = match e { 
+    //         Ok(e) => e,
+    //         Err(_e) => continue,
+    //     };
+    //     
+    //     let ev = event.get_original_event().as_json::<TransportTypeResponse>().unwrap();
+    //     
+    //     match event.event.unwrap().event_type.as_str() {
+    //         "transport_type_add" => {
+    //             let _ = sqlx::query!(
+    //                 "insert into tb_transport_type (type_name) values ($1)", &ev.type_name)
+    //                 .execute(&state.postgres)
+    //                 .await
+    //                 .map_err(MyError::DBError)
+    //                 .unwrap();
+    //         }
+    //         "transport_type_update" => {
+    //             let _ = sqlx::query!(
+    //                 "update tb_transport_type set type_name = $1 where type_id = $2",
+    //                 &ev.type_name,
+    //                 &ev.type_id
+    //             )
+    //                 .execute(&state.postgres)
+    //                 .await
+    //                 .map_err(MyError::DBError)
+    //                 .unwrap();
+    //         }
+    //         "transport_type_delete" => {
+    //             let _ = sqlx::query!(
+    //                 "delete from tb_transport_type where type_id = $1",
+    //                 &ev.type_id
+    //             )
+    //                 .execute(&state.postgres)
+    //                 .await
+    //                 .map_err(MyError::DBError)
+    //                 .unwrap();
+    //         }
+    //         _ => {}
+    //     }
+    // }
 }
 
 pub async fn update_db_main(State(mut state): State<AppState>) {
+    let retry_opts = RetryOptions::default().retry_forever().retry_delay(Duration::from_secs(5));
+    let opts = SubscribeToStreamOptions::default().retry_options(retry_opts);
+    
     let mut stream = state
         .event_client
-        .subscribe_to_stream("transport", &Default::default())
+        .subscribe_to_stream("transport", &opts)
         .await;
     
-    loop {
-        let e = stream.next().await;
-        
-        let event = match e {
-            Ok(e) => e,
-            Err(_e) => continue,
-        };
-        
+    while let Ok(event) = stream.next().await {
         let ev = event.get_original_event().as_json::<Transport>().unwrap();
-        
+
         match event.event.unwrap().event_type.as_str() {
             "transport_add" => {
                 let _ = sqlx::query!("insert into tb_transport (transport_name, transport_reg_number, transport_type_id, transport_status_id) values ($1, $2, $3, $4)", &ev.transport_name, &ev.transport_reg_number, &ev.transport_type.type_id, &ev.transport_status.status_id)
@@ -247,24 +284,62 @@ pub async fn update_db_main(State(mut state): State<AppState>) {
             _ => {}
         }
     }
+    
+    // loop {
+    //     let e = stream.next().await;
+    //     
+    //     let event = match e {
+    //         Ok(e) => e,
+    //         Err(_e) => continue,
+    //     };
+    //     
+    //     let ev = event.get_original_event().as_json::<Transport>().unwrap();
+    //     
+    //     match event.event.unwrap().event_type.as_str() {
+    //         "transport_add" => {
+    //             let _ = sqlx::query!("insert into tb_transport (transport_name, transport_reg_number, transport_type_id, transport_status_id) values ($1, $2, $3, $4)", &ev.transport_name, &ev.transport_reg_number, &ev.transport_type.type_id, &ev.transport_status.status_id)
+    //                 .execute(&state.postgres)
+    //                 .await
+    //                 .map_err(MyError::DBError)
+    //                 .unwrap();
+    //         }
+    //         "transport_update" => {
+    //             let _ = sqlx::query!("update tb_transport set transport_name = $1, transport_reg_number = $2, transport_type_id = $3, transport_status_id = $4 where transport_id = $5", &ev.transport_name, &ev.transport_reg_number, &ev.transport_type.type_id, &ev.transport_status.status_id, &ev.transport_id)
+    //                 .execute(&state.postgres)
+    //                 .await
+    //                 .map_err(MyError::DBError)
+    //                 .unwrap();
+    //         }
+    //         "transport_delete" => {
+    //             let _ = sqlx::query!(
+    //                 "delete from tb_transport where transport_id = $1",
+    //                 &ev.transport_id
+    //             )
+    //                 .execute(&state.postgres)
+    //                 .await
+    //                 .map_err(MyError::DBError)
+    //                 .unwrap();
+    //         }
+    //         _ => {}
+    //     }
+    // }
 }
 
 pub async fn update_mongo(State(state): State<AppState>) {
-    let mut stream = state.event_client.subscribe_to_stream("transport_geo", &Default::default()).await;
+    let retry_opts = RetryOptions::default().retry_forever().retry_delay(Duration::from_secs(5));
+    let opts = SubscribeToStreamOptions::default().retry_options(retry_opts);
+    
+    let mut stream = state
+        .event_client
+        .subscribe_to_stream("transport_geo", &opts)
+        .await;
 
     let db = state.mongo.database("sdek");
     let coll = db.collection("transport_geo");
     
-    loop {
-        let e = stream.next().await;
-        
-        let event = match e {
-            Ok(e) => e,
-            Err(_e) => continue,
-        };
-        
+    while let Ok(event) = stream.next().await {
         let body = event.get_original_event().as_json::<TransportMongo>().unwrap();
-        
+
         let uuid = body.transport_id;
         let doc = doc! {
             "$set": {
@@ -283,6 +358,35 @@ pub async fn update_mongo(State(state): State<AppState>) {
             }
         }
     }
+    
+    // loop {
+    //     let e = stream.next().await;
+    //     
+    //     let event = match e {
+    //         Ok(e) => e,
+    //         Err(_e) => continue,
+    //     };
+    //     
+    //     let body = event.get_original_event().as_json::<TransportMongo>().unwrap();
+    //     
+    //     let uuid = body.transport_id;
+    //     let doc = doc! {
+    //         "$set": {
+    //             "lat": body.lat,
+    //             "lon": body.lon
+    //         },
+    //     };
+    // 
+    //     let d = coll.find_one(doc! { "transport_id": uuid.clone() }).await.unwrap();
+    //     match d {
+    //         Some(_d) => {
+    //             let _ = coll.update_many(doc! { "transport_id": uuid }, doc).await.unwrap();
+    //         },
+    //         None => {
+    //             let _ =  coll.insert_one(doc! { "transport_id": uuid, "lat": body.lat, "lon": body.lon }).await.unwrap();
+    //         }
+    //     }
+    // }
 }
 
 pub async fn get_trans_pos(State(state): State<AppState>, ws: WebSocketUpgrade) -> Response {

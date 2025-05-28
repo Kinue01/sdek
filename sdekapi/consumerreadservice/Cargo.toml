@@ -21,11 +21,3 @@ utoipa = { version = "5.3.1", features = ["axum_extras", "uuid"] }
 utoipa-swagger-ui = { version = "9.0.0", features = ["axum"] }
 futures = "0.3.31"
 eventstore = "4.0.0"
-
-[dependencies.uuid]
-version = "1.16.0"
-features = [
-    "v7",
-    "serde",
-    "macro-diagnostics",
-]
