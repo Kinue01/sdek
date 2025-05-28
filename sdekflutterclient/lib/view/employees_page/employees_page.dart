@@ -40,6 +40,7 @@ class EmployeesState extends State<EmployeesComponent> with GetItStateMixin {
   late TextEditingController _emailController;
   late TextEditingController _transNameController;
   late TextEditingController _transNumberController;
+  bool _transportDataEnabled = false;
 
   late Employee selectedEmp = Employee(employee_position: Position(), employee_user: User(user_role: Role()));
 
@@ -77,7 +78,7 @@ class EmployeesState extends State<EmployeesComponent> with GetItStateMixin {
             children: [
               TextButton(
                   onPressed: () {
-                    selectedEmp = Employee(employee_position: Position(), employee_user: User(user_role: Role()));
+                    selectedEmp = Employee(employee_position: Position(), employee_user: User(user_role: Role()), delivery_transport: Transport());
 
                     _lastNameController.text = "";
                     _firstNameController.text = "";
@@ -154,8 +155,15 @@ class EmployeesState extends State<EmployeesComponent> with GetItStateMixin {
                               ),
                               controller: _emailController,
                             ),
+                            DropdownMenu<Position>(
+                                label: Text("Position"),
+                                onSelected: (Position? pos) {
+                                  selectedEmp.employee_position = pos!;
+                                },
+                                dropdownMenuEntries: poses.map<DropdownMenuEntry<Position>>((Position pos) => DropdownMenuEntry<Position>(value: pos, label: pos.position_name!)).toList()
+                            ),
                             Text(
-                                "Данная часть активируется при выборе должности доставщик",
+                              "Данная часть активируется при выборе должности доставщик",
                               textAlign: TextAlign.center,
                             ),
                             TextField(
@@ -178,13 +186,6 @@ class EmployeesState extends State<EmployeesComponent> with GetItStateMixin {
                                   selectedEmp.delivery_transport!.transport_type = type;
                                 },
                                 dropdownMenuEntries: transTypes.map<DropdownMenuEntry<TransportType>>((TransportType type) => DropdownMenuEntry(value: type, label: type.type_name!)).toList()
-                            ),
-                            DropdownMenu<Position>(
-                              label: Text("Position"),
-                                onSelected: (Position? pos) {
-                                  selectedEmp.employee_position = pos!;
-                                },
-                                dropdownMenuEntries: poses.map<DropdownMenuEntry<Position>>((Position pos) => DropdownMenuEntry<Position>(value: pos, label: pos.position_name!)).toList()
                             )
                           ],
                         ),

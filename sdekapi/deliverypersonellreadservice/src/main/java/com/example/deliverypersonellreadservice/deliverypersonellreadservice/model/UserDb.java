@@ -15,6 +15,7 @@ import java.util.UUID;
 @Table(name = "tb_fuser")
 public class UserDb {
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID user_id;
     private String user_login;
     private String user_password;

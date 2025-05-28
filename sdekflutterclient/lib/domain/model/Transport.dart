@@ -8,7 +8,7 @@ class Transport with EquatableMixin {
   final int? transport_id;
   final String? transport_name;
   final String? transport_reg_number;
-  late final TransportType? transport_type;
+  late TransportType? transport_type;
   final TransportStatus? transport_status;
 
   Transport({
