@@ -3,14 +3,14 @@ services:
     image: eventstore/eventstore
     container_name: eventstore
     environment:
+      - EVENTSTORE_CLUSTER_SIZE=1
       - EVENTSTORE_RUN_PROJECTIONS=All
       - EVENTSTORE_START_STANDARD_PROJECTIONS=true
       - EVENTSTORE_HTTP_PORT=2113
       - EVENTSTORE_INSECURE=true
-      - EVENTSTORE_ENABLE_ATOM_PUB_OVER_HTTP=true
     healthcheck:
       test: ["CMD-SHELL", "curl -f --insecure http://eventstore:2113/health/live || exit 1" ]
-      interval: 5s
+      interval: 1s
       timeout: 5s
       retries: 20
     ports:
@@ -65,9 +65,12 @@ services:
       timeout: 5s
       retries: 10
     depends_on:
-      - eventstore
-      - mongodb
-      - redis
+      eventstore:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_started
   mongodb:
     image: mongo
     restart: always
@@ -77,6 +80,11 @@ services:
       MONGO_INITDB_DATABASE: sdek
     volumes:
       - ./init-mongo-db-with-collections.js:/docker-entrypoint-initdb.d/init-mongo-db-with-collections.js:ro
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh mongodb://admin:12345@mongodb:27017/?authSource=sdek --quiet
+      interval: 5s
+      timeout: 10s
+      retries: 5
     
 volumes:
   eventstore-volume-data:
