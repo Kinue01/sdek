@@ -81,9 +81,9 @@ services:
     volumes:
       - ./init-mongo-db-with-collections.js:/docker-entrypoint-initdb.d/init-mongo-db-with-collections.js:ro
     healthcheck:
-      test: echo 'db.runCommand("ping").ok' | mongosh mongodb://admin:12345@mongodb:27017/?authSource=sdek --quiet
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
       interval: 5s
-      timeout: 10s
+      timeout: 5s
       retries: 5
     
 volumes:

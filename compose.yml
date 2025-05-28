@@ -7,7 +7,8 @@ services:
     ports:
       - "8000:8000"
     depends_on:
-      - eventstore
+      eventstore:
+        condition: service_healthy
 
   consumerservice:
     build: 
