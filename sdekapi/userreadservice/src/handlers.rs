@@ -166,7 +166,13 @@ pub async fn update_db(State(state): State<AppState>) {
         .await;
     
     loop {
-        let event = stream.next().await.unwrap();
+        let e = stream.next().await;
+        
+        let event = match e {
+            Ok(e) => e,
+            Err(_e) => continue,
+        };
+        
         let ev = event.get_original_event().as_json::<User>().unwrap();
         
         match event.event.unwrap().event_type.as_str() {

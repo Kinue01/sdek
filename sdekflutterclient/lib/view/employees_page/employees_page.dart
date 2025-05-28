@@ -11,6 +11,7 @@ import 'package:clientapp/view/employees_page/employees_page_controller.dart';
 import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it_mixin/get_it_mixin.dart';
+import 'package:uuid/uuid.dart';
 
 class EmployeesPage extends StatelessWidget {
   const EmployeesPage({super.key});
@@ -157,39 +158,31 @@ class EmployeesState extends State<EmployeesComponent> with GetItStateMixin {
                                 "Данная часть активируется при выборе должности доставщик",
                               textAlign: TextAlign.center,
                             ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                TextField(
-                                  decoration: InputDecoration(
-                                      labelText: "Название транспорта",
-                                      border: UnderlineInputBorder()
-                                  ),
-                                  controller: _transNameController,
-                                ),
-                                TextField(
-                                  decoration: InputDecoration(
-                                      labelText: "Номер",
-                                      border: UnderlineInputBorder()
-                                  ),
-                                  controller: _transNumberController,
-                                ),
-                                DropdownMenu(
-                                    label: Text("Type"),
-                                    onSelected: (TransportType? type) {
-                                      selectedEmp.delivery_transport!.transport_type = type;
-                                    },
-                                    dropdownMenuEntries: transTypes.map<DropdownMenuEntry<TransportType>>((TransportType type) => DropdownMenuEntry(value: type, label: type.type_name!)).toList()
-                                ),
-                              ],
+                            TextField(
+                              decoration: InputDecoration(
+                                  labelText: "Название транспорта",
+                                  border: UnderlineInputBorder()
+                              ),
+                              controller: _transNameController,
+                            ),
+                            TextField(
+                              decoration: InputDecoration(
+                                  labelText: "Номер",
+                                  border: UnderlineInputBorder()
+                              ),
+                              controller: _transNumberController,
+                            ),
+                            DropdownMenu(
+                                label: Text("Type"),
+                                onSelected: (TransportType? type) {
+                                  selectedEmp.delivery_transport!.transport_type = type;
+                                },
+                                dropdownMenuEntries: transTypes.map<DropdownMenuEntry<TransportType>>((TransportType type) => DropdownMenuEntry(value: type, label: type.type_name!)).toList()
                             ),
                             DropdownMenu<Position>(
                               label: Text("Position"),
                                 onSelected: (Position? pos) {
-                                  selectedEmp.employee_position.position_id = pos?.position_id;
-                                  selectedEmp.employee_position.position_name = pos?.position_name;
-                                  selectedEmp.employee_position.position_base_pay = pos?.position_base_pay;
+                                  selectedEmp.employee_position = pos!;
                                 },
                                 dropdownMenuEntries: poses.map<DropdownMenuEntry<Position>>((Position pos) => DropdownMenuEntry<Position>(value: pos, label: pos.position_name!)).toList()
                             )
@@ -233,7 +226,7 @@ class EmployeesState extends State<EmployeesComponent> with GetItStateMixin {
                         }
 
                         User empUser = User(
-                            user_id: "",
+                            user_id: Uuid().v4(),
                             user_login: _loginController.text,
                             user_email: _emailController.text,
                             user_phone: _phoneController.text,
@@ -249,6 +242,7 @@ class EmployeesState extends State<EmployeesComponent> with GetItStateMixin {
                         selectedEmp.employee_firstname = _firstNameController.text;
                         selectedEmp.employee_middlename = _middleNameController.text;
                         selectedEmp.employee_user = empUser;
+                        selectedEmp.employee_id = Uuid().v4();
 
                         _contoller.addEmp(selectedEmp);
                       },

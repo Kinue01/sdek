@@ -159,7 +159,13 @@ pub async fn update_db_types(State(mut state): State<AppState>) {
         .await;
 
     loop {
-        let event = stream.next().await.unwrap();
+        let e = stream.next().await;
+        
+        let event = match e { 
+            Ok(e) => e,
+            Err(_e) => continue,
+        };
+        
         let ev = event.get_original_event().as_json::<TransportTypeResponse>().unwrap();
         
         match event.event.unwrap().event_type.as_str() {
@@ -204,7 +210,13 @@ pub async fn update_db_main(State(mut state): State<AppState>) {
         .await;
     
     loop {
-        let event = stream.next().await.unwrap();
+        let e = stream.next().await;
+        
+        let event = match e {
+            Ok(e) => e,
+            Err(_e) => continue,
+        };
+        
         let ev = event.get_original_event().as_json::<Transport>().unwrap();
         
         match event.event.unwrap().event_type.as_str() {
@@ -244,11 +256,16 @@ pub async fn update_mongo(State(state): State<AppState>) {
     let coll = db.collection("transport_geo");
     
     loop {
-        let event = stream.next().await.unwrap();
+        let e = stream.next().await;
+        
+        let event = match e {
+            Ok(e) => e,
+            Err(_e) => continue,
+        };
+        
         let body = event.get_original_event().as_json::<TransportMongo>().unwrap();
         
         let uuid = body.transport_id;
-        
         let doc = doc! {
             "$set": {
                 "lat": body.lat,
@@ -257,11 +274,13 @@ pub async fn update_mongo(State(state): State<AppState>) {
         };
 
         let d = coll.find_one(doc! { "transport_id": uuid.clone() }).await.unwrap();
-
-        if d.is_none() {
-            let _ =  coll.insert_one(doc! { "transport_id": uuid, "lat": body.lat, "lon": body.lon }).await.unwrap();
-        } else {
-            let _ = coll.update_many(doc! { "transport_id": uuid }, doc).await.unwrap();
+        match d {
+            Some(_d) => {
+                let _ = coll.update_many(doc! { "transport_id": uuid }, doc).await.unwrap();
+            },
+            None => {
+                let _ =  coll.insert_one(doc! { "transport_id": uuid, "lat": body.lat, "lon": body.lon }).await.unwrap();
+            }
         }
     }
 }

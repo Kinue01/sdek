@@ -7,12 +7,12 @@ import 'package:equatable/equatable.dart';
 import 'User.dart';
 
 class Employee with EquatableMixin {
-  final String? employee_id;
-  late final String? employee_lastname;
-  late final String? employee_firstname;
-  late final String? employee_middlename;
-  final Position employee_position;
-  late final User employee_user;
+  late String? employee_id;
+  late String? employee_lastname;
+  late String? employee_firstname;
+  late String? employee_middlename;
+  late Position employee_position;
+  late User employee_user;
   late Transport? delivery_transport;
 
   Employee({

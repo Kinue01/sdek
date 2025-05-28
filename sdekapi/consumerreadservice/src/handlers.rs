@@ -5,6 +5,8 @@ use futures::StreamExt;
 use redis::{AsyncCommands, JsonAsyncCommands};
 use serde::Deserialize;
 use std::clone::Clone;
+use std::time::Duration;
+use eventstore::{RetryOptions, SubscribeToStreamOptions};
 use utoipa::IntoParams;
 use uuid::Uuid;
 
@@ -168,13 +170,22 @@ pub async fn get_client_by_user_id(
 }
 
 pub async fn update_db(State(state): State<AppState>) {
+    let retry_opts = RetryOptions::default().retry_forever().retry_delay(Duration::from_secs(5));
+    let opts = SubscribeToStreamOptions::default().retry_options(retry_opts);
+    
     let mut stream = state
         .event_client
-        .subscribe_to_stream("client", &Default::default())
+        .subscribe_to_stream("client", &opts)
         .await;
     
     loop {
-        let event = stream.next().await.unwrap();
+        let e = stream.next().await;
+        
+        let event = match e {
+            Ok(e) => e,
+            Err(_e) => {continue;}
+        };
+        
         let ev = event.get_original_event().as_json::<Client>().unwrap();
         
         match event.event.unwrap().event_type.as_str() {
