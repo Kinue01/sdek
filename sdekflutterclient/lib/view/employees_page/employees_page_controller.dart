@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:clientapp/domain/model/DeliveryPerson.dart';
 import 'package:clientapp/domain/model/Employee.dart';
 import 'package:clientapp/domain/model/Position.dart';
@@ -84,34 +86,46 @@ class EmployeesPageContoller {
 
   Future<void> addEmp(Employee emp) async {
     await addEmployeeUseCase.exec(emp);
+    await Future.delayed(Duration(seconds: 1));
     await initEmps();
   }
 
   Future<void> updateEmp(Employee emp) async {
     await updateEmployeeUseCase.exec(emp);
+    await Future.delayed(Duration(seconds: 1));
     await initEmps();
   }
 
   Future<void> deleteEmp(Employee emp) async {
     await deleteEmployeeUseCase.exec(emp);
+    await Future.delayed(Duration(seconds: 1));
     await initEmps();
   }
 
   Future<void> addDelivery(DeliveryPerson person) async {
     await addUserUseCase.exec(person.person_user!);
     await addTransportUseCase.exec(person.person_transport!);
+    await Future.delayed(Duration(seconds: 3));
     await addDeliveryPersonUseCase.exec(person);
+    await Future.delayed(Duration(seconds: 1));
+    await initEmps();
   }
 
   Future<void> updateDelivery(DeliveryPerson person) async {
     await updateUserUseCase.exec(person.person_user!);
     await updateTransportUseCase.exec(person.person_transport!);
+    await Future.delayed(Duration(seconds: 3));
     await updateDeliveryPersonUseCase.exec(person);
+    await Future.delayed(Duration(seconds: 1));
+    await initEmps();
   }
 
   Future<void> deleteDelivery(DeliveryPerson person) async {
     await deleteDeliveryPersonUseCase.exec(person);
+    await Future.delayed(Duration(seconds: 3));
     await deleteTransportUseCase.exec(person.person_transport!);
     await deleteUserUseCase.exec(person.person_user!);
+    await Future.delayed(Duration(seconds: 1));
+    await initEmps();
   }
 }

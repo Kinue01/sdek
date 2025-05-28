@@ -24,7 +24,6 @@ class UserApiImpl implements UserApi {
 
   @override
   Future<bool> addUser(User user) async {
-    print(user.toRawJson());
     Response resp = await client.post("$url/api/user", data: user.toRawJson());
     if (resp.statusCode == 201) {
       return true;

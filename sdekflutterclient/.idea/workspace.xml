@@ -5,11 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8150d90f-2e70-4c11-baaa-2d9bf53faa8e" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../sdekapi/deliverypersonellreadservice/src/main/java/com/example/deliverypersonellreadservice/deliverypersonellreadservice/model/Role.java" beforeDir="false" afterPath="$PROJECT_DIR$/../sdekapi/deliverypersonellreadservice/src/main/java/com/example/deliverypersonellreadservice/deliverypersonellreadservice/model/Role.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../sdekapi/deliverypersonellreadservice/src/main/java/com/example/deliverypersonellreadservice/deliverypersonellreadservice/model/UserDb.java" beforeDir="false" afterPath="$PROJECT_DIR$/../sdekapi/deliverypersonellreadservice/src/main/java/com/example/deliverypersonellreadservice/deliverypersonellreadservice/model/UserDb.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/domain/model/Transport.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/domain/model/Transport.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/inject.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/inject.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/remote/api/user_api.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/remote/api/user_api.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/view/employees_page/employees_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/view/employees_page/employees_page.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/view/employees_page/employees_page_controller.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/view/employees_page/employees_page_controller.dart" afterDir="false" />
@@ -155,7 +151,7 @@
       <workItem from="1748167873186" duration="7361000" />
       <workItem from="1748257397511" duration="29000" />
       <workItem from="1748343875194" duration="8025000" />
-      <workItem from="1748370671242" duration="24784000" />
+      <workItem from="1748370671242" duration="28437000" />
     </task>
     <servers />
   </component>
@@ -174,26 +170,6 @@
           <url>file://D:/flutter/packages/flutter/lib/src/widgets/focus_manager.dart</url>
           <line>1928</line>
           <option name="timeStamp" value="2" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="Dart">
-          <url>file://$PROJECT_DIR$/lib/view/employees_page/employees_page.dart</url>
-          <line>224</line>
-          <option name="timeStamp" value="96" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="Dart">
-          <url>file://$PROJECT_DIR$/lib/remote/api/user_api.dart</url>
-          <line>29</line>
-          <option name="timeStamp" value="119" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="Dart">
-          <url>file://$PROJECT_DIR$/lib/remote/api/user_api.dart</url>
-          <line>32</line>
-          <option name="timeStamp" value="121" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="Dart">
-          <url>file://$PROJECT_DIR$/lib/remote/api/user_api.dart</url>
-          <line>27</line>
-          <option name="timeStamp" value="122" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

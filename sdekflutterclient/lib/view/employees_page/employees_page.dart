@@ -40,7 +40,6 @@ class EmployeesState extends State<EmployeesComponent> with GetItStateMixin {
   late TextEditingController _emailController;
   late TextEditingController _transNameController;
   late TextEditingController _transNumberController;
-  bool _transportDataEnabled = false;
 
   late Employee selectedEmp = Employee(employee_position: Position(), employee_user: User(user_role: Role()));
 
@@ -153,6 +152,7 @@ class EmployeesState extends State<EmployeesComponent> with GetItStateMixin {
                                   labelText: "Почта",
                                   border: UnderlineInputBorder()
                               ),
+                              keyboardType: TextInputType.emailAddress,
                               controller: _emailController,
                             ),
                             DropdownMenu<Position>(
@@ -179,6 +179,7 @@ class EmployeesState extends State<EmployeesComponent> with GetItStateMixin {
                                   border: UnderlineInputBorder()
                               ),
                               controller: _transNumberController,
+                              maxLength: 8,
                             ),
                             DropdownMenu(
                                 label: Text("Type"),
