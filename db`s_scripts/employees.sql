@@ -62,5 +62,5 @@ begin
 end;
 $$ language plpgsql;
 
-create or replace trigger fkey_user before insert or update or delete
+create or replace trigger fkey_user before insert
 on tb_employee for each row execute function fkey_user_func();

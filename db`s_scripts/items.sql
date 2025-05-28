@@ -62,7 +62,7 @@ begin
 end;
 $$ language plpgsql;
 
-create or replace trigger fkey_package before insert or update or delete
+create or replace trigger fkey_package before insert
 on tb_package_items for each row execute function fkey_package_func();
 
 drop trigger fkey_package on tb_package_items;

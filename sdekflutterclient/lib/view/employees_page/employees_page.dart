@@ -251,7 +251,7 @@ class EmployeesState extends State<EmployeesComponent> with GetItStateMixin {
                   child: Text("Add")
               ),
               TextButton(
-                  onPressed: () async {
+                  onPressed: () {
                     if (selectedEmp.employee_id == null) {
                       AwesomeDialog(
                         context: context,
@@ -340,41 +340,33 @@ class EmployeesState extends State<EmployeesComponent> with GetItStateMixin {
                               ),
                               controller: _emailController,
                             ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                TextField(
-                                  decoration: InputDecoration(
-                                      labelText: "Название транспорта",
-                                      border: UnderlineInputBorder()
-                                  ),
-                                  controller: _transNameController,
-                                ),
-                                TextField(
-                                  decoration: InputDecoration(
-                                      labelText: "Номер",
-                                      border: UnderlineInputBorder()
-                                  ),
-                                  controller: _transNumberController,
-                                ),
-                                DropdownMenu<TransportType>(
-                                    label: Text("Type"),
-                                    initialSelection: selectedEmp.delivery_transport!.transport_type,
-                                    onSelected: (TransportType? type) {
-                                      selectedEmp.delivery_transport!.transport_type = type;
-                                    },
-                                    dropdownMenuEntries: transTypes.map<DropdownMenuEntry<TransportType>>((TransportType type) => DropdownMenuEntry(value: type, label: type.type_name!)).toList()
-                                ),
-                              ],
+                            TextField(
+                              decoration: InputDecoration(
+                                  labelText: "Название транспорта",
+                                  border: UnderlineInputBorder()
+                              ),
+                              controller: _transNameController,
+                            ),
+                            TextField(
+                              decoration: InputDecoration(
+                                  labelText: "Номер",
+                                  border: UnderlineInputBorder()
+                              ),
+                              controller: _transNumberController,
+                            ),
+                            DropdownMenu<TransportType>(
+                                label: Text("Type"),
+                                initialSelection: selectedEmp.delivery_transport?.transport_type,
+                                onSelected: (TransportType? type) {
+                                  selectedEmp.delivery_transport!.transport_type = type;
+                                },
+                                dropdownMenuEntries: transTypes.map<DropdownMenuEntry<TransportType>>((TransportType type) => DropdownMenuEntry(value: type, label: type.type_name!)).toList()
                             ),
                             DropdownMenu<Position>(
                                 label: Text("Position"),
                                 initialSelection: selectedEmp.employee_position,
                                 onSelected: (Position? pos) {
-                                  selectedEmp.employee_position.position_id = pos?.position_id;
-                                  selectedEmp.employee_position.position_name = pos?.position_name;
-                                  selectedEmp.employee_position.position_base_pay = pos?.position_base_pay;
+                                  selectedEmp.employee_position = pos!;
                                 },
                                 dropdownMenuEntries: poses.map<DropdownMenuEntry<Position>>((Position pos) => DropdownMenuEntry<Position>(value: pos, label: pos.position_name!)).toList()
                             )

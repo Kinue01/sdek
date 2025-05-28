@@ -168,5 +168,5 @@ begin
 end;
 $$ language plpgsql;
 
-create or replace trigger fkey_package before insert or update or delete
+create or replace trigger fkey_package before insert
 on tb_package_services for each row execute function fkey_package_func();

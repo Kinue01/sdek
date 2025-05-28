@@ -76,7 +76,7 @@ begin
 end;
 $$ language plpgsql;
 
-create or replace trigger fkey_user before insert or update or delete
+create or replace trigger fkey_user before insert
 on tb_delivery_person for each row execute function fkey_user_func();
 
 -- Transport
@@ -93,5 +93,5 @@ begin
 end;
 $$ language plpgsql;
 
-create or replace trigger fkey_transport before insert or update or delete
+create or replace trigger fkey_transport before insert
 on tb_delivery_person for each row execute function fkey_transport_func();

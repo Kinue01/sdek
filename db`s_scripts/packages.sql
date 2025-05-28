@@ -189,7 +189,7 @@ begin
 end;
 $$ language plpgsql;
 
-create or replace trigger fkey_deliveryperson before insert or update or delete
+create or replace trigger fkey_deliveryperson before insert
 on tb_package for each row execute function fkey_deliveryperson_func();
 
 -- Sender and receiver and payer
@@ -220,7 +220,7 @@ begin
 end;
 $$ language plpgsql;
 
-create or replace trigger fkey_sender_receiver before insert or update or delete
+create or replace trigger fkey_sender_receiver before insert
 on tb_package for each row execute function fkey_sender_receiver_func();
 
 -- Warehouses
@@ -237,5 +237,5 @@ begin
 end;
 $$ language plpgsql;
 
-create or replace trigger fkey_warehouse before insert or update or delete
+create or replace trigger fkey_warehouse before insert
 on tb_package for each row execute function fkey_warehouse_func();
