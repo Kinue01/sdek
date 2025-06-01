@@ -81,7 +81,6 @@ class SendPackageController {
     clients.value = client;
     types = await getPackageTypesUseCase.exec();
     paytypes.value = await getPackagePaytypesUseCase.exec();
-    deliveryPersonal = await getDeliveryPersonalUseCase.exec();
     warehouses = await getWarehousesUseCase.exec();
   }
 
@@ -102,13 +101,6 @@ class SendPackageController {
     for (PackageType t in types) {
       if (t.type_height! * t.type_width! * t.type_length! >= v) {
         type = t;
-        break;
-      }
-    }
-
-    for (var d in deliveryPersonal) {
-      if (d.person_transport?.transport_status?.status_id == 1) {
-        deliveryPerson = d;
         break;
       }
     }

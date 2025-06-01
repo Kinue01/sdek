@@ -1008,7 +1008,7 @@ pub async fn update_db_main(State(state): State<AppState>) {
 
         match event.event.unwrap().event_type.as_str() {
             "package_add" => {
-                let _ = sqlx::query!("insert into tb_package (package_uuid, package_send_date, package_receive_date, package_weight, package_deliveryperson_id, package_type_id, package_status_id, package_sender_id, package_receiver_id, package_warehouse_id, package_paytype_id, package_payer_id) values (gen_random_uuid(), $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)", &ev.package_send_date, &ev.package_receive_date, &ev.package_weight, &ev.package_deliveryperson.unwrap().person_id, &ev.package_type.type_id, &ev.package_status.status_id, &ev.package_sender.client_id, &ev.package_receiver.client_id, &ev.package_warehouse.warehouse_id, &ev.package_paytype.type_id, &ev.package_payer.client_id)
+                let _ = sqlx::query!("insert into tb_package (package_send_date, package_receive_date, package_weight, package_type_id, package_status_id, package_sender_id, package_receiver_id, package_warehouse_id, package_paytype_id, package_payer_id) values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)", &ev.package_send_date, &ev.package_receive_date, &ev.package_weight, &ev.package_type.type_id, &ev.package_status.status_id, &ev.package_sender.client_id, &ev.package_receiver.client_id, &ev.package_warehouse.warehouse_id, &ev.package_paytype.type_id, &ev.package_payer.client_id)
                     .execute(&state.postgres)
                     .await
                     .map_err(MyError::DBError).unwrap();
