@@ -96,7 +96,7 @@ create foreign table tb_fwarehouse_type
 create foreign table tb_fitem
 (
 	item_id integer NOT NULL,
-    item_name character varying(25) COLLATE pg_catalog."default" NOT NULL,
+    item_name character varying(150) COLLATE pg_catalog."default" NOT NULL,
     item_description character varying(200) COLLATE pg_catalog."default" NOT NULL,
     item_length numeric(5,1) NOT NULL,
     item_width numeric(5,1) NOT NULL,
