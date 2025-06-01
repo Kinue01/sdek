@@ -36,12 +36,6 @@ class SendPackageViewState extends State<SendPackageView> with GetItStateMixin {
   Service selectedService = Service();
 
   @override
-  void dispose() {
-    controller = null;
-    super.dispose();
-  }
-
-  @override
   void initState() {
     super.initState();
     controller = get<SendPackageController>();
@@ -135,6 +129,24 @@ class SendPackageViewState extends State<SendPackageView> with GetItStateMixin {
                     validator: (value) {
                       if (value == null) {
                         return 'Выберите получателя';
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  //padding: const EdgeInsets.all(15),
+                  child: DropdownButtonFormField(
+                    //key: UniqueKey(),
+                    decoration: const InputDecoration(labelText: 'Отправитель'),
+                    items: clientItems,
+                    onChanged: (value) {
+                      controller?.selectedClientSender = value;
+                    },
+                    validator: (value) {
+                      if (value == null) {
+                        return 'Выберите отправителя';
                       }
                       return null;
                     },

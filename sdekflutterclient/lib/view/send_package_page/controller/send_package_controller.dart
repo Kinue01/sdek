@@ -39,6 +39,7 @@ class SendPackageController {
   late List<Client> allClients;
   late User currUser;
   late Client selectedClient;
+  late Client selectedClientSender;
   late int payer;
   late List<PackageType> types;
   late PackagePaytype paytype;
@@ -72,10 +73,10 @@ class SendPackageController {
 
   Future<void> populatelLists() async {
     packageTypes.value = await getPackageTypesUseCase.exec();
-    currUser = await getCurrentUserUseCase.exec();
+    // currUser = await getCurrentUserUseCase.exec();
     var client = await getClientsUseCase.exec();
     allClients = await getClientsUseCase.exec();
-    client.removeWhere((item) => item.client_user.user_id == currUser.user_id);
+    // client.removeWhere((item) => item.client_user.user_id == currUser.user_id);
     services.value = await getAllServicesUseCase.exec();
     clients.value = client;
     types = await getPackageTypesUseCase.exec();
@@ -90,7 +91,7 @@ class SendPackageController {
     late Warehouse warehouse;
 
     if (payer == 1) {
-      payerCl = await getCurrentClientUseCase.exec();
+      payerCl = selectedClientSender;
     }
     if (payer == 2) {
       payerCl = selectedClient;
@@ -98,7 +99,7 @@ class SendPackageController {
 
     var v = items.value.fold<double>(0, (prev, item) => item.item_length! * item.item_weight! * item.item_heigth!);
 
-    for (var t in types) {
+    for (PackageType t in types) {
       if (t.type_height! * t.type_width! * t.type_length! >= v) {
         type = t;
         break;
@@ -121,7 +122,7 @@ class SendPackageController {
 
     Package pack = Package(
         package_uuid: "db78ee80-09a0-4cfc-9491-70b4ad3768cc",
-        package_deliveryperson: deliveryPerson,
+        package_deliveryperson: null,
         package_payer: payerCl,
         package_paytype: paytype,
         package_send_date: DateTime.now(),
@@ -131,7 +132,7 @@ class SendPackageController {
         package_receiver: selectedClient,
         package_warehouse: warehouse,
         package_type: type,
-        package_sender: await getCurrentClientUseCase.exec(),
+        package_sender: selectedClientSender,
         package_items: items.value
     );
 
